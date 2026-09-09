@@ -84,7 +84,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 .contact .l{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;font-weight:600}
 .note{padding:32px var(--g) 80px;color:var(--ink-faint);font-size:12px;max-width:70ch}
 @media (max-width:700px){
-  .gwrap{align-items:start;padding:6svh clamp(6px,3vw,56px) 0}
+  .gwrap{align-items:start;justify-items:center;padding:6svh clamp(6px,3vw,56px) 0}
   #glove{height:min(38svh,360px)}
   #g3d{height:min(44svh,420px)}
   body:not(.fx) #glove{height:min(30svh,300px)}
@@ -214,77 +214,90 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   // --- rezie hero ---
   var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
   var S=.13, H=(1-S*(BEATS.length-1))/BEATS.length;
-
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
-  function mob(){return innerWidth<=700;}
-  function inset(){return mob()?innerWidth*.06:innerWidth*.14;}   // jak daleko od kraje rukavice dosedne
-  // na mobilu rukavice sedi nahore a text dole - pri tahu se propadne dolu a text pretre
-  function dip(){return mob()? innerHeight*.32 : -innerHeight*.05;}
-  var rest={
-    R:function(){return -inset();},
-    L:function(){return -Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
-  };
-  function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
-  var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
-    scrub:1.1,invalidateOnRefresh:true}});
-  gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+  // dve samostatne rezie; gsap.matchMedia je pri zmene sirky sam od sebe prepne a uklidi
+  gsap.matchMedia().add({mob:'(max-width:700px)'},function(ctx){
+    var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
-  // pismena vybihaji z te strany, ze ktere rukavice odjizdi
-  function enter(sel,at,dir){
-    var p=document.querySelector(sel);
-    tl.fromTo(p,{opacity:0},{opacity:1,duration:S*.10,ease:'none'},at);
+    function inset(){return innerWidth*.14;}
+    var rest={
+      R:function(){return mob?0:-inset();},
+      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
+    };
+    function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
-    if(sel==='#stats'){
-      tl.fromTo(p.querySelectorAll('#stats>div'),{opacity:0,y:34,scale:.9},
-        {opacity:1,y:0,scale:1,duration:S*.26,ease:'back.out(1.6)',stagger:{each:S*.07,from:dir}},at+S*.06);
-      Array.prototype.forEach.call(p.querySelectorAll('b'),function(b,k){
-        var raw=b.textContent, n=parseInt(raw,10), suf=raw.replace(/[0-9]/g,''), o={v:0};
-        tl.to(o,{v:n,duration:S*.42,ease:'power2.out',
-          onUpdate:function(){b.textContent=Math.round(o.v)+suf;}},at+S*.08+k*S*.05);
+    var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
+      scrub:1.1,invalidateOnRefresh:true}});
+    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+
+    function enter(sel,at,dir){
+      var p=document.querySelector(sel);
+      tl.fromTo(p,{opacity:0},{opacity:1,duration:S*.08,ease:'none'},at);
+
+      if(sel==='#stats'){
+        tl.fromTo(p.querySelectorAll('#stats>div'),{opacity:0,y:30,scale:.92},
+          {opacity:1,y:0,scale:1,duration:S*.22,ease:'back.out(1.5)',
+           stagger:{each:S*.06,from:dir}},at+S*.04);
+        Array.prototype.forEach.call(p.querySelectorAll('b'),function(b,k){
+          var raw=b.textContent, n=parseInt(raw,10), suf=raw.replace(/[0-9]/g,''), o={v:0};
+          tl.to(o,{v:n,duration:S*.34,ease:'power2.out',
+            onUpdate:function(){b.textContent=Math.round(o.v)+suf;}},at+S*.06+k*S*.04);
+        });
+        return;
+      }
+
+      var eb=p.querySelector('.eyebrow');
+      if(eb) tl.fromTo(eb,{opacity:0,x:dir==='end'?24:-24},
+        {opacity:1,x:0,duration:S*.24,ease:'power2.out'},at+S*.02);
+
+      var head=p.querySelector('h1,h2');
+      if(head) tl.fromTo(parts(head,unit),
+        mob?{opacity:0,yPercent:55}:{opacity:0,yPercent:80,rotationX:-55},
+        {opacity:1,yPercent:0,rotationX:0,duration:S*.16,ease:'power3.out',
+         stagger:{each:mob?S*.045:S*.013,from:dir}},at+S*.04);
+
+      Array.prototype.forEach.call(p.querySelectorAll('p'),function(el,k){
+        tl.fromTo(parts(el,'word'),{opacity:0,y:14},
+          {opacity:1,y:0,duration:S*.14,ease:'power2.out',
+           stagger:{each:S*.006,from:dir}},at+S*(.20+k*.08));
       });
-      return;
     }
 
-    var eb=p.querySelector('.eyebrow');
-    if(eb) tl.fromTo(eb,{opacity:0,x:dir==='end'?24:-24},
-      {opacity:1,x:0,duration:S*.30,ease:'power2.out'},at+S*.02);
+    for(var i=0;i<BEATS.length-1;i++){
+      var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
 
-    // na mobilu po slovech - stovky prekloponych spanu telefon nerozdycha
-    var unit=mob()?'word':'char';
-    var head=p.querySelector('h1,h2');
-    if(head) tl.fromTo(parts(head,unit),
-      mob()?{opacity:0,yPercent:60}:{opacity:0,yPercent:80,rotationX:-55},
-      {opacity:1,yPercent:0,rotationX:0,duration:S*.17,ease:'power3.out',
-       stagger:{each:mob()?S*.05:S*.014,from:dir}},at+S*.05);
+      // 1) stary text odejde uplne drive, nez zacne nabihat novy - nikdy nejsou dva najednou
+      tl.to(BEATS[i][0],{opacity:0,y:-18,duration:S*.26,ease:'power2.in'},t);
 
-    Array.prototype.forEach.call(p.querySelectorAll('p'),function(el,k){
-      tl.fromTo(parts(el,'word'),{opacity:0,y:16},
-        {opacity:1,y:0,duration:S*.15,ease:'power2.out',
-         stagger:{each:S*.007,from:dir}},at+S*(.22+k*.10));
-    });
-  }
+      if(mob){
+        // mobil: rukavice zustava nahore na stredu, jen se preklopi zleva doprava
+        tl.to('.gl',{rotation:dir*13,duration:S,ease:'sine.inOut'},t);
+        tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
+          .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
+      }else{
+        // desktop: jeden tah pres celou scenu, dva navazujici useky
+        tl.to('.gl',{x:mid(from,to),y:-innerHeight*.05,rotation:dir*14,scale:1.13,
+                     duration:S*.5,ease:'sine.in'},t)
+          .to('.gl',{x:rest[to],y:0,rotation:dir*-3,scale:1,
+                     duration:S*.5,ease:'sine.out'},t+S*.5);
+      }
 
-  for(var i=0;i<BEATS.length-1;i++){
-    var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
-    // jeden plynuly tah, dva navazujici useky - zadne prekryvajici se tweeny na stejne vlastnosti
-    tl.to('.gl',{x:mid(from,to),y:dip,rotation:dir*14,scale:1.13,
-                 duration:S*.5,ease:'sine.in'},t)
-      .to('.gl',{x:rest[to],y:0,rotation:dir*-3,scale:1,
-                 duration:S*.5,ease:'sine.out'},t+S*.5);
-    enter(BEATS[i+1][0],t+S*.08,from==='R'?'end':'start');
-    tl.to(BEATS[i][0],{opacity:0,y:-20,duration:S*.26,ease:'power2.in'},t+S*.50);
-  }
-  tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+      // 2) novy text az na uklizene plose, za rukavici
+      enter(BEATS[i+1][0],t+S*.42,mob?'start':(from==='R'?'end':'start'));
+    }
+    tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+  });
 
   // rukavice dycha i mimo scroll
-  gsap.to('.gwrap',{yPercent:1.8,rotation:1.3,duration:5.5,ease:'sine.inOut',yoyo:true,repeat:-1});
+  gsap.to('.gwrap',{yPercent:1.6,rotation:1.1,duration:5.5,ease:'sine.inOut',yoyo:true,repeat:-1});
 
   // uvodni panel nabehne pri nacteni, ne scrollem
+  var small=matchMedia('(max-width:700px)').matches;
   var p0=document.getElementById('p0');
-  gsap.from(parts(p0.querySelector('h1'),mob()?'word':'char'),
-    {opacity:0,yPercent:mob()?60:90,rotationX:mob()?0:-60,
-     duration:.75,ease:'power3.out',stagger:mob()?.09:.017,delay:.15});
+  gsap.from(parts(p0.querySelector('h1'),small?'word':'char'),
+    {opacity:0,yPercent:small?55:90,rotationX:small?0:-60,
+     duration:.75,ease:'power3.out',stagger:small?.09:.017,delay:.15});
   gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
