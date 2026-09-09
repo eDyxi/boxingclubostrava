@@ -28,7 +28,7 @@ body.fx .wrap{height:600vh}
 body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
-.bg video,.bg img{width:100%;height:100%;object-fit:cover}
+.bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
 .scrim{position:absolute;inset:0;z-index:1;background:
   linear-gradient(96deg,oklch(8% .01 30/.94) 0%,oklch(9% .015 30/.7) 32%,oklch(10% .02 30/.2) 58%,transparent 74%),
   linear-gradient(0deg,oklch(7% .01 30/.85) 0%,transparent 42%)}
@@ -90,7 +90,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 <div class="wrap">
   <section class="hero">
     <div class="bg">
-      <video src="ring-loop.mp4" poster="ring-poster.webp" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+      <video src="ring-fpv.mp4" poster="ring-fpv-poster.webp" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -277,8 +277,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       onUpdate:function(st){want=st.progress;}});
     (function tick(){
       if(scrubbing&&!document.hidden){
-        var tt=Math.min(want*v.duration,v.duration-.06);
-        if(Math.abs(v.currentTime-tt)>.033) v.currentTime=tt;
+        var FPS=24, tt=Math.min(want*v.duration,v.duration-1/FPS);
+        tt=Math.round(tt*FPS)/FPS;                       // zarovnat na mrizku snimku
+        if(Math.abs(v.currentTime-tt)>=1/FPS) v.currentTime=tt;
       }
       requestAnimationFrame(tick);
     })();
