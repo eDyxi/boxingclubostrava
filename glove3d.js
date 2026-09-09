@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [-6, 150, 6];          // vychozi natoceni modelu ve stupnich
-const FIT = 0.78;                       // kolik z ramecku model zabere
+const FIT = 0.88;                       // kolik z vysky ramecku model zabere
 const LEATHER = 0x8a1f16;               // krvava kuze
 const GOLD = 0xd9a441;
 
@@ -77,8 +77,12 @@ function render(model) {
   const pivot = new THREE.Group();
   pivot.add(model);
   scene.add(pivot);
-  const radius = Math.max(size.x, size.y, size.z) * .5;
-  camera.position.set(0, 0, radius / Math.tan(THREE.MathUtils.degToRad(15)) / FIT);
+  const fit = () => {                     // nafitovat na vysku ramecku, ne na nejvetsi rozmer
+    const half = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+    const dh = (size.y / 2 / FIT) / half;
+    const dw = (Math.max(size.x, size.z) / 2 / .8) / (half * camera.aspect);
+    camera.position.set(0, 0, Math.max(dh, dw));
+  };
 
   const q = new URLSearchParams(location.search).get('g');
   const base = (q ? q.split(',').map(Number) : BASE_ROT).map(THREE.MathUtils.degToRad);
@@ -96,6 +100,7 @@ function render(model) {
     if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
+    fit();
     dirty = true;
   };
   addEventListener('resize', resize, { passive: true });
