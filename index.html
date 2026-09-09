@@ -56,6 +56,8 @@ body.fx .p.r{left:auto;right:var(--g);text-align:right}
 body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
 
+.wd{display:inline-block;perspective:500px}
+.ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
 .p p{color:var(--ink-dim);font-size:15px;max-width:44ch}
@@ -168,39 +170,101 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   document.body.classList.add('fx');
   ScrollTrigger.refresh();
 
-  // --- rezie hero ---
-  // 6 zastavek, rukavice strida strany. Pri prechodu prejede pres text:
-  // odchazi ze sve strany (odkryje novy panel) a dopadne na stranu stareho (prekryje ho).
-  var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
-  var S=.10, H=(1-S*(BEATS.length-1))/BEATS.length;
-
-  function gloveEl(){
-    var e=document.getElementById('g3d');
-    return (e&&e.offsetWidth)?e:document.getElementById('glove');
+  // --- rozklad textu na slova a pismena (bez SplitText) ---
+  function split(el,mode){
+    if(el.dataset.sp) return; el.dataset.sp=1;
+    (function walk(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(n){
+        if(n.nodeType===3){
+          if(!n.nodeValue.trim()) return;
+          var f=document.createDocumentFragment();
+          n.nodeValue.split(/(\s+)/).forEach(function(tok){
+            if(!tok) return;
+            if(/^\s+$/.test(tok)){f.appendChild(document.createTextNode(tok));return;}
+            var w=document.createElement('span'); w.className='wd';
+            if(mode==='char') tok.split('').forEach(function(c){
+              var sp=document.createElement('span'); sp.className='ch'; sp.textContent=c; w.appendChild(sp);
+            }); else w.textContent=tok;
+            f.appendChild(w);
+          });
+          node.replaceChild(f,n);
+        } else if(n.nodeType===1&&n.tagName!=='BR') walk(n);
+      });
+    })(el);
   }
+  function parts(el,mode){ split(el,mode); return el.querySelectorAll(mode==='char'?'.ch':'.wd'); }
+
+  // --- rezie hero ---
+  var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
+  var S=.13, H=(1-S*(BEATS.length-1))/BEATS.length;
+
+  function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
+  function inset(){return innerWidth<700?innerWidth*.05:innerWidth*.14;}   // jak daleko od kraje rukavice dosedne
   var rest={
-    R:function(){return 0},
-    L:function(){return -Math.max(innerWidth-gloveEl().offsetWidth-24,140)}
+    R:function(){return -inset();},
+    L:function(){return -Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
   };
   function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
   var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
-    scrub:.8,invalidateOnRefresh:true}});
-  gsap.set('.gl',{x:0,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+    scrub:1.1,invalidateOnRefresh:true}});
+  gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+
+  // pismena vybihaji z te strany, ze ktere rukavice odjizdi
+  function enter(sel,at,dir){
+    var p=document.querySelector(sel);
+    tl.fromTo(p,{opacity:0},{opacity:1,duration:S*.10,ease:'none'},at);
+
+    if(sel==='#stats'){
+      tl.fromTo(p.querySelectorAll('#stats>div'),{opacity:0,y:34,scale:.9},
+        {opacity:1,y:0,scale:1,duration:S*.26,ease:'back.out(1.6)',stagger:{each:S*.07,from:dir}},at+S*.06);
+      Array.prototype.forEach.call(p.querySelectorAll('b'),function(b,k){
+        var raw=b.textContent, n=parseInt(raw,10), suf=raw.replace(/[0-9]/g,''), o={v:0};
+        tl.to(o,{v:n,duration:S*.42,ease:'power2.out',
+          onUpdate:function(){b.textContent=Math.round(o.v)+suf;}},at+S*.08+k*S*.05);
+      });
+      return;
+    }
+
+    var eb=p.querySelector('.eyebrow');
+    if(eb) tl.fromTo(eb,{opacity:0,letterSpacing:'.7em',x:dir==='end'?22:-22},
+      {opacity:1,letterSpacing:'.26em',x:0,duration:S*.30,ease:'power2.out'},at+S*.02);
+
+    var head=p.querySelector('h1,h2');
+    if(head) tl.fromTo(parts(head,'char'),{opacity:0,yPercent:80,rotationX:-55},
+      {opacity:1,yPercent:0,rotationX:0,duration:S*.17,ease:'power3.out',
+       stagger:{each:S*.014,from:dir}},at+S*.05);
+
+    Array.prototype.forEach.call(p.querySelectorAll('p'),function(el,k){
+      tl.fromTo(parts(el,'word'),{opacity:0,y:16},
+        {opacity:1,y:0,duration:S*.15,ease:'power2.out',
+         stagger:{each:S*.007,from:dir}},at+S*(.22+k*.10));
+    });
+  }
 
   for(var i=0;i<BEATS.length-1;i++){
     var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
-    // jeden tah, dva navazujici useky - zadne prekryvajici se tweeny na stejnych vlastnostech
-    tl.to('.gl',{x:mid(from,to),y:'-4vh',rotation:dir*9,scale:1.09,
-                 duration:S/2,ease:'power1.in'},t)
-      .to('.gl',{x:rest[to],y:0,rotation:0,scale:1,
-                 duration:S/2,ease:'power1.out'},t+S/2);
-    // novy panel se odkryva, jak rukavice opousti jeho stranu
-    tl.fromTo(BEATS[i+1][0],{opacity:0,y:26},{opacity:1,y:0,duration:S*.32,ease:'power2.out'},t+S*.10);
-    // stary panel mizi ve chvili, kdy nad nim rukavice je
-    tl.to(BEATS[i][0],{opacity:0,y:-20,duration:S*.28,ease:'power2.in'},t+S*.48);
+    // jeden plynuly tah, dva navazujici useky - zadne prekryvajici se tweeny na stejne vlastnosti
+    tl.to('.gl',{x:mid(from,to),y:'-5vh',rotation:dir*14,scale:1.13,
+                 duration:S*.5,ease:'sine.in'},t)
+      .to('.gl',{x:rest[to],y:0,rotation:dir*-3,scale:1,
+                 duration:S*.5,ease:'sine.out'},t+S*.5);
+    enter(BEATS[i+1][0],t+S*.08,from==='R'?'end':'start');
+    tl.to(BEATS[i][0],{opacity:0,y:-20,duration:S*.26,ease:'power2.in'},t+S*.50);
   }
   tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+
+  // rukavice dycha i mimo scroll
+  gsap.to('.gwrap',{yPercent:1.8,rotation:1.3,duration:5.5,ease:'sine.inOut',yoyo:true,repeat:-1});
+
+  // uvodni panel nabehne pri nacteni, ne scrollem
+  var p0=document.getElementById('p0');
+  gsap.from(parts(p0.querySelector('h1'),'char'),
+    {opacity:0,yPercent:90,rotationX:-60,duration:.75,ease:'power3.out',stagger:.017,delay:.15});
+  gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
+  gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
+
+  ScrollTrigger.refresh();
 
   // --- video ringu se prehrava scrollem ---
   var v=document.querySelector('.bg video'), scrubbing=false, want=0;
@@ -213,8 +277,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       onUpdate:function(st){want=st.progress;}});
     (function tick(){
       if(scrubbing&&!document.hidden){
-        var t=Math.min(want*v.duration,v.duration-.06);
-        if(Math.abs(v.currentTime-t)>.033) v.currentTime=t;
+        var tt=Math.min(want*v.duration,v.duration-.06);
+        if(Math.abs(v.currentTime-tt)>.033) v.currentTime=tt;
       }
       requestAnimationFrame(tick);
     })();
