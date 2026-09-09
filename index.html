@@ -35,18 +35,23 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 .grain{position:absolute;inset:0;z-index:2;opacity:.26;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
 
-#glove,#g3d{position:absolute;z-index:3;width:min(340px,52vw);right:6vw;top:14vh;
-  filter:drop-shadow(0 30px 60px oklch(6% .02 30/.8));pointer-events:none;opacity:.96}
-#g3d{display:none;width:min(440px,66vw);right:1vw;top:8vh;aspect-ratio:1;height:auto;filter:none}
+.gwrap{position:absolute;inset:0;z-index:6;pointer-events:none;
+  display:grid;align-items:center;justify-items:end;padding:0 clamp(6px,3vw,56px)}
+.gwrap>*{grid-area:1/1}
+#glove{height:min(78svh,880px);width:auto;max-width:none;
+  filter:drop-shadow(0 40px 70px oklch(6% .02 30/.85));opacity:.97}
+#g3d{display:none;height:min(92svh,1040px);width:auto;aspect-ratio:11/16}
 body.g3d #g3d{display:block}
 body.g3d #glove{display:none}
-body.fx #glove,body.fx #g3d{will-change:transform}
+body:not(.fx) #glove{height:min(52svh,520px);opacity:.5}
+body.fx .gl{will-change:transform}
 
 .stage{position:relative;z-index:4}
 body.fx .stage{position:absolute;inset:0}
 
 .p{width:min(440px,100%);margin:0 0 20vh}
 body.fx .p{position:absolute;left:var(--g);bottom:16vh;width:min(440px,74vw);opacity:0;margin:0}
+body.fx #p0{width:min(680px,84vw)}
 body.fx .p.r{left:auto;right:var(--g);text-align:right}
 body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
@@ -65,7 +70,7 @@ body.fx #p0{opacity:1}
 .btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
 #stats{display:flex;gap:clamp(24px,7vw,80px);flex-wrap:wrap;margin-bottom:20vh}
-body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:center;opacity:0;margin:0;padding:0 var(--g)}
+body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex-start;opacity:0;margin:0;padding:0 var(--g)}
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
@@ -76,43 +81,45 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .contact a{color:var(--ink);text-decoration:none;font-size:clamp(20px,3.4vw,30px);font-weight:600}
 .contact .l{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;font-weight:600}
 .note{padding:32px var(--g) 80px;color:var(--ink-faint);font-size:12px;max-width:70ch}
-@media (max-width:900px){ body.fx #glove{width:64vw;right:-6vw} body.fx #g3d{width:96vw;right:-16vw;top:6vh} }
+@media (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(70svh,680px)} body.fx .p{width:68vw} }
 @media (prefers-reduced-motion:reduce){ .bg video{display:none} }
 </style>
 
 <div class="wrap">
   <section class="hero">
     <div class="bg">
-      <video src="ring-loop.mp4" poster="ring-poster.webp" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+      <video src="ring-loop.mp4" poster="ring-poster.webp" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
-    <img id="glove" class="gl" src="rukavice-cutout@2x.webp" alt="" width="441" height="749" decoding="async">
-    <canvas id="g3d" class="gl" aria-hidden="true"></canvas>
+    <div class="gwrap" aria-hidden="true">
+      <img id="glove" class="gl" src="rukavice-cutout@2x.webp" alt="" width="441" height="749" decoding="async">
+      <canvas id="g3d" class="gl"></canvas>
+    </div>
     <div class="mark">Boxing Club Ostrava<span>ZŠ Nádražní 117</span></div>
 
     <div class="stage">
       <div class="p" id="p0">
-        <h1>Box pro každého,<br>kdo <em>přijde</em></h1>
+        <h1>Box pro<br>každého,<br>kdo <em>přijde</em></h1>
         <p class="sub">Od prvního tréninku po reprezentační dres. Moravská Ostrava, ZŠ Nádražní 117.</p>
         <div class="cta"><a class="btn solid" href="#kontakt">Přijít na trénink</a><a class="btn" href="#kontakt">Rozvrh</a></div>
       </div>
 
-      <div class="p" id="p1">
+      <div class="p r" id="p1">
         <div class="eyebrow">Je to pro tebe</div>
         <h2>Nemusíš být v kondici. Musíš jen přijít.</h2>
         <p>Většina lidí u nás nikdy nezápasila a nechce. Chodí, protože je to nejtvrdší kardio, jaké existuje, a protože se u pytle vypne hlava.</p>
         <p class="fine">První trénink 140 Kč. Rukavice a bandáže půjčíme.</p>
       </div>
 
-      <div class="p r" id="p2">
+      <div class="p" id="p2">
         <div class="eyebrow">Kdy a kolik</div>
         <h2>Trénujeme pondělí, středu a pátek.</h2>
         <p>Kondiční box · Akademie pro děti · Mládež · Výkonnostní box</p>
         <p class="fine">Permanentka 10 vstupů 1 200 Kč. Žádná smlouva, žádný vstupní poplatek.</p>
       </div>
 
-      <div class="p" id="p3">
+      <div class="p r" id="p3">
         <div class="eyebrow">Kdo tě povede</div>
         <h2>Trenéři, co vedou i národní tým.</h2>
         <p>Kondičku ti vede mistr republiky. Náš trenér SCM vede juniorskou reprezentaci ČR. Předseda klubu sedí v trenérské radě České boxerské asociace.</p>
@@ -161,23 +168,59 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   document.body.classList.add('fx');
   ScrollTrigger.refresh();
 
-  var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',scrub:.7}});
+  // --- rezie hero ---
+  // 6 zastavek, rukavice strida strany. Pri prechodu prejede pres text:
+  // odchazi ze sve strany (odkryje novy panel) a dopadne na stranu stareho (prekryje ho).
+  var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
+  var S=.10, H=(1-S*(BEATS.length-1))/BEATS.length;
 
-  // rukavice cestuje scenou
-  tl.to('.gl',{xPercent:-20,yPercent:26,rotation:-14,scale:1.12,ease:'none'},0)
-    .to('.gl',{xPercent:-96,yPercent:6,rotation:12,scale:.92,ease:'none'},.33)
-    .to('.gl',{xPercent:-40,yPercent:20,rotation:-6,scale:1.25,ease:'none'},.6)
-    .to('.gl',{xPercent:-46,yPercent:-6,rotation:4,scale:.7,ease:'none'},.82)
-    .to('.gl',{opacity:0,ease:'none',duration:.06},.94);
+  function gloveEl(){
+    var e=document.getElementById('g3d');
+    return (e&&e.offsetWidth)?e:document.getElementById('glove');
+  }
+  var rest={
+    R:function(){return 0},
+    L:function(){return -Math.max(innerWidth-gloveEl().offsetWidth-24,140)}
+  };
+  function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
-  [['#p1',.14,.30],['#p2',.34,.50],['#p3',.54,.68],['#stats',.71,.79],['#p4',.83,.95]]
-    .forEach(function(x){
-      tl.fromTo(x[0],{opacity:0,y:36},{opacity:1,y:0,duration:.05,ease:'power2.out'},x[1]);
-      tl.to(x[0],{opacity:0,y:-28,duration:.05,ease:'power2.in'},x[2]);
+  var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
+    scrub:.8,invalidateOnRefresh:true}});
+  gsap.set('.gl',{x:0,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+
+  for(var i=0;i<BEATS.length-1;i++){
+    var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
+    // jeden tah, dva navazujici useky - zadne prekryvajici se tweeny na stejnych vlastnostech
+    tl.to('.gl',{x:mid(from,to),y:'-4vh',rotation:dir*9,scale:1.09,
+                 duration:S/2,ease:'power1.in'},t)
+      .to('.gl',{x:rest[to],y:0,rotation:0,scale:1,
+                 duration:S/2,ease:'power1.out'},t+S/2);
+    // novy panel se odkryva, jak rukavice opousti jeho stranu
+    tl.fromTo(BEATS[i+1][0],{opacity:0,y:26},{opacity:1,y:0,duration:S*.32,ease:'power2.out'},t+S*.10);
+    // stary panel mizi ve chvili, kdy nad nim rukavice je
+    tl.to(BEATS[i][0],{opacity:0,y:-20,duration:S*.28,ease:'power2.in'},t+S*.48);
+  }
+  tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+
+  // --- video ringu se prehrava scrollem ---
+  var v=document.querySelector('.bg video'), scrubbing=false, want=0;
+  if(v&&!(navigator.connection||{}).saveData){
+    v.addEventListener('canplaythrough',function(){
+      if(scrubbing||!v.duration||!isFinite(v.duration))return;
+      scrubbing=true; v.removeAttribute('loop'); v.pause();
     });
-  tl.to('#p0',{opacity:0,y:-28,duration:.05,ease:'power2.in'},.10);
+    ScrollTrigger.create({trigger:'.wrap',start:'top top',end:'bottom bottom',scrub:true,
+      onUpdate:function(st){want=st.progress;}});
+    (function tick(){
+      if(scrubbing&&!document.hidden){
+        var t=Math.min(want*v.duration,v.duration-.06);
+        if(Math.abs(v.currentTime-t)>.033) v.currentTime=t;
+      }
+      requestAnimationFrame(tick);
+    })();
+  }
 
-  d.textContent='Scroll animace aktivni.';
+  d.textContent='Scroll rezim aktivni.';
 })();
 </script>
 <script type="module" src="glove3d.js"></script>
