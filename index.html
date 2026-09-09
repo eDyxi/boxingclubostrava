@@ -83,7 +83,21 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 .contact a{color:var(--ink);text-decoration:none;font-size:clamp(20px,3.4vw,30px);font-weight:600}
 .contact .l{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;font-weight:600}
 .note{padding:32px var(--g) 80px;color:var(--ink-faint);font-size:12px;max-width:70ch}
-@media (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(70svh,680px)} body.fx .p{width:68vw} }
+@media (max-width:700px){
+  .gwrap{align-items:start;padding:6svh clamp(6px,3vw,56px) 0}
+  #glove{height:min(38svh,360px)}
+  #g3d{height:min(44svh,420px)}
+  body:not(.fx) #glove{height:min(30svh,300px)}
+  body.fx .p{left:var(--g);right:var(--g);width:auto;bottom:8vh}
+  body.fx .p.r{left:var(--g);right:var(--g);text-align:left}
+  body.fx .p.r p{margin-left:0}
+  body.fx #p0{width:auto}
+  body.fx #stats{align-items:flex-end;padding:0 var(--g) 8vh}
+  .p h2{font-size:clamp(24px,7vw,32px)}
+  .p p{font-size:14px}
+  #stats{gap:20px}
+}
+@media (min-width:701px) and (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(66svh,640px)} }
 @media (prefers-reduced-motion:reduce){ .bg video{display:none} }
 </style>
 
@@ -192,14 +206,20 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       });
     })(el);
   }
-  function parts(el,mode){ split(el,mode); return el.querySelectorAll(mode==='char'?'.ch':'.wd'); }
+  function parts(el,mode){ split(el,mode);
+    var r=el.querySelectorAll(mode==='char'?'.ch':'.wd');
+    return r.length?r:el.querySelectorAll('.wd');   // po zmene sirky uz je rozlozeny jinak
+  }
 
   // --- rezie hero ---
   var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
   var S=.13, H=(1-S*(BEATS.length-1))/BEATS.length;
 
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
-  function inset(){return innerWidth<700?innerWidth*.05:innerWidth*.14;}   // jak daleko od kraje rukavice dosedne
+  function mob(){return innerWidth<=700;}
+  function inset(){return mob()?innerWidth*.06:innerWidth*.14;}   // jak daleko od kraje rukavice dosedne
+  // na mobilu rukavice sedi nahore a text dole - pri tahu se propadne dolu a text pretre
+  function dip(){return mob()? innerHeight*.32 : -innerHeight*.05;}
   var rest={
     R:function(){return -inset();},
     L:function(){return -Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
@@ -227,13 +247,16 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
     }
 
     var eb=p.querySelector('.eyebrow');
-    if(eb) tl.fromTo(eb,{opacity:0,letterSpacing:'.7em',x:dir==='end'?22:-22},
-      {opacity:1,letterSpacing:'.26em',x:0,duration:S*.30,ease:'power2.out'},at+S*.02);
+    if(eb) tl.fromTo(eb,{opacity:0,x:dir==='end'?24:-24},
+      {opacity:1,x:0,duration:S*.30,ease:'power2.out'},at+S*.02);
 
+    // na mobilu po slovech - stovky prekloponych spanu telefon nerozdycha
+    var unit=mob()?'word':'char';
     var head=p.querySelector('h1,h2');
-    if(head) tl.fromTo(parts(head,'char'),{opacity:0,yPercent:80,rotationX:-55},
+    if(head) tl.fromTo(parts(head,unit),
+      mob()?{opacity:0,yPercent:60}:{opacity:0,yPercent:80,rotationX:-55},
       {opacity:1,yPercent:0,rotationX:0,duration:S*.17,ease:'power3.out',
-       stagger:{each:S*.014,from:dir}},at+S*.05);
+       stagger:{each:mob()?S*.05:S*.014,from:dir}},at+S*.05);
 
     Array.prototype.forEach.call(p.querySelectorAll('p'),function(el,k){
       tl.fromTo(parts(el,'word'),{opacity:0,y:16},
@@ -245,7 +268,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   for(var i=0;i<BEATS.length-1;i++){
     var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
     // jeden plynuly tah, dva navazujici useky - zadne prekryvajici se tweeny na stejne vlastnosti
-    tl.to('.gl',{x:mid(from,to),y:'-5vh',rotation:dir*14,scale:1.13,
+    tl.to('.gl',{x:mid(from,to),y:dip,rotation:dir*14,scale:1.13,
                  duration:S*.5,ease:'sine.in'},t)
       .to('.gl',{x:rest[to],y:0,rotation:dir*-3,scale:1,
                  duration:S*.5,ease:'sine.out'},t+S*.5);
@@ -259,8 +282,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 
   // uvodni panel nabehne pri nacteni, ne scrollem
   var p0=document.getElementById('p0');
-  gsap.from(parts(p0.querySelector('h1'),'char'),
-    {opacity:0,yPercent:90,rotationX:-60,duration:.75,ease:'power3.out',stagger:.017,delay:.15});
+  gsap.from(parts(p0.querySelector('h1'),mob()?'word':'char'),
+    {opacity:0,yPercent:mob()?60:90,rotationX:mob()?0:-60,
+     duration:.75,ease:'power3.out',stagger:mob()?.09:.017,delay:.15});
   gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
