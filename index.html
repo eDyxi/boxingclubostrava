@@ -40,7 +40,7 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 .gwrap>*{grid-area:1/1}
 #glove{height:min(78svh,880px);width:auto;max-width:none;
   filter:drop-shadow(0 40px 70px oklch(6% .02 30/.85));opacity:.97}
-#g3d{display:none;height:min(92svh,1040px);width:auto;aspect-ratio:11/16}
+#g3d{display:none;height:min(104svh,1180px);width:auto;aspect-ratio:3/4}
 body.g3d #g3d{display:block}
 body.g3d #glove{display:none}
 body:not(.fx) #glove{height:min(52svh,520px);opacity:.5}
@@ -56,7 +56,7 @@ body.fx .p.r{left:auto;right:var(--g);text-align:right}
 body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
 
-.wd{display:inline-block;perspective:500px}
+.wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
 .ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
@@ -86,7 +86,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 @media (max-width:700px){
   .gwrap{align-items:start;justify-items:center;padding:6svh clamp(6px,3vw,56px) 0}
   #glove{height:min(38svh,360px)}
-  #g3d{height:min(44svh,420px)}
+  #g3d{height:min(50svh,470px)}
   body:not(.fx) #glove{height:min(30svh,300px)}
   body.fx .p{left:var(--g);right:var(--g);width:auto;bottom:8vh}
   body.fx .p.r{left:var(--g);right:var(--g);text-align:left}
@@ -97,7 +97,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   .p p{font-size:14px}
   #stats{gap:20px}
 }
-@media (min-width:701px) and (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(66svh,640px)} }
+@media (min-width:701px) and (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(72svh,700px)} }
+@media (min-width:701px){
+  body.fx .p.r{left:var(--g);right:auto;text-align:left}
+  body.fx .p.r p{margin-left:0}
+}
 @media (prefers-reduced-motion:reduce){ .bg video{display:none} }
 </style>
 
@@ -196,9 +200,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
             if(!tok) return;
             if(/^\s+$/.test(tok)){f.appendChild(document.createTextNode(tok));return;}
             var w=document.createElement('span'); w.className='wd';
-            if(mode==='char') tok.split('').forEach(function(c){
+            (mode==='char'?tok.split(''):[tok]).forEach(function(c){
               var sp=document.createElement('span'); sp.className='ch'; sp.textContent=c; w.appendChild(sp);
-            }); else w.textContent=tok;
+            });
             f.appendChild(w);
           });
           node.replaceChild(f,n);
@@ -206,10 +210,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       });
     })(el);
   }
-  function parts(el,mode){ split(el,mode);
-    var r=el.querySelectorAll(mode==='char'?'.ch':'.wd');
-    return r.length?r:el.querySelectorAll('.wd');   // po zmene sirky uz je rozlozeny jinak
-  }
+  function parts(el,mode){ split(el,mode); return el.querySelectorAll('.ch'); }
 
   // --- rezie hero ---
   var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','R'],['#p4','L']];
@@ -220,25 +221,22 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   gsap.matchMedia().add({mob:'(max-width:700px)'},function(ctx){
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
-    function inset(){return innerWidth*.14;}
-    var rest={
-      R:function(){return mob?0:-inset();},
-      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
-    };
-    function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
+    // rukavice odpociva vpravo, ale posunuta ke stredu
+    function restX(){return mob?0:-innerWidth*.20;}
+    function offL(){return -(innerWidth+gloveEl().offsetWidth);}   // uplne pryc vlevo
+    function offR(){return gloveEl().offsetWidth*.6+innerWidth*.12;} // pripravena vpravo mimo obraz
 
     var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
       scrub:1.1,invalidateOnRefresh:true}});
-    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+    gsap.set('.gl',{x:restX,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
 
-    function enter(sel,at,dir){
+    function enter(sel,at){
       var p=document.querySelector(sel);
-      tl.fromTo(p,{opacity:0},{opacity:1,duration:S*.08,ease:'none'},at);
+      tl.fromTo(p,{opacity:0},{opacity:1,duration:S*.06,ease:'none'},at);
 
       if(sel==='#stats'){
         tl.fromTo(p.querySelectorAll('#stats>div'),{opacity:0,y:30,scale:.92},
-          {opacity:1,y:0,scale:1,duration:S*.22,ease:'back.out(1.5)',
-           stagger:{each:S*.06,from:dir}},at+S*.04);
+          {opacity:1,y:0,scale:1,duration:S*.22,ease:'back.out(1.5)',stagger:S*.06},at+S*.04);
         Array.prototype.forEach.call(p.querySelectorAll('b'),function(b,k){
           var raw=b.textContent, n=parseInt(raw,10), suf=raw.replace(/[0-9]/g,''), o={v:0};
           tl.to(o,{v:n,duration:S*.34,ease:'power2.out',
@@ -248,43 +246,45 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       }
 
       var eb=p.querySelector('.eyebrow');
-      if(eb) tl.fromTo(eb,{opacity:0,x:dir==='end'?24:-24},
-        {opacity:1,x:0,duration:S*.24,ease:'power2.out'},at+S*.02);
+      if(eb) tl.fromTo(eb,{opacity:0,x:26},{opacity:1,x:0,duration:S*.24,ease:'power2.out'},at+S*.02);
 
+      // pismena vyjizdeji zpod masky - zadne prolinani, cista hrana
       var head=p.querySelector('h1,h2');
-      if(head) tl.fromTo(parts(head,unit),
-        mob?{opacity:0,yPercent:55}:{opacity:0,yPercent:80,rotationX:-55},
-        {opacity:1,yPercent:0,rotationX:0,duration:S*.16,ease:'power3.out',
-         stagger:{each:mob?S*.045:S*.013,from:dir}},at+S*.04);
+      if(head) tl.fromTo(parts(head,unit),{yPercent:118},
+        {yPercent:0,duration:S*.20,ease:'power3.out',stagger:mob?S*.045:S*.012},at+S*.04);
 
       Array.prototype.forEach.call(p.querySelectorAll('p'),function(el,k){
-        tl.fromTo(parts(el,'word'),{opacity:0,y:14},
-          {opacity:1,y:0,duration:S*.14,ease:'power2.out',
-           stagger:{each:S*.006,from:dir}},at+S*(.20+k*.08));
+        tl.fromTo(parts(el,'word'),{yPercent:110,opacity:0},
+          {yPercent:0,opacity:1,duration:S*.15,ease:'power2.out',stagger:S*.008},at+S*(.20+k*.08));
       });
     }
 
-    for(var i=0;i<BEATS.length-1;i++){
-      var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
+    function leave(sel,at){
+      var p=document.querySelector(sel), ch=p.querySelectorAll('.ch');
+      if(ch.length) tl.to(ch,{yPercent:-118,duration:S*.16,ease:'power2.in',stagger:S*.006},at);
+      tl.to(p,{opacity:0,duration:S*.08,ease:'none'},at+S*.20);
+    }
 
-      // 1) stary text odejde uplne drive, nez zacne nabihat novy - nikdy nejsou dva najednou
-      tl.to(BEATS[i][0],{opacity:0,y:-18,duration:S*.26,ease:'power2.in'},t);
+    for(var i=0;i<BEATS.length-1;i++){
+      var t=i*(H+S)+H, dir=(BEATS[i+1][1]==='L'?-1:1);
+
+      leave(BEATS[i][0],t);                 // stary text zmizi drive, nez zacne novy
 
       if(mob){
-        // mobil: rukavice zustava nahore na stredu, jen se preklopi zleva doprava
+        // mobil zustava jak byl: rukavice nahore na stredu, jen se preklapi
         tl.to('.gl',{rotation:dir*13,duration:S,ease:'sine.inOut'},t);
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
       }else{
-        // desktop: jeden tah pres celou scenu, dva navazujici useky
-        tl.to('.gl',{x:mid(from,to),y:-innerHeight*.05,rotation:dir*14,scale:1.13,
-                     duration:S*.5,ease:'sine.in'},t)
-          .to('.gl',{x:rest[to],y:0,rotation:dir*-3,scale:1,
-                     duration:S*.5,ease:'sine.out'},t+S*.5);
+        // desktop: rukavice vzdy leti zprava doleva, vyleti z obrazu a vrati se zprava
+        tl.to('.gl',{x:offL,rotation:-20,scale:1.2,y:-innerHeight*.05,
+                     duration:S*.42,ease:'power2.in'},t)
+          .set('.gl',{x:offR,rotation:16,scale:1.06,y:-innerHeight*.02},t+S*.44)
+          .to('.gl',{x:restX,rotation:0,scale:1,y:0,
+                     duration:S*.54,ease:'power3.out'},t+S*.46);
       }
 
-      // 2) novy text az na uklizene plose, za rukavici
-      enter(BEATS[i+1][0],t+S*.42,mob?'start':(from==='R'?'end':'start'));
+      enter(BEATS[i+1][0],t+S*.45);         // novy text az za rukavici, na uklizene plose
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
   });
@@ -296,8 +296,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   var small=matchMedia('(max-width:700px)').matches;
   var p0=document.getElementById('p0');
   gsap.from(parts(p0.querySelector('h1'),small?'word':'char'),
-    {opacity:0,yPercent:small?55:90,rotationX:small?0:-60,
-     duration:.75,ease:'power3.out',stagger:small?.09:.017,delay:.15});
+    {yPercent:120,duration:.85,ease:'power3.out',stagger:small?.09:.016,delay:.15});
   gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
