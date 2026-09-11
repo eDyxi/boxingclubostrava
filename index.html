@@ -32,7 +32,7 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .bg img{position:absolute;inset:0}
-.bg video{position:relative}
+.bg video{position:relative;opacity:1;transition:opacity .4s ease}
 .bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
 /* iOS kresli pres pauznute video vlastni play tlacitko - pryc s nim */
 .bg video::-webkit-media-controls,
@@ -135,7 +135,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     <div class="mark"><img src="logo.png" alt="" width="512" height="512" decoding="async"><b>Boxing Club Ostrava<span>ZŠ Nádražní 117</span></b></div>
 
     <div class="stage">
-      <div class="p" id="p0">
+      <div class="p r" id="p0">
         <h1>Box pro<br>každého,<br>kdo <em>přijde</em></h1>
         <p class="sub">Od prvního tréninku po reprezentační dres. Moravská Ostrava, ZŠ Nádražní 117.</p>
         <div class="cta"><a class="btn solid" href="#kontakt">Přijít na trénink</a><a class="btn" href="#kontakt">Rozvrh</a></div>
@@ -148,7 +148,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         <p class="fine">První trénink 140 Kč. Rukavice a bandáže půjčíme.</p>
       </div>
 
-      <div class="p" id="p2">
+      <div class="p r" id="p2">
         <div class="eyebrow">Kdy a kolik</div>
         <h2>Trénujeme pondělí, středu a pátek.</h2>
         <p>Kondiční box · Akademie pro děti · Mládež · Výkonnostní box</p>
@@ -303,13 +303,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
     // klidove pozice se stridaji, text je vzdy na opacne strane
-    function inset(){return innerWidth*.015;}   // prakticky az na okraj, tah co nejdelsi
-    var rest={
-      R:function(){return mob?0:-inset();},
-      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);},
-      OUT:function(){return mob?0:gloveEl().offsetWidth*.85;}   // pryc z obrazu, scena patri cislum
-    };
-    function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
+    // Rukavice odpociva vlevo, text je vzdy vpravo. Pohyb jde porad jednim smerem:
+    // odleti za pravy okraj, mimo obraz se prehodi za levy a vrati se zpatky k domovske
+    // pozici. Zadny couvani do hloubky, zadne zmensovani.
+    function inset(){return innerWidth*.015;}
+    function homeX(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);}
+    function outR(){return mob?0:gloveEl().offsetWidth*.55+innerWidth*.55;}   // hodne za pravym okrajem
+    function outL(){return mob?0:-(innerWidth+gloveEl().offsetWidth*1.4);}    // hodne za levym okrajem
 
     // Pet ruznych pruletu, ne jeden pohyb dokola. lift = zdvih, dep = jak daleko je
     // uprostred cesty (pod 1 = odleti do hloubky, nad 1 = projde tesne kolem kamery).
@@ -322,7 +322,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     ];
 
     var tl=gsap.timeline({paused:true});
-    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+    gsap.set('.gl',{x:homeX,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -376,19 +376,30 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
       }else{
-        var m=MOVES[i];
-        // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
-        tl.to('.gl',{x:mid(from,to),y:-innerHeight*m.lift,scale:m.dep,rotation:dir*m.rot,
-                     duration:S*.5,ease:m.e1},t)
-          .to('.gl',{x:rest[to],y:0,scale:1,rotation:dir*-3,
-                     duration:S*.5,ease:m.e2},t+S*.5);
-        // naklon do oblouku dela 3D model, ne CSS
-        tl.to(rig,{yaw:dir*m.yaw,roll:dir*-m.roll,pitch:m.pitch,duration:S*.5,ease:m.e1},t)
-          .to(rig,{yaw:0,roll:dir*.12,pitch:0,duration:S*.42,ease:m.e2},t+S*.5)
-          .to(rig,{roll:0,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
+        var m=MOVES[i], toStats=(BEATS[i+1][0]==='#stats'), fromStats=(BEATS[i][0]==='#stats');
+        if(toStats){
+          // u cisel musi byt scena prazdna - rukavice odleti a zustane venku
+          tl.to('.gl',{x:outR,scale:1.16,y:-innerHeight*m.lift,duration:S*.46,ease:'power2.in'},t);
+          tl.to('.gl',{rotation:'+=300',duration:S*.46,ease:'power1.in'},t);
+          tl.to(rig,{yaw:1.4,roll:-.5,pitch:m.pitch,duration:S*.46,ease:'power2.in'},t);
+        }else if(fromStats){
+          // navrat zpoza leveho okraje
+          tl.set('.gl',{x:outL,scale:1.14,y:-innerHeight*.04},t+S*.06);
+          tl.to('.gl',{x:homeX,scale:1,y:0,duration:S*.72,ease:'power3.out'},t+S*.08);
+          tl.to('.gl',{rotation:'+=420',duration:S*.8,ease:'power2.out'},t+S*.06);
+          tl.to(rig,{yaw:0,roll:0,pitch:0,duration:S*.7,ease:'power2.out'},t+S*.08);
+        }else{
+          // odlet za pravy okraj, neviditelny prehoz za levy, navrat domu
+          tl.to('.gl',{x:outR,scale:1.18,y:-innerHeight*m.lift,duration:S*.42,ease:'power2.in'},t)
+            .set('.gl',{x:outL,scale:1.14,y:-innerHeight*.03},t+S*.46)
+            .to('.gl',{x:homeX,scale:1,y:0,duration:S*.54,ease:'power3.out'},t+S*.48);
+          tl.to('.gl',{rotation:'+=360',duration:S,ease:'power1.inOut'},t);
+          tl.to(rig,{yaw:1.2,roll:-.45,pitch:m.pitch,duration:S*.42,ease:'power2.in'},t)
+            .to(rig,{yaw:0,roll:0,pitch:0,duration:S*.5,ease:'power3.out'},t+S*.48);
+        }
       }
 
-      enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
+      enter(BEATS[i+1][0],t+S*.62,'end');
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
     // dojezd do cerna, aby hero splynulo s pozadim sekce pod nim
@@ -448,7 +459,16 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // Kdyz prohlizec prehravani odmitne (uspornu rezim, blokovany autoplay), iOS by
   // pres video vykreslil vlastni play tlacitko. V tom pripade video zahodime a
   // v pozadi zustane jen poster.
-  if(v){ var pr=v.play(); if(pr && pr.catch) pr.catch(function(){ v.remove(); v=null; }); }
+  function tryPlay(){
+    if(!v) return;
+    var pr=v.play();
+    if(pr&&pr.then) pr.then(function(){v.style.opacity=1;},function(){v.style.opacity=0;});
+  }
+  tryPlay();
+  ['pointerdown','keydown','wheel','touchstart'].forEach(function(ev){
+    addEventListener(ev,tryPlay,{once:true,passive:true});
+  });
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) tryPlay(); });
   if(v&&!(navigator.connection||{}).saveData){
     // Na dotykovych zarizenich se nescrubuje: iOS kresli pres pauznute video
     // vlastni play tlacitko, ktere nejde spolehlive schovat. Tam jede proste smycka.
