@@ -11,21 +11,26 @@ const FIT = 0.74;                       // kolik z vysky ramecku model zabere (z
 const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0;
 
 const canvas = document.getElementById('g3d');
-const img = document.getElementById('glove');
+const OPT_IN = new URLSearchParams(location.search).has('3d');   // 3D jen na vyzadani
+
+function say(t) { const d = document.getElementById('diag'); if (d) d.textContent = '3D: ' + t; }
+function bail(why) { if (canvas) canvas.remove(); document.body.classList.remove('g3d'); if (OPT_IN) say(why); }
+
 if (canvas) boot();
 
-function bail() { canvas.remove(); }
-
 async function boot() {
+  // Vychozi stav je 2D obrazek. 3D se zapina pres ?3d=1, aby pripadna chyba
+  // v WebGL nenechala hero uplne bez rukavice.
+  if (!OPT_IN) return bail('vypnuto');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const conn = navigator.connection || {};
   const weak = conn.saveData || (navigator.deviceMemory && navigator.deviceMemory < 4);
-  if (reduce || weak) return bail();
+  if (reduce || weak) return bail('reduced-motion nebo uspornu rezim');
 
   // WebGL2 check pred stazenim 400 kB modelu
   try {
-    if (!document.createElement('canvas').getContext('webgl2')) return bail();
-  } catch (e) { return bail(); }
+    if (!document.createElement('canvas').getContext('webgl2')) return bail('neni WebGL2');
+  } catch (e) { return bail('WebGL2 selhal'); }
 
   await new Promise(r => (document.readyState === 'complete' ? r() : addEventListener('load', r)));
   await new Promise(r => (window.requestIdleCallback || setTimeout)(r, { timeout: 1200 }));
@@ -33,7 +38,7 @@ async function boot() {
   let gltf;
   try {
     gltf = await new GLTFLoader().loadAsync('rukavice.glb');
-  } catch (e) { return bail(); }
+  } catch (e) { return bail('model se nenacetl'); }
 
   render(gltf.scene);
 }
@@ -145,10 +150,10 @@ function render(model) {
   // prazdna scena, ztraceny kontext), vratime se k 2D obrazku misto prazdna.
   renderer.render(scene, camera);
   if (!renderer.info.render.triangles) {
-    document.body.classList.remove('g3d');
-    renderer.dispose(); canvas.remove();
-    return;
+    renderer.dispose();
+    return bail('nevykreslen zadny trojuhelnik');
   }
+  say('ok, ' + renderer.info.render.triangles + ' trojuhelniku');
 
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
