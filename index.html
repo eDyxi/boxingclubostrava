@@ -84,7 +84,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
 .brand{position:absolute;z-index:8;top:clamp(16px,3vh,34px);left:var(--g);display:flex;align-items:center;gap:12px}
-.brand img{width:clamp(40px,6vw,58px);height:auto;display:block}
+.brand img{width:clamp(34px,4.4vw,48px);height:auto;display:block}
 .brand span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
 @media (max-width:700px){.brand span{display:none}}
 .outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh}
@@ -390,6 +390,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+    // znacka patri jen na uvodni obrazovku; hero je sticky, jinak by visela pres vsechno
+    tl.to('.brand',{opacity:0,y:-14,duration:.05,ease:'power2.in'},0);
     // dojezd do cerna, aby hero splynulo s pozadim sekce pod nim
     tl.to(['.bg','.grain'],{opacity:0,duration:.12,ease:'power2.in'},.88);
 
