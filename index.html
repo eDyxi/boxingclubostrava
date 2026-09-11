@@ -10,7 +10,7 @@
 :root{
   --paper:oklch(11% .014 30); --ink:oklch(96% .008 60);
   --ink-dim:oklch(76% .014 50); --ink-faint:oklch(54% .02 40);
-  --gold:oklch(80% .132 78); --blood:oklch(45% .17 25); --line:oklch(28% .03 30);
+  --gold:oklch(66% .21 26); --blood:oklch(45% .17 25); --line:oklch(28% .03 30);
   --g:clamp(20px,6vw,110px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -69,7 +69,7 @@ body.fx #p0{opacity:1}
 
 .wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
 .p h1,.p h2{text-shadow:0 0 .55em oklch(45% .17 25/.42),0 3px 22px oklch(6% .02 30/.75)}
-.eyebrow{text-shadow:0 0 .9em oklch(80% .132 78/.5)}
+.eyebrow{text-shadow:0 0 .9em oklch(66% .21 26/.5)}
 .sub{text-shadow:0 2px 14px oklch(6% .02 30/.8)}
 .ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
@@ -87,10 +87,10 @@ body.fx #p0{opacity:1}
 
 #stats{display:flex;gap:clamp(24px,7vw,80px);flex-wrap:wrap;margin-bottom:20vh}
 body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;opacity:0;margin:0;padding:0 var(--g)}
-#stats b{position:relative;text-shadow:0 0 .22em oklch(78% .16 80/.40),0 0 .04em oklch(88% .10 85/.28)}
+#stats b{position:relative;text-shadow:0 0 .22em oklch(64% .22 26/.40),0 0 .04em oklch(78% .14 28/.28)}
 #stats b::before{content:'';position:absolute;left:50%;top:50%;width:1.75em;height:1.75em;
   translate:-50% -50%;border-radius:50%;pointer-events:none;z-index:-1;
-  background:radial-gradient(circle closest-side,oklch(64% .14 72/.30),oklch(64% .14 72/0) 72%)}
+  background:radial-gradient(circle closest-side,oklch(52% .19 26/.30),oklch(52% .19 26/0) 72%)}
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
@@ -446,8 +446,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   ScrollTrigger.refresh();
 
-  // Video jede prostou smyckou. Scrubovani podle scrollu jsem zrusil - seek po
-  // snimcich se na slabsim stroji trhal a obraz couval dopredu a zpet.
+  // Video ridi scroll, ale pres rychlost prehravani, ne pres preskakovani na snimek.
+  // Seekovani podle scrollu drive trhalo a couvalo - tady se jen meni tempo, takze
+  // obraz jde vzdycky dopredu a plynule. V klidu skoro stoji, pri scrollu se rozjede.
   var v=document.querySelector('.bg video');
   function tryPlay(){
     if(!v) return;
@@ -459,6 +460,19 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     addEventListener(ev,tryPlay,{once:true,passive:true});
   });
   document.addEventListener('visibilitychange',function(){ if(!document.hidden) tryPlay(); });
+
+  if(v){
+    var lastY=scrollY, sp=0;
+    gsap.ticker.add(function(){
+      var d=Math.abs(scrollY-lastY); lastY=scrollY;
+      sp += (Math.min(d/14,1) - sp) * .07;              // dojezd, at tempo neskace
+      var rate = 0.08 + sp * 2.6;                       // v klidu skoro stoji
+      if(Math.abs(v.playbackRate-rate)>.02){
+        try{ v.playbackRate = rate; }catch(e){}
+      }
+    });
+  }
+
 
 })();
 </script>
