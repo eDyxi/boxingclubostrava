@@ -134,14 +134,16 @@ function render(model) {
   }
 
   const resize = () => {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (!w || !h) return;
+    const box = canvas.getBoundingClientRect();
+    const w = Math.round(box.width) || canvas.clientWidth || 320;
+    const h = Math.round(box.height) || canvas.clientHeight || Math.round(w * 4 / 3);
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
-    fit();
+    fit();                                   // fit se musi provest vzdy, i na nahradnich rozmerech
     dirty = true;
   };
   addEventListener('resize', resize, { passive: true });
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
   resize();
 
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; dirty = true; }, { threshold: 0 })
