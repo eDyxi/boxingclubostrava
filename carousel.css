@@ -17,8 +17,8 @@
   box-shadow:0 18px 40px oklch(6% .02 30/.5)}
 .cf-art{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;
   background:
-    radial-gradient(120% 90% at 78% 8%, oklch(32% .09 34/.85), transparent 62%),
-    linear-gradient(168deg, oklch(20% .035 32), oklch(12% .02 30))}
+    radial-gradient(120% 90% at 78% 8%, oklch(34% .14 24/.9), transparent 62%),
+    linear-gradient(168deg, oklch(21% .06 25), oklch(12% .025 28))}
 .cf-card[data-img] .cf-art{background-image:var(--img);background-size:cover;background-position:center}
 .cf-card[data-img] .cf-art::after{content:'';position:absolute;inset:0;
   background:linear-gradient(to top, oklch(9% .02 30/.9), transparent 58%)}
@@ -43,19 +43,19 @@
 .cf-on{position:relative;height:min(560px,74vh);perspective:1000px;
   user-select:none;touch-action:pan-y}
 .cf-on .cf-card{cursor:pointer}
-.cf-on.is-drag,.cf-on.is-drag .cf-card{cursor:grabbing}
+
 .cf-on .cf-stage{display:block;position:relative;height:100%;transform-style:preserve-3d}
 
 .cf-on .cf-glow{display:block;position:absolute;left:50%;top:48%;width:min(420px,70vw);aspect-ratio:1;
   translate:-50% -50%;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);
-  background:oklch(50% .16 32/.55);opacity:.4;
+  background:oklch(45% .17 25/.55);opacity:.42;
   transition:opacity .8s ease,scale .8s ease}
 
 .cf-on .cf-card{position:absolute;left:50%;top:50%;width:clamp(200px,25vw,282px);
   margin:calc(min(560px,74vh) * -.38) 0 0 clamp(-141px,-12.5vw,-100px);
   height:calc(min(560px,74vh) * .76);
   transition:transform .52s cubic-bezier(.2,.95,.35,1),opacity .45s ease,filter .45s ease}
-.cf-on.is-drag .cf-card{transition:none}
+
 .cf-on .cf-card:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
 .cf-on .cf-panel{height:100%}
 .cf-on .cf-art{aspect-ratio:auto;flex:1}
