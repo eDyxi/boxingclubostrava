@@ -82,3 +82,38 @@
 @media (prefers-reduced-motion:reduce){
   .cf-on .cf-card{transition:none}
 }
+
+/* ---------- rozkliknuty profil ---------- */
+.cf-detail{display:none}
+.cf-on .cf-detail{display:block;position:absolute;right:0;top:50%;z-index:50;
+  width:min(430px,44%);translate:0 -50%;opacity:0;pointer-events:none;
+  transition:opacity .45s ease,translate .45s cubic-bezier(.2,.95,.35,1)}
+.cf-on.is-open .cf-detail{opacity:1;pointer-events:auto;translate:0 -50%}
+.cf-on .cf-detail{translate:26px -50%}
+
+.cf-on.is-open .cf-card{pointer-events:none}
+.cf-on.is-open .cf-card:not(.is-mid){opacity:0!important}
+.cf-on.is-open .is-mid{pointer-events:auto}
+
+.cf-d-img{width:74px;height:74px;border-radius:50%;background:oklch(18% .02 32) center/cover;
+  border:1px solid oklch(80% .132 78/.4);margin-bottom:14px}
+.cf-d-name{font-size:clamp(22px,3vw,32px);font-weight:800;text-transform:uppercase;
+  letter-spacing:-.02em;line-height:1.05;margin:0}
+.cf-d-role{margin:8px 0 0;font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold)}
+.cf-d-bio{margin:14px 0 0;color:var(--ink-dim);font-size:15px;line-height:1.55}
+.cf-d-mail{display:inline-block;margin-top:14px;font-size:13px;color:var(--ink);
+  border-bottom:1px solid var(--line);text-decoration:none;padding-bottom:2px}
+.cf-d-mail:hover{color:var(--gold);border-color:var(--gold)}
+.cf-d-close{margin-top:20px;background:none;border:1px solid var(--line);color:var(--ink-dim);
+  border-radius:999px;padding:8px 16px;font:inherit;font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+.cf-d-close:hover{border-color:var(--gold);color:var(--gold)}
+
+@media (max-width:700px){
+  .cf-on .cf-detail{position:fixed;inset:auto 0 0 0;width:auto;translate:0 12px;
+    background:oklch(13% .016 32);border-top:1px solid var(--line);border-radius:16px 16px 0 0;
+    padding:22px var(--g) 26px;max-height:70vh;overflow:auto}
+  .cf-on.is-open .cf-detail{translate:0 0}
+  .cf-on.is-open .is-mid{opacity:.25!important}
+}
