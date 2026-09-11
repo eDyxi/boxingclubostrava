@@ -18,7 +18,10 @@ html,body{overflow-x:clip}
 body{background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
 img,video{display:block;max-width:100%}
 
-.mark{position:absolute;top:20px;left:var(--g);z-index:40;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+.mark{position:absolute;top:20px;left:var(--g);z-index:40;display:flex;align-items:center;gap:12px;
+  font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+.mark img{width:clamp(32px,4vw,44px);height:auto;display:block}
+.mark b{font-weight:600}
 .mark span{display:block;color:var(--ink-faint);font-weight:500;font-size:10px;letter-spacing:.24em}
 
 .wrap{position:relative}
@@ -28,6 +31,8 @@ body.fx .wrap{height:600vh}
 body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.bg img{position:absolute;inset:0}
+.bg video{position:relative}
 .bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
 /* iOS kresli pres pauznute video vlastni play tlacitko - pryc s nim */
 .bg video::-webkit-media-controls,
@@ -86,10 +91,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.brand{position:absolute;z-index:8;top:clamp(16px,3vh,34px);left:var(--g);display:flex;align-items:center;gap:12px}
-.brand img{width:clamp(34px,4.4vw,48px);height:auto;display:block}
-.brand span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
-@media (max-width:700px){.brand span{display:none}}
 .outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
   padding-top:24px;border-top:1px solid var(--line)}
@@ -121,12 +122,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <div class="wrap">
   <section class="hero">
-    <a class="brand" href="#" aria-label="Boxing Club Ostrava">
-      <img src="logo.png" alt="" width="512" height="512" decoding="async">
-      <span>Boxing Club Ostrava</span>
-    </a>
     <div class="bg">
-      <video src="ring-fpv.mp4" poster="ring-fpv-poster.webp" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+      <img src="ring-fpv-poster.webp" alt="" width="1280" height="720" decoding="async">
+      <video src="ring-fpv.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -134,7 +132,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       <img id="glove" class="gl" src="rukavice-cutout@2x.webp" alt="" width="441" height="749" decoding="async">
       <canvas id="g3d" class="gl"></canvas>
     </div></div>
-    <div class="mark">Boxing Club Ostrava<span>ZŠ Nádražní 117</span></div>
+    <div class="mark"><img src="logo.png" alt="" width="512" height="512" decoding="async"><b>Boxing Club Ostrava<span>ZŠ Nádražní 117</span></b></div>
 
     <div class="stage">
       <div class="p" id="p0">
@@ -393,8 +391,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
-    // znacka patri jen na uvodni obrazovku; hero je sticky, jinak by visela pres vsechno
-    tl.to('.brand',{opacity:0,y:-14,duration:.05,ease:'power2.in'},0);
     // dojezd do cerna, aby hero splynulo s pozadim sekce pod nim
     tl.to(['.bg','.grain'],{opacity:0,duration:.12,ease:'power2.in'},.88);
 
@@ -449,6 +445,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   // --- video ringu se prehrava scrollem ---
   var v=document.querySelector('.bg video'), scrubbing=false, want=0;
+  // Kdyz prohlizec prehravani odmitne (uspornu rezim, blokovany autoplay), iOS by
+  // pres video vykreslil vlastni play tlacitko. V tom pripade video zahodime a
+  // v pozadi zustane jen poster.
+  if(v){ var pr=v.play(); if(pr && pr.catch) pr.catch(function(){ v.remove(); v=null; }); }
   if(v&&!(navigator.connection||{}).saveData){
     // Na dotykovych zarizenich se nescrubuje: iOS kresli pres pauznute video
     // vlastni play tlacitko, ktere nejde spolehlive schovat. Tam jede proste smycka.
@@ -458,7 +458,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       scrubbing=true; v.removeAttribute('loop'); v.pause();
     });
     (function tick(){
-      if(scrubbing&&!document.hidden){
+      if(v&&scrubbing&&!document.hidden){
         want=window.__heroP;
         var FPS=24, tt=Math.min(want*v.duration,v.duration-1/FPS);
         tt=Math.round(tt*FPS)/FPS;                       // zarovnat na mrizku snimku
