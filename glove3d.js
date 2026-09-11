@@ -5,23 +5,21 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [0, 0, 0];          // vychozi natoceni modelu ve stupnich
+const GOLD = 0xd9a441;                  // barva hlavniho svetla
 const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
 // ktery plni hero timeline - model zatáčí do oblouku misto toceni na miste.
 const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0;
 
 const canvas = document.getElementById('g3d');
-const OPT_IN = new URLSearchParams(location.search).has('3d');   // 3D jen na vyzadani
+const DBG = new URLSearchParams(location.search).has('3d');   // ?3d=1 jen zapina vypis stavu
 
 function say(t) { const d = document.getElementById('diag'); if (d) d.textContent = '3D: ' + t; }
-function bail(why) { if (canvas) canvas.remove(); document.body.classList.remove('g3d'); if (OPT_IN) say(why); }
+function bail(why) { if (canvas) canvas.remove(); document.body.classList.remove('g3d'); if (DBG) say(why); }
 
 if (canvas) boot();
 
 async function boot() {
-  // Vychozi stav je 2D obrazek. 3D se zapina pres ?3d=1, aby pripadna chyba
-  // v WebGL nenechala hero uplne bez rukavice.
-  if (!OPT_IN) return bail('vypnuto');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const conn = navigator.connection || {};
   const weak = conn.saveData || (navigator.deviceMemory && navigator.deviceMemory < 4);
@@ -40,7 +38,10 @@ async function boot() {
     gltf = await new GLTFLoader().loadAsync('rukavice.glb');
   } catch (e) { return bail('model se nenacetl'); }
 
-  render(gltf.scene);
+  // Kdyz cokoli ve stavbe sceny spadne, musi se vratit 2D obrazek - jinak
+  // zustane odkryty prazdny canvas a v hero neni rukavice zadna.
+  try { render(gltf.scene); }
+  catch (e) { console.error(e); bail('vyjimka: ' + e.message); }
 }
 
 function render(model) {
