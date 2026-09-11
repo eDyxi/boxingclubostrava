@@ -114,7 +114,7 @@
   function move(e) {
     if (!dragging) return;
     var x = e.clientX != null ? e.clientX : e.touches[0].clientX;
-    drag = x - startX; moved = Math.abs(drag);
+    drag = x - startX; moved = Math.max(moved, Math.abs(drag));
     render();
   }
   function up() {
@@ -139,18 +139,38 @@
   // Blokuje se jen tazeni, aby se po swipu neotevirala nahodna karta.
   cards.forEach(function (c, i) {
     c.addEventListener('click', function (e) {
-      if (moved > 6) { e.preventDefault(); return; }
+      if (moved > 14) { e.preventDefault(); return; }
       if (!EXPAND) return;                      // bez rozkliknuti je karta proste odkaz
       e.preventDefault();
       if (i !== mid) { go(i); return; }
       opened ? closeCard() : openCard(i);
     });
   });
+  // Na mobilu se karta pod prstem mezi touchend a syntetickym clickem posune,
+  // takze klik casto nedorazi. Tuknuti si proto obsluhujeme sami.
+  var tapX = 0, tapY = 0, tapT = 0;
+  root.addEventListener('touchstart', function (e) {
+    var t = e.touches[0]; tapX = t.clientX; tapY = t.clientY; tapT = Date.now();
+  }, { passive: true });
+  root.addEventListener('touchend', function (e) {
+    var t = e.changedTouches[0];
+    if (Math.abs(t.clientX - tapX) > 14 || Math.abs(t.clientY - tapY) > 14) return;
+    if (Date.now() - tapT > 600) return;
+    var card = t.target && t.target.closest ? t.target.closest('.cf-card') : null;
+    var i = card ? cards.indexOf(card) : -1;
+    if (i < 0) return;
+    e.preventDefault();
+    if (i !== mid) { go(i); return; }
+    if (EXPAND) { opened ? closeCard() : openCard(i); }
+    else if (card.getAttribute('href')) location.href = card.getAttribute('href');
+  });
+
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
   addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
 
-  // ---- naklon za kurzorem + odlesk (jen prostredni karta) ----
-  root.addEventListener('mousemove', function (e) {
+  // ---- naklon za kurzorem + odlesk (jen prostredni karta, jen s mysi) ----
+  var HOVER = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (HOVER) root.addEventListener('mousemove', function (e) {
     var r = root.getBoundingClientRect();
     var nx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2)));
     var ny = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2)));
@@ -161,7 +181,7 @@
     if (!dragging) render();
   }, { passive: true });
 
-  root.addEventListener('mouseleave', function () { tiltX = tiltY = 0; render(); });
+  if (HOVER) root.addEventListener('mouseleave', function () { tiltX = tiltY = 0; render(); });
 
   // ---- klavesnice ----
   root.addEventListener('keydown', function (e) {
