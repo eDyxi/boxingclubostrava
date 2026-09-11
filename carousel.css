@@ -36,18 +36,19 @@
 
 /* zrcadlovy odlesk pres sklo - v 3D rezimu se hybe za kurzorem */
 .cf-glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s ease;
-  background:radial-gradient(60% 60% at var(--gx,50%) var(--gy,50%),
-    oklch(100% 0 0/.16), transparent 62%)}
+  background:radial-gradient(42% 42% at var(--gx,50%) var(--gy,50%),
+    oklch(100% 0 0/.07), transparent 66%)}
 
 /* ---------- 3D rezim ---------- */
 .cf-on{position:relative;height:min(560px,74vh);perspective:1000px;
-  user-select:none;touch-action:pan-y;cursor:grab}
-.cf-on:active{cursor:grabbing}
+  user-select:none;touch-action:pan-y}
+.cf-on .cf-card{cursor:pointer}
+.cf-on.is-drag,.cf-on.is-drag .cf-card{cursor:grabbing}
 .cf-on .cf-stage{display:block;position:relative;height:100%;transform-style:preserve-3d}
 
 .cf-on .cf-glow{display:block;position:absolute;left:50%;top:48%;width:min(420px,70vw);aspect-ratio:1;
   translate:-50% -50%;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);
-  background:oklch(50% .16 32/.55);opacity:.6;
+  background:oklch(50% .16 32/.55);opacity:.4;
   transition:opacity .8s ease,scale .8s ease}
 
 .cf-on .cf-card{position:absolute;left:50%;top:50%;width:clamp(200px,25vw,282px);
