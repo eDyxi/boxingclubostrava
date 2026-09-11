@@ -66,12 +66,53 @@ function render(model) {
   const grain = grainTexture();
   const skin = leatherTexture();
   const mat = new THREE.MeshPhysicalMaterial({
-    map: skin.tex, color: 0xffffff, roughness: .52, metalness: 0,
-    roughnessMap: grain, clearcoat: .42, clearcoatRoughness: .45,
-    sheen: .30, sheenColor: new THREE.Color(GOLD), sheenRoughness: .65,
-    normalMap: grain, normalScale: new THREE.Vector2(.55, .55),
-    envMapIntensity: 1.12
+    map: skin.tex, color: 0xffffff, roughness: .48, metalness: 0,
+    roughnessMap: grain, clearcoat: .55, clearcoatRoughness: .34,
+    sheen: .35, sheenColor: new THREE.Color(GOLD), sheenRoughness: .6,
+    normalMap: grain, normalScale: new THREE.Vector2(.7, .7),
+    envMapIntensity: 1.2
   });
+
+  // Manzeta, zlaty pruh a logo se resi v shaderu, protoze UV mapu toho modelu neznam.
+  // Ladi se z URL:  ?cuff=-0.30,-0.62   ?logo=cx,cy,velikost,osa   (osa 0=+Z 1=-Z 2=+X 3=-X)
+  const qs = new URLSearchParams(location.search);
+  const num = (k, d) => { const a = (qs.get(k) || '').split(',').map(Number); return a.length === d.length && a.every(n => !isNaN(n)) ? a : d; };
+  const cuff = num('cuff', [-.30, -.62]);
+  const lg = num('logo', [0, .18, .62, 0]);
+
+  const logoTex = new THREE.TextureLoader().load('logo.png',
+    t => { t.colorSpace = THREE.SRGBColorSpace; mat.needsUpdate = false; }, undefined, () => { });
+
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uLogo = { value: logoTex };
+    sh.uniforms.uLogoRect = { value: new THREE.Vector4(lg[0], lg[1], lg[2], lg[3]) };
+    sh.uniforms.uCuff = { value: new THREE.Vector2(cuff[0], cuff[1]) };
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vLoc; varying vec3 vLocN;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvLoc = position; vLocN = normalize(normal);');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', `#include <common>
+        varying vec3 vLoc; varying vec3 vLocN;
+        uniform sampler2D uLogo; uniform vec4 uLogoRect; uniform vec2 uCuff;`)
+      .replace('#include <map_fragment>', `#include <map_fragment>
+        // cerna manzeta se zlatym pruhem - rukavice neni jednolite cervena
+        float cf = smoothstep(uCuff.x, uCuff.y, vLoc.y);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.050,0.044,0.046), cf * 0.94);
+        float mid = (uCuff.x + uCuff.y) * 0.5;
+        float band = smoothstep(uCuff.x, mid, vLoc.y) * (1.0 - smoothstep(mid, uCuff.y, vLoc.y));
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.72,0.54,0.19), band * 0.8);
+
+        // logo promitnute rovinne z prednI strany, takze nezalezi na UV mape
+        float ax = uLogoRect.w;
+        vec2 pp = (ax < 1.5) ? vLoc.xy : vLoc.zy;
+        float facing = (ax < 1.5) ? vLocN.z : vLocN.x;
+        if (ax == 1.0 || ax == 3.0) { pp.x = -pp.x; facing = -facing; }
+        vec2 duv = (pp - uLogoRect.xy) / uLogoRect.z + 0.5;
+        if (duv.x > 0.0 && duv.x < 1.0 && duv.y > 0.0 && duv.y < 1.0 && facing > 0.12) {
+          vec4 lgc = texture2D(uLogo, vec2(duv.x, 1.0 - duv.y));
+          diffuseColor.rgb = mix(diffuseColor.rgb, lgc.rgb, lgc.a * smoothstep(0.12, 0.42, facing));
+        }`);
+  };
   model.traverse(o => { if (o.isMesh) { o.material = mat; o.geometry.computeVertexNormals?.(); } });
 
   // --- vycentrovat a nafitovat ---
@@ -144,9 +185,12 @@ function envTexture() {
     g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = g; x.fillRect(0, 0, 512, 256);
   };
-  blob(340, 40, 190, '#ffd48a');     // zlaty svetelny pas nad ringem
-  blob(120, 70, 120, '#5c6b86');     // studeny protisvetlo
-  blob(200, 230, 220, '#a3271a');    // odraz od cervene podlahy
+  blob(330, 34, 200, '#fff0cf');     // hlavni lampa nad ringem
+  blob(430, 74, 120, '#ffb765');     // teply bocni zdroj
+  blob(110, 62, 140, '#6f86ad');     // studene protisvetlo z okna
+  blob(20, 120, 100, '#2f4f7a');     // modry dosvit
+  blob(210, 236, 230, '#b02c1c');    // odraz od cervene podlahy
+  blob(470, 210, 130, '#4a1d12');    // tmavy kout, aby odlesk nebyl vsude stejny
   const t = new THREE.CanvasTexture(c);
   t.mapping = THREE.EquirectangularReflectionMapping;
   t.colorSpace = THREE.SRGBColorSpace;
@@ -154,8 +198,6 @@ function envTexture() {
 }
 
 // Kuze rukavice: mramorovany podklad kreslen za behu, takze se nic nestahuje.
-// Logo se na nej dokresli, kdyz v repu lezi logo.png. Umisteni se ladi bez commitu:
-//   ?logo=u,v,velikost   napr. ?logo=.42,.36,.20   (u,v 0-1 v UV prostoru modelu)
 function leatherTexture() {
   const N = 1024, c = document.createElement('canvas'); c.width = c.height = N;
   const x = c.getContext('2d');
@@ -168,21 +210,6 @@ function leatherTexture() {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
-
-  const q = (new URLSearchParams(location.search).get('logo') || '').split(',').map(Number);
-  const [u, v, size] = q.length === 3 ? q : [.5, .42, .22];
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => {
-    const w = N * size, h = w * (img.height / img.width);
-    x.save();
-    x.globalAlpha = .92;
-    x.drawImage(img, u * N - w / 2, v * N - h / 2, w, h);
-    x.restore();
-    tex.needsUpdate = true;
-  };
-  img.onerror = () => { };                          // logo.png v repu neni, nevadi
-  img.src = 'logo.png';
   return { tex };
 }
 
