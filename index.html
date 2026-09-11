@@ -165,6 +165,47 @@ body.fx #stats b{text-shadow:0 0 clamp(20px,3.4vw,54px) oklch(78% .16 80/.42),0 
   </section>
 </div>
 
+<section class="rozc" id="rozcestnik">
+  <div class="rozc-head">
+    <div class="eyebrow">Kam dál</div>
+    <h2>Vyber si, co tě zajímá.</h2>
+  </div>
+  <div class="cf" id="cf">
+    <div class="cf-glow" aria-hidden="true"></div>
+    <div class="cf-stage">
+      <a class="cf-card" href="/treneri" data-glow="oklch(50% .16 32/.55)"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">01</span></span>
+        <span class="cf-meta"><strong>Trenéři</strong><em>Kdo tě povede</em></span>
+      </span></a>
+      <a class="cf-card" href="/treninky" data-glow="oklch(52% .13 62/.5)"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">02</span></span>
+        <span class="cf-meta"><strong>Tréninky</strong><em>Skupiny a rozvrh</em></span>
+      </span></a>
+      <a class="cf-card" href="/zapasy" data-glow="oklch(46% .18 25/.55)"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">03</span></span>
+        <span class="cf-meta"><strong>Zápasy</strong><em>Výsledky a turnaje</em></span>
+      </span></a>
+      <a class="cf-card" href="/galerie" data-glow="oklch(48% .10 250/.45)"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">04</span></span>
+        <span class="cf-meta"><strong>Galerie</strong><em>Z ringu i ze zákulisí</em></span>
+      </span></a>
+      <a class="cf-card" href="https://www.facebook.com/" data-glow="oklch(55% .12 250/.5)" target="_blank" rel="noopener"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">05</span></span>
+        <span class="cf-meta"><strong>Facebook</strong><em>Co je nového</em></span>
+      </span></a>
+      <a class="cf-card" href="#kontakt" data-glow="oklch(50% .14 78/.5)"><span class="cf-panel">
+        <span class="cf-art"><span class="cf-num">06</span></span>
+        <span class="cf-meta"><strong>Kontakt</strong><em>Kde nás najdeš</em></span>
+      </span></a>
+    </div>
+    <div class="cf-nav">
+      <button class="cf-prev" type="button" aria-label="Předchozí">&#8249;</button>
+      <div class="cf-dots"></div>
+      <button class="cf-next" type="button" aria-label="Další">&#8250;</button>
+    </div>
+  </div>
+</section>
+
 <section class="outro" id="kontakt">
   <h2>Přijď v pondělí v 16:30.</h2>
   <p>Nemusíš se hlásit dopředu. Přijď v tričku a botách, zbytek vyřešíme na místě.</p>
@@ -176,6 +217,7 @@ body.fx #stats b{text-shadow:0 0 clamp(20px,3.4vw,54px) oklch(78% .16 80/.42),0 
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
+<link rel="stylesheet" href="carousel.css">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -398,4 +440,5 @@ body.fx #stats b{text-shadow:0 0 clamp(20px,3.4vw,54px) oklch(78% .16 80/.42),0 
 })();
 </script>
 <script type="module" src="glove3d.js"></script>
+<script src="carousel.js" defer></script>
 </html>
