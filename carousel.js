@@ -15,6 +15,11 @@
   var prevBtn = root.querySelector('.cf-prev');
   var nextBtn = root.querySelector('.cf-next');
 
+  // rezim s rozkliknutim - prevzato z puvodni komponenty, jen misto traileru je profil
+  var EXPAND = root.dataset.mode === 'expand';
+  var detail = root.querySelector('.cf-detail');
+  var opened = false;
+
   var mid = Math.floor(cards.length / 2);
   var drag = 0, dragging = false, startX = 0, moved = 0;
   var tiltX = 0, tiltY = 0;
@@ -32,8 +37,28 @@
   var dots = [].slice.call(dotsBox.children);
 
   function go(i) {
+    if (opened) closeCard();
     mid = Math.max(0, Math.min(cards.length - 1, i));
     render();
+  }
+
+  function openCard(i) {
+    if (!EXPAND || !detail) return;
+    var c = cards[i];
+    detail.querySelector('.cf-d-img').style.backgroundImage = c.dataset.img ? 'url(' + c.dataset.img + ')' : 'none';
+    detail.querySelector('.cf-d-name').textContent = c.dataset.name || '';
+    detail.querySelector('.cf-d-role').textContent = c.dataset.role || '';
+    detail.querySelector('.cf-d-bio').textContent = c.dataset.bio || '';
+    var mail = detail.querySelector('.cf-d-mail');
+    mail.textContent = c.dataset.mail || '';
+    mail.href = c.dataset.mail ? 'mailto:' + c.dataset.mail : '#';
+    mail.hidden = !c.dataset.mail;
+    opened = true;
+    root.classList.add('is-open');
+  }
+  function closeCard() {
+    opened = false;
+    root.classList.remove('is-open');
   }
 
   function render() {
@@ -111,11 +136,17 @@
 
   // Klik otevre odkaz vzdy, i na bocni karte - jinak to pusobi, ze prekliknuti nejde.
   // Blokuje se jen tazeni, aby se po swipu neotevirala nahodna karta.
-  cards.forEach(function (c) {
+  cards.forEach(function (c, i) {
     c.addEventListener('click', function (e) {
-      if (moved > 6) { e.preventDefault(); }
+      if (moved > 6) { e.preventDefault(); return; }
+      if (!EXPAND) return;                      // bez rozkliknuti je karta proste odkaz
+      e.preventDefault();
+      if (i !== mid) { go(i); return; }
+      opened ? closeCard() : openCard(i);
     });
   });
+  if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
 
   // ---- naklon za kurzorem + odlesk (jen prostredni karta) ----
   root.addEventListener('mousemove', function (e) {
