@@ -37,6 +37,8 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .gwrap{position:absolute;inset:0;z-index:6;pointer-events:none;
   display:grid;align-items:center;justify-items:end;padding:0 clamp(6px,3vw,56px)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto}
 .gtilt{display:grid;justify-items:inherit;will-change:transform}
 .gtilt>*{grid-area:1/1}
 #glove{height:min(78svh,880px);width:auto;max-width:none;
@@ -173,6 +175,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
+<script src="https://cdn.jsdelivr.net/npm/lenis/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
@@ -183,6 +186,19 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
 
   gsap.registerPlugin(ScrollTrigger);
   document.body.classList.add('fx');
+
+  // setrvacny scroll; kdyz se knihovna nenacte, jede nativni a nic se nerozbije
+  if(window.Lenis){
+    var lenis=new Lenis({duration:1.15,smoothWheel:true,wheelMultiplier:.9});
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(function(tm){lenis.raf(tm*1000);});
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  // Rukavice se hybe vlastnim tempem. Scroll jen rekne, kam ma dojet - rychlost je
+  // shora zastropovana, takze prudke skrolnuti animaci nezrychli.
+  var RATE=.22, heroP=0;
+  window.__heroP=0;
   ScrollTrigger.refresh();
 
   // --- rozklad textu na slova a pismena (bez SplitText) ---
@@ -241,8 +257,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       {lift:.07,dep:1.12,rot:24,yaw:1.2,roll:.55,pitch:.12,e1:'power3.in', e2:'back.out(1.1)'}
     ];
 
-    var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
-      scrub:1.1,invalidateOnRefresh:true}});
+    var tl=gsap.timeline({paused:true});
     gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
 
     function enter(sel,at,dir){
@@ -283,7 +298,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
     for(var i=0;i<BEATS.length-1;i++){
       var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
 
-      leave(BEATS[i][0],t);                 // stary text zmizi drive, nez zacne novy
+      leave(BEATS[i][0],t+S*.30);           // stary text setre rukavice, kdyz na nej doleti
 
       if(mob){
         // mobil zustava jak byl: rukavice nahore na stredu, jen se preklapi
@@ -303,22 +318,38 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
           .to(rig,{roll:0,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
       }
 
-      enter(BEATS[i+1][0],t+S*.30,from==='R'?'end':'start');
+      enter(BEATS[i+1][0],t+S*.70,from==='R'?'end':'start');   // az kdyz je rukavice za nim
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+
+    var goal=0, last=performance.now();
+    var st=ScrollTrigger.create({trigger:'.wrap',start:'top top',end:'bottom bottom',
+      onUpdate:function(self){goal=self.progress;},
+      onRefresh:function(){tl.invalidate(); tl.progress(Math.min(1,heroP+1e-6));}});
+
+    function drive(){
+      var now=performance.now(), dt=Math.min((now-last)/1000,.05); last=now;
+      var d=goal-heroP, step=d*Math.min(dt*5,1), cap=RATE*dt;
+      if(step>cap) step=cap; else if(step<-cap) step=-cap;
+      heroP = Math.abs(d)<.0003 ? goal : heroP+step;
+      window.__heroP=heroP;
+      tl.progress(Math.max(0,Math.min(1,heroP)));
+    }
+    gsap.ticker.add(drive);
+
+    return function(){ gsap.ticker.remove(drive); st.kill(); };
   });
 
   // rukavice visi na stejne kamere jako pozadi: rychlost scrollu ji naklani a strhava
   (function(){
-    var tilt=document.querySelector('.gtilt'), last=scrollY, vel=0, r=0, dx=0;
-    if(!tilt) return;
-    (function frame(){
-      var y=scrollY; vel+=((y-last)-vel)*.18; last=y;
-      var tr=Math.max(-8,Math.min(8,-vel*.30)), td=Math.max(-30,Math.min(30,-vel*1.0));
-      r+=(tr-r)*.10; dx+=(td-dx)*.10;
+    var tilt=document.querySelector('.gtilt'); if(!tilt) return;
+    var prev=0, r=0, dx=0;
+    gsap.ticker.add(function(){
+      var v=(window.__heroP-prev)*60; prev=window.__heroP;   // rychlost uz je zastropovana
+      var tr=Math.max(-7,Math.min(7,-v*26)), td=Math.max(-26,Math.min(26,-v*90));
+      r+=(tr-r)*.08; dx+=(td-dx)*.08;
       tilt.style.transform='translate3d('+dx.toFixed(2)+'px,'+(dx*.22).toFixed(2)+'px,0) rotate('+r.toFixed(2)+'deg)';
-      requestAnimationFrame(frame);
-    })();
+    });
   })();
 
   // rukavice dycha i mimo scroll - dve nesouhlasne periody, aby se pohyb neopakoval takt v takt
@@ -347,10 +378,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
       if(scrubbing||!v.duration||!isFinite(v.duration))return;
       scrubbing=true; v.removeAttribute('loop'); v.pause();
     });
-    ScrollTrigger.create({trigger:'.wrap',start:'top top',end:'bottom bottom',scrub:true,
-      onUpdate:function(st){want=st.progress;}});
     (function tick(){
       if(scrubbing&&!document.hidden){
+        want=window.__heroP;
         var FPS=24, tt=Math.min(want*v.duration,v.duration-1/FPS);
         tt=Math.round(tt*FPS)/FPS;                       // zarovnat na mrizku snimku
         if(Math.abs(v.currentTime-tt)>=1/FPS) v.currentTime=tt;
