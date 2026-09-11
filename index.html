@@ -83,7 +83,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
+.brand{position:absolute;z-index:8;top:clamp(16px,3vh,34px);left:var(--g);display:flex;align-items:center;gap:12px}
+.brand img{width:clamp(40px,6vw,58px);height:auto;display:block}
+.brand span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
+@media (max-width:700px){.brand span{display:none}}
 .outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh}
+.affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
+  padding-top:24px;border-top:1px solid var(--line)}
+.affil img{width:46px;height:auto;opacity:.75}
+.affil span{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
 .outro h2{font-size:clamp(34px,7vw,68px);font-weight:800;line-height:1.02;letter-spacing:-.03em;text-transform:uppercase;max-width:14ch}
 .outro p{color:var(--ink-dim);margin-top:20px;max-width:42ch}
 .contact{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;gap:24px 56px;flex-wrap:wrap}
@@ -110,6 +118,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <div class="wrap">
   <section class="hero">
+    <a class="brand" href="#" aria-label="Boxing Club Ostrava">
+      <img src="logo.png" alt="" width="512" height="512" decoding="async">
+      <span>Boxing Club Ostrava</span>
+    </a>
     <div class="bg">
       <video src="ring-fpv.mp4" poster="ring-fpv-poster.webp" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
     </div>
@@ -212,6 +224,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   <div class="contact">
     <div><span class="l">Telefon</span><a href="tel:+420733142899">+420 733 142 899</a></div>
     <div><span class="l">Kde</span><a href="#kontakt">ZŠ Nádražní 117</a></div>
+  </div>
+  <div class="affil">
+    <img src="logo-cba.png" alt="" width="512" height="512" loading="lazy" decoding="async">
+    <span>Člen České boxerské asociace</span>
   </div>
 </section>
 
