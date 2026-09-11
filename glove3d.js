@@ -9,7 +9,7 @@ const FIT = 0.74;                       // kolik z vysky ramecku model zabere (z
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
 // ktery plni hero timeline - model zatáčí do oblouku misto toceni na miste.
 const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0;
-const LEATHER = 0x8a1f16;               // krvava kuze
+const LEATHER = 0x9e1b33;               // matna karminova kuze podle reference
 const GOLD = 0xd9a441;
 
 const canvas = document.getElementById('g3d');
@@ -63,14 +63,16 @@ function render(model) {
   scene.add(key, rim, fill);
 
   // --- material: neotexturovany mesh + procedurální zrno kuze ---
+  // Matna hladka kuze. Zadny mramorovany podklad - jen jemne zrno, aby povrch
+  // nebyl uplne plastovy. Vic uz ne, reference je cista.
   const grain = grainTexture();
-  const skin = leatherTexture();
+  grain.repeat.set(14, 14);
   const mat = new THREE.MeshPhysicalMaterial({
-    map: skin.tex, color: 0xffffff, roughness: .48, metalness: 0,
-    roughnessMap: grain, clearcoat: .55, clearcoatRoughness: .34,
-    sheen: .35, sheenColor: new THREE.Color(GOLD), sheenRoughness: .6,
-    normalMap: grain, normalScale: new THREE.Vector2(.7, .7),
-    envMapIntensity: 1.2
+    color: LEATHER, roughness: .62, metalness: 0,
+    clearcoat: .14, clearcoatRoughness: .62,
+    sheen: .28, sheenColor: new THREE.Color(0xd8b9b2), sheenRoughness: .85,
+    normalMap: grain, normalScale: new THREE.Vector2(.11, .11),
+    envMapIntensity: 1.0
   });
 
   // Manzeta, zlaty pruh a logo se resi v shaderu, protoze UV mapu toho modelu neznam.
@@ -97,10 +99,7 @@ function render(model) {
       .replace('#include <map_fragment>', `#include <map_fragment>
         // cerna manzeta se zlatym pruhem - rukavice neni jednolite cervena
         float cf = smoothstep(uCuff.x, uCuff.y, vLoc.y);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.050,0.044,0.046), cf * 0.94);
-        float mid = (uCuff.x + uCuff.y) * 0.5;
-        float band = smoothstep(uCuff.x, mid, vLoc.y) * (1.0 - smoothstep(mid, uCuff.y, vLoc.y));
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.72,0.54,0.19), band * 0.8);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.042,0.038,0.040), cf * 0.96);
 
         // logo promitnute rovinne z prednI strany, takze nezalezi na UV mape
         float ax = uLogoRect.w;
@@ -185,32 +184,14 @@ function envTexture() {
     g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = g; x.fillRect(0, 0, 512, 256);
   };
-  blob(330, 34, 200, '#fff0cf');     // hlavni lampa nad ringem
-  blob(430, 74, 120, '#ffb765');     // teply bocni zdroj
-  blob(110, 62, 140, '#6f86ad');     // studene protisvetlo z okna
-  blob(20, 120, 100, '#2f4f7a');     // modry dosvit
-  blob(210, 236, 230, '#b02c1c');    // odraz od cervene podlahy
-  blob(470, 210, 130, '#4a1d12');    // tmavy kout, aby odlesk nebyl vsude stejny
+  blob(256, 10, 320, '#f2ece6');     // siroke mekke svetlo shora
+  blob(80, 96, 190, '#8f9aab');       // studeny vyplnovy odraz zleva
+  blob(440, 110, 170, '#caa98c');     // teply dosvit zprava
+  blob(256, 250, 260, '#3a2320');     // tmavsi podlaha, aby spodek nesvitil
   const t = new THREE.CanvasTexture(c);
   t.mapping = THREE.EquirectangularReflectionMapping;
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
-}
-
-// Kuze rukavice: mramorovany podklad kreslen za behu, takze se nic nestahuje.
-function leatherTexture() {
-  const N = 1024, c = document.createElement('canvas'); c.width = c.height = N;
-  const x = c.getContext('2d');
-  x.fillStyle = '#8a1f16'; x.fillRect(0, 0, N, N);
-  for (let i = 0; i < 4200; i++) {                 // mramorovani a poskozeni
-    const r = 8 + Math.random() * 46, a = .025 + Math.random() * .045;
-    x.fillStyle = Math.random() < .55 ? `rgba(28,4,2,${a})` : `rgba(255,150,124,${a * .6})`;
-    x.beginPath(); x.arc(Math.random() * N, Math.random() * N, r, 0, 6.283); x.fill();
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return { tex };
 }
 
 // zrno kuze -> normal mapa, generovana za behu (0 B prenosu)
