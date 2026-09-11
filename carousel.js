@@ -109,11 +109,11 @@
   root.addEventListener('touchmove', move, { passive: true });
   root.addEventListener('touchend', up);
 
-  // klik na bocni kartu ji vytahne dopredu misto otevreni odkazu
-  cards.forEach(function (c, i) {
+  // Klik otevre odkaz vzdy, i na bocni karte - jinak to pusobi, ze prekliknuti nejde.
+  // Blokuje se jen tazeni, aby se po swipu neotevirala nahodna karta.
+  cards.forEach(function (c) {
     c.addEventListener('click', function (e) {
-      if (moved > 6) { e.preventDefault(); return; }
-      if (i !== mid) { e.preventDefault(); go(i); }
+      if (moved > 6) { e.preventDefault(); }
     });
   });
 
