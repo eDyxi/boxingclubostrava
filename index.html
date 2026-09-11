@@ -450,7 +450,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // --- video ringu se prehrava scrollem ---
   var v=document.querySelector('.bg video'), scrubbing=false, want=0;
   if(v&&!(navigator.connection||{}).saveData){
-    v.addEventListener('canplaythrough',function(){
+    // Na dotykovych zarizenich se nescrubuje: iOS kresli pres pauznute video
+    // vlastni play tlacitko, ktere nejde spolehlive schovat. Tam jede proste smycka.
+    var canScrub=matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if(canScrub) v.addEventListener('canplaythrough',function(){
       if(scrubbing||!v.duration||!isFinite(v.duration))return;
       scrubbing=true; v.removeAttribute('loop'); v.pause();
     });
