@@ -5,7 +5,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [-6, 150, 6];          // vychozi natoceni modelu ve stupnich
-const FIT = 0.88;                       // kolik z vysky ramecku model zabere
+const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
+// Na mobilu je otaceni modelu hlavni pohyb. Na desktopu cestuje rukavice pres scenu
+// v CSS, takze model se jen mirne naklani - jinak to vypada, ze se toci na miste.
+const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0.5;
 const LEATHER = 0x8a1f16;               // krvava kuze
 const GOLD = 0xd9a441;
 
@@ -80,7 +83,7 @@ function render(model) {
   const fit = () => {                     // nafitovat na vysku ramecku, ne na nejvetsi rozmer
     const half = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
     const dh = (size.y / 2 / FIT) / half;
-    const dw = (Math.max(size.x, size.z) / 2 / .8) / (half * camera.aspect);
+    const dw = (Math.max(size.x, size.z) / 2 / .62) / (half * camera.aspect);
     camera.position.set(0, 0, Math.max(dh, dw));
   };
 
@@ -116,8 +119,8 @@ function render(model) {
     cur += (progress - cur) * .12;
     pivot.rotation.set(
       base[0] + Math.sin(t * .35) * .05 - cur * .35,
-      base[1] + cur * 4.2 + Math.sin(t * .27) * .06,
-      base[2] + Math.sin(t * .21) * .04 + cur * .5
+      base[1] + cur * SPIN + Math.sin(t * .27) * .06,
+      base[2] + Math.sin(t * .21) * .04 + cur * .25
     );
     renderer.render(scene, camera);
     dirty = false;
