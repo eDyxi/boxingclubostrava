@@ -29,6 +29,9 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
+/* iOS kresli pres pauznute video vlastni play tlacitko - pryc s nim */
+.bg video::-webkit-media-controls,
+.bg video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
 .scrim{position:absolute;inset:0;z-index:1;background:
   linear-gradient(96deg,oklch(8% .01 30/.94) 0%,oklch(9% .015 30/.7) 32%,oklch(10% .02 30/.2) 58%,transparent 74%),
   linear-gradient(0deg,oklch(7% .01 30/.85) 0%,transparent 42%)}
@@ -185,7 +188,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   <div class="cf" id="cf">
     <div class="cf-glow" aria-hidden="true"></div>
     <div class="cf-stage">
-      <a class="cf-card" href="/treneri" data-glow="oklch(50% .16 32/.55)"><span class="cf-panel">
+      <a class="cf-card" href="treneri.html" data-glow="oklch(50% .16 32/.55)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">01</span></span>
         <span class="cf-meta"><strong>Trenéři</strong><em>Kdo tě povede</em></span>
       </span></a>
