@@ -37,7 +37,8 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .gwrap{position:absolute;inset:0;z-index:6;pointer-events:none;
   display:grid;align-items:center;justify-items:end;padding:0 clamp(6px,3vw,56px)}
-.gwrap>*{grid-area:1/1}
+.gtilt{display:grid;justify-items:inherit;will-change:transform}
+.gtilt>*{grid-area:1/1}
 #glove{height:min(78svh,880px);width:auto;max-width:none;
   filter:drop-shadow(0 40px 70px oklch(6% .02 30/.85));opacity:.97}
 #g3d{display:none;height:min(104svh,1180px);width:auto;aspect-ratio:3/4}
@@ -108,10 +109,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
-    <div class="gwrap" aria-hidden="true">
+    <div class="gwrap" aria-hidden="true"><div class="gtilt">
       <img id="glove" class="gl" src="rukavice-cutout@2x.webp" alt="" width="441" height="749" decoding="async">
       <canvas id="g3d" class="gl"></canvas>
-    </div>
+    </div></div>
     <div class="mark">Boxing Club Ostrava<span>ZŠ Nádražní 117</span></div>
 
     <div class="stage">
@@ -216,6 +217,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   // dve samostatne rezie; gsap.matchMedia je pri zmene sirky sam od sebe prepne a uklidi
   // POZOR: musi tu byt obe podminky. S jedinou se callback na desktopu vubec nespusti
   // (zadny dotaz neplati) a cela rezie se nepostavi.
+  // 3D model cte tyhle hodnoty pri kazdem snimku; kdyz WebGL nejede, nic se nedeje
+  var rig=window.gloveRig={yaw:0,pitch:0,roll:0};
   var mm=gsap.matchMedia();
   mm.add({mob:'(max-width:700px)',pc:'(min-width:701px)'},function(ctx){
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
@@ -278,19 +281,33 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
       }else{
-        // desktop: prolet pres celou scenu s plnou otockou - drsny pohyb jako v pozadi
-        tl.to('.gl',{x:mid(from,to),y:-innerHeight*.09,scale:1.24,
-                     duration:S*.5,ease:'sine.in'},t)
-          .to('.gl',{x:rest[to],y:0,scale:1,
-                     duration:S*.5,ease:'sine.out'},t+S*.5);
-        // rotace bezi samostatne pres cely tah, aby si s posunem nelezly do cesty
-        tl.to('.gl',{rotation:'+='+(dir*360),duration:S,ease:'power1.inOut'},t);
+        // desktop: hloubkovy oblouk. Uprostred je rukavice daleko (mala), na konci zase u kamery.
+        tl.to('.gl',{x:mid(from,to),y:-innerHeight*.10,scale:.58,rotation:dir*7,
+                     duration:S*.5,ease:'sine.inOut'},t)
+          .to('.gl',{x:rest[to],y:0,scale:1,rotation:0,
+                     duration:S*.5,ease:'sine.inOut'},t+S*.5);
+        // naklon delá 3D model, ne CSS - zatáčí do oblouku jako pták
+        tl.to(rig,{yaw:dir*1.35,roll:dir*-.5,pitch:.16,duration:S*.5,ease:'sine.inOut'},t)
+          .to(rig,{yaw:0,roll:0,pitch:0,duration:S*.5,ease:'sine.inOut'},t+S*.5);
       }
 
       enter(BEATS[i+1][0],t+S*.45,from==='R'?'end':'start');
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
   });
+
+  // rukavice visi na stejne kamere jako pozadi: rychlost scrollu ji naklani a strhava
+  (function(){
+    var tilt=document.querySelector('.gtilt'), last=scrollY, vel=0, r=0, dx=0;
+    if(!tilt) return;
+    (function frame(){
+      var y=scrollY; vel+=((y-last)-vel)*.18; last=y;
+      var tr=Math.max(-8,Math.min(8,-vel*.30)), td=Math.max(-30,Math.min(30,-vel*1.0));
+      r+=(tr-r)*.10; dx+=(td-dx)*.10;
+      tilt.style.transform='translate3d('+dx.toFixed(2)+'px,'+(dx*.22).toFixed(2)+'px,0) rotate('+r.toFixed(2)+'deg)';
+      requestAnimationFrame(frame);
+    })();
+  })();
 
   // rukavice dycha i mimo scroll - dve nesouhlasne periody, aby se pohyb neopakoval takt v takt
   gsap.to('.gwrap',{yPercent:2.2,rotation:1.4,duration:5.5,ease:'sine.inOut',yoyo:true,repeat:-1});
