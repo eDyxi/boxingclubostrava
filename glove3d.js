@@ -63,12 +63,14 @@ function render(model) {
   scene.add(key, rim, fill);
 
   // --- material: neotexturovany mesh + procedurální zrno kuze ---
+  const grain = grainTexture();
+  const skin = leatherTexture();
   const mat = new THREE.MeshPhysicalMaterial({
-    color: LEATHER, roughness: .46, metalness: 0,
-    clearcoat: .55, clearcoatRoughness: .38,
-    sheen: .35, sheenColor: new THREE.Color(GOLD), sheenRoughness: .6,
-    normalMap: grainTexture(), normalScale: new THREE.Vector2(.4, .4),
-    envMapIntensity: 1.15
+    map: skin.tex, color: 0xffffff, roughness: .52, metalness: 0,
+    roughnessMap: grain, clearcoat: .42, clearcoatRoughness: .45,
+    sheen: .30, sheenColor: new THREE.Color(GOLD), sheenRoughness: .65,
+    normalMap: grain, normalScale: new THREE.Vector2(.55, .55),
+    envMapIntensity: 1.12
   });
   model.traverse(o => { if (o.isMesh) { o.material = mat; o.geometry.computeVertexNormals?.(); } });
 
@@ -149,6 +151,39 @@ function envTexture() {
   t.mapping = THREE.EquirectangularReflectionMapping;
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
+}
+
+// Kuze rukavice: mramorovany podklad kreslen za behu, takze se nic nestahuje.
+// Logo se na nej dokresli, kdyz v repu lezi logo.png. Umisteni se ladi bez commitu:
+//   ?logo=u,v,velikost   napr. ?logo=.42,.36,.20   (u,v 0-1 v UV prostoru modelu)
+function leatherTexture() {
+  const N = 1024, c = document.createElement('canvas'); c.width = c.height = N;
+  const x = c.getContext('2d');
+  x.fillStyle = '#8a1f16'; x.fillRect(0, 0, N, N);
+  for (let i = 0; i < 4200; i++) {                 // mramorovani a poskozeni
+    const r = 8 + Math.random() * 46, a = .025 + Math.random() * .045;
+    x.fillStyle = Math.random() < .55 ? `rgba(28,4,2,${a})` : `rgba(255,150,124,${a * .6})`;
+    x.beginPath(); x.arc(Math.random() * N, Math.random() * N, r, 0, 6.283); x.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+
+  const q = (new URLSearchParams(location.search).get('logo') || '').split(',').map(Number);
+  const [u, v, size] = q.length === 3 ? q : [.5, .42, .22];
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const w = N * size, h = w * (img.height / img.width);
+    x.save();
+    x.globalAlpha = .92;
+    x.drawImage(img, u * N - w / 2, v * N - h / 2, w, h);
+    x.restore();
+    tex.needsUpdate = true;
+  };
+  img.onerror = () => { };                          // logo.png v repu neni, nevadi
+  img.src = 'logo.png';
+  return { tex };
 }
 
 // zrno kuze -> normal mapa, generovana za behu (0 B prenosu)
