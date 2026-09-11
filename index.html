@@ -68,6 +68,9 @@ body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
 
 .wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
+.p h1,.p h2{text-shadow:0 0 .55em oklch(45% .17 25/.42),0 3px 22px oklch(6% .02 30/.75)}
+.eyebrow{text-shadow:0 0 .9em oklch(80% .132 78/.5)}
+.sub{text-shadow:0 2px 14px oklch(6% .02 30/.8)}
 .ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
@@ -190,7 +193,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         <span class="cf-art"><span class="cf-num">01</span></span>
         <span class="cf-meta"><strong>Trenéři</strong><em>Kdo tě povede</em></span>
       </span></a>
-      <a class="cf-card" href="/treninky" data-glow="oklch(52% .13 62/.5)"><span class="cf-panel">
+      <a class="cf-card" href="/treninky" data-glow="oklch(42% .15 22/.55)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">02</span></span>
         <span class="cf-meta"><strong>Tréninky</strong><em>Skupiny a rozvrh</em></span>
       </span></a>
@@ -198,15 +201,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         <span class="cf-art"><span class="cf-num">03</span></span>
         <span class="cf-meta"><strong>Zápasy</strong><em>Výsledky a turnaje</em></span>
       </span></a>
-      <a class="cf-card" href="/galerie" data-glow="oklch(48% .10 250/.45)"><span class="cf-panel">
+      <a class="cf-card" href="/galerie" data-glow="oklch(38% .16 18/.5)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">04</span></span>
         <span class="cf-meta"><strong>Galerie</strong><em>Z ringu i ze zákulisí</em></span>
       </span></a>
-      <a class="cf-card" href="https://www.facebook.com/" data-glow="oklch(55% .12 250/.5)" target="_blank" rel="noopener"><span class="cf-panel">
+      <a class="cf-card" href="https://www.facebook.com/" data-glow="oklch(48% .17 28/.5)" target="_blank" rel="noopener"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">05</span></span>
         <span class="cf-meta"><strong>Facebook</strong><em>Co je nového</em></span>
       </span></a>
-      <a class="cf-card" href="#kontakt" data-glow="oklch(50% .14 78/.5)"><span class="cf-panel">
+      <a class="cf-card" href="#kontakt" data-glow="oklch(36% .13 20/.5)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">06</span></span>
         <span class="cf-meta"><strong>Kontakt</strong><em>Kde nás najdeš</em></span>
       </span></a>
@@ -437,17 +440,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
   // dychani hlavniho nadpisu: vlna po slovech - masky se hybou cele, takze nic neorezavaji
-  gsap.to('#p0 h1 .wd',{yPercent:-3.5,duration:2.4,ease:'sine.inOut',yoyo:true,repeat:-1,
-    stagger:{each:.16,from:'start'},delay:1.1});
+  gsap.to('.p h1 .wd, .p h2 .wd',{yPercent:-3.5,duration:2.4,ease:'sine.inOut',yoyo:true,repeat:-1,
+    stagger:{each:.14,from:'start'},delay:1.1});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
 
-  // --- video ringu se prehrava scrollem ---
-  var v=document.querySelector('.bg video'), scrubbing=false, want=0;
-  // Kdyz prohlizec prehravani odmitne (uspornu rezim, blokovany autoplay), iOS by
-  // pres video vykreslil vlastni play tlacitko. V tom pripade video zahodime a
-  // v pozadi zustane jen poster.
+  // Video jede prostou smyckou. Scrubovani podle scrollu jsem zrusil - seek po
+  // snimcich se na slabsim stroji trhal a obraz couval dopredu a zpet.
+  var v=document.querySelector('.bg video');
   function tryPlay(){
     if(!v) return;
     var pr=v.play();
@@ -458,26 +459,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     addEventListener(ev,tryPlay,{once:true,passive:true});
   });
   document.addEventListener('visibilitychange',function(){ if(!document.hidden) tryPlay(); });
-  if(v&&!(navigator.connection||{}).saveData){
-    // Na dotykovych zarizenich se nescrubuje: iOS kresli pres pauznute video
-    // vlastni play tlacitko, ktere nejde spolehlive schovat. Tam jede proste smycka.
-    var canScrub=matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if(canScrub) v.addEventListener('canplaythrough',function(){
-      if(scrubbing||!v.duration||!isFinite(v.duration))return;
-      scrubbing=true; v.removeAttribute('loop'); v.pause();
-    });
-    (function tick(){
-      if(v&&scrubbing&&!document.hidden){
-        want=window.__heroP;
-        var FPS=24, tt=Math.min(want*v.duration,v.duration-1/FPS);
-        tt=Math.round(tt*FPS)/FPS;                       // zarovnat na mrizku snimku
-        if(Math.abs(v.currentTime-tt)>=1/FPS) v.currentTime=tt;
-      }
-      requestAnimationFrame(tick);
-    })();
-  }
 
-  d.textContent='Scroll rezim aktivni.';
 })();
 </script>
 <script type="module" src="glove3d.js"></script>
