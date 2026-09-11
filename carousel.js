@@ -108,13 +108,18 @@
   // Tazeni je uplne pryc. Drzeni kurzoru kartami posouvalo a klik se pak
   // vyhodnotil jako swipe, takze odkaz nikdy neprosel. Ovlada se klikem,
   // sipkami, teckami a sipkami na klavesnici.
+  // Na prechod se nespolehame na vychozi chovani odkazu - rizeni si bereme sami,
+  // aby ho nemohlo nic po ceste spolknout.
   cards.forEach(function (c, i) {
     c.addEventListener('click', function (e) {
-      if (!EXPAND) { if (i !== mid) { e.preventDefault(); go(i); } return; }
       e.preventDefault();
       if (i !== mid) { go(i); return; }
-      opened ? closeCard() : openCard(i);
-    });
+      if (EXPAND) { opened ? closeCard() : openCard(i); return; }
+      var h = c.getAttribute('href');
+      if (!h || h === '#') return;
+      if (c.getAttribute('target') === '_blank') window.open(h, '_blank', 'noopener');
+      else location.assign(h);
+    }, true);
   });
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
