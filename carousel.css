@@ -1,0 +1,91 @@
+/* Rozcestnik podstranek - 3D coverflow.
+   Bez JS je to obycejna mrizka odkazu. Trida .cf-on prepne na 3D scenu. */
+
+.rozc{padding:clamp(64px,10vw,140px) var(--g) clamp(48px,8vw,110px);position:relative}
+.rozc-head{max-width:640px;margin:0 0 clamp(28px,4vw,56px)}
+.rozc-head h2{font-size:clamp(28px,5vw,54px);font-weight:800;text-transform:uppercase;
+  letter-spacing:-.03em;line-height:1.02;margin:.35em 0 0}
+
+/* ---------- vychozi stav bez JS: prosta mrizka ---------- */
+.cf-stage{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.cf-glow,.cf-nav{display:none}
+
+/* ---------- karta ---------- */
+.cf-card{display:block;text-decoration:none;color:inherit;transform-origin:center center}
+.cf-panel{position:relative;display:flex;flex-direction:column;height:100%;overflow:hidden;
+  border:1px solid var(--line);border-radius:14px;background:oklch(15% .018 32);
+  box-shadow:0 18px 40px oklch(6% .02 30/.5)}
+.cf-art{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 78% 8%, oklch(32% .09 34/.85), transparent 62%),
+    linear-gradient(168deg, oklch(20% .035 32), oklch(12% .02 30))}
+.cf-card[data-img] .cf-art{background-image:var(--img);background-size:cover;background-position:center}
+.cf-card[data-img] .cf-art::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to top, oklch(9% .02 30/.9), transparent 58%)}
+
+/* velka duchova cislice misto fotky, nez dodas realne snimky */
+.cf-num{position:absolute;right:-.06em;bottom:-.24em;font-size:min(26vw,190px);font-weight:800;
+  line-height:.8;letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1px oklch(80% .132 78/.30);pointer-events:none}
+.cf-card[data-img] .cf-num{display:none}
+
+.cf-meta{display:block;padding:16px 18px 18px;border-top:1px solid var(--line)}
+.cf-meta strong{display:block;font-size:19px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
+.cf-meta em{display:block;margin-top:4px;font-style:normal;font-size:11px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+
+/* zrcadlovy odlesk pres sklo - v 3D rezimu se hybe za kurzorem */
+.cf-glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(60% 60% at var(--gx,50%) var(--gy,50%),
+    oklch(100% 0 0/.16), transparent 62%)}
+
+/* ---------- 3D rezim ---------- */
+.cf-on{position:relative;height:min(560px,74vh);perspective:1000px;
+  user-select:none;touch-action:pan-y;cursor:grab}
+.cf-on:active{cursor:grabbing}
+.cf-on .cf-stage{display:block;position:relative;height:100%;transform-style:preserve-3d}
+
+.cf-on .cf-glow{display:block;position:absolute;left:50%;top:48%;width:min(420px,70vw);aspect-ratio:1;
+  translate:-50% -50%;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);
+  background:oklch(50% .16 32/.55);opacity:.6;
+  transition:opacity .8s ease,scale .8s ease}
+
+.cf-on .cf-card{position:absolute;left:50%;top:50%;width:clamp(200px,25vw,282px);
+  margin:calc(min(560px,74vh) * -.38) 0 0 clamp(-141px,-12.5vw,-100px);
+  height:calc(min(560px,74vh) * .76);
+  transition:transform .52s cubic-bezier(.2,.95,.35,1),opacity .45s ease,filter .45s ease}
+.cf-on.is-drag .cf-card{transition:none}
+.cf-on .cf-card:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
+.cf-on .cf-panel{height:100%}
+.cf-on .cf-art{aspect-ratio:auto;flex:1}
+.cf-on .is-mid .cf-panel{border-color:oklch(80% .132 78/.42)}
+.cf-on .is-mid .cf-glare{opacity:1}
+
+/* stitek na prostredni karte */
+.cf-open{position:absolute;left:18px;bottom:18px;z-index:3;display:inline-flex;gap:8px;
+  align-items:center;padding:9px 14px;border-radius:999px;font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:oklch(14% .02 60);background:var(--gold);
+  opacity:0;translate:0 8px;transition:opacity .4s ease,translate .4s ease;pointer-events:none}
+.cf-on .is-mid .cf-open{opacity:1;translate:0 0}
+
+/* ---------- ovladani ---------- */
+.cf-on .cf-nav{display:flex;align-items:center;justify-content:center;gap:14px;
+  position:absolute;left:0;right:0;bottom:-6px;z-index:40}
+.cf-nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  background:oklch(15% .018 32);color:var(--ink);cursor:pointer;font-size:17px;line-height:1;
+  transition:border-color .25s ease,color .25s ease}
+.cf-nav button:hover{border-color:var(--gold);color:var(--gold)}
+.cf-nav button[disabled]{opacity:.3;cursor:default;border-color:var(--line);color:var(--ink)}
+.cf-dots{display:flex;gap:7px}
+.cf-dots i{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);cursor:pointer;
+  transition:background .3s ease,width .3s ease}
+.cf-dots i.on{width:20px;border-radius:3px;background:var(--gold)}
+
+@media (max-width:700px){
+  .cf-on{height:min(460px,66vh)}
+  .cf-on .cf-card{width:min(232px,62vw);margin-top:calc(min(460px,66vh) * -.38);
+    margin-left:min(-116px,-31vw);height:calc(min(460px,66vh) * .76)}
+}
+@media (prefers-reduced-motion:reduce){
+  .cf-on .cf-card{transition:none}
+}
