@@ -6,9 +6,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [-6, 150, 6];          // vychozi natoceni modelu ve stupnich
 const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
-// Na mobilu je otaceni modelu hlavni pohyb. Na desktopu cestuje rukavice pres scenu
-// v CSS, takze model se jen mirne naklani - jinak to vypada, ze se toci na miste.
-const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 1.6;
+// Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
+// ktery plni hero timeline - model zatáčí do oblouku misto toceni na miste.
+const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0;
 const LEATHER = 0x8a1f16;               // krvava kuze
 const GOLD = 0xd9a441;
 
@@ -91,6 +91,7 @@ function render(model) {
   const base = (q ? q.split(',').map(Number) : BASE_ROT).map(THREE.MathUtils.degToRad);
 
   let progress = 0, cur = 0, dirty = true, visible = true;
+  const pose = { y: 0, p: 0, r: 0 };
   if (window.gsap && window.ScrollTrigger) {
     ScrollTrigger.create({
       trigger: '.wrap', start: 'top top', end: 'bottom bottom', scrub: true,
@@ -117,10 +118,14 @@ function render(model) {
     if (!visible || document.hidden) return;
     const t = clock.getElapsedTime();
     cur += (progress - cur) * .12;
+    const rig = window.gloveRig || { yaw: 0, pitch: 0, roll: 0 };
+    pose.y += (rig.yaw - pose.y) * .09;      // dojezd, aby zatacka nebyla hranata
+    pose.p += (rig.pitch - pose.p) * .09;
+    pose.r += (rig.roll - pose.r) * .09;
     pivot.rotation.set(
-      base[0] + Math.sin(t * .35) * .05 - cur * .35,
-      base[1] + cur * SPIN + Math.sin(t * .27) * .06,
-      base[2] + Math.sin(t * .21) * .04 + cur * .25
+      base[0] + pose.p + Math.sin(t * .35) * .05 - cur * .35,
+      base[1] + pose.y + cur * SPIN + Math.sin(t * .27) * .06,
+      base[2] + pose.r + Math.sin(t * .21) * .04 + cur * .25
     );
     renderer.render(scene, camera);
     dirty = false;
