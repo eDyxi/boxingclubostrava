@@ -25,10 +25,6 @@
   cards.forEach(function (c, i) {
     var p = c.querySelector('.cf-panel');
     var g = document.createElement('span'); g.className = 'cf-glare'; p.appendChild(g);
-    var b = document.createElement('span'); b.className = 'cf-open';
-    b.textContent = c.dataset.cta || 'Otevřít';
-    p.appendChild(b);
-
     var d = document.createElement('i');
     d.addEventListener('click', function () { go(i); });
     dotsBox.appendChild(d);
