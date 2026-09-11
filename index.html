@@ -231,6 +231,16 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
     };
     function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
+    // Pet ruznych pruletu, ne jeden pohyb dokola. lift = zdvih, dep = jak daleko je
+    // uprostred cesty (pod 1 = odleti do hloubky, nad 1 = projde tesne kolem kamery).
+    var MOVES=[
+      {lift:.04,dep:1.22,rot:10,yaw:.9, roll:.40,pitch:.06,e1:'power2.in', e2:'power2.out'},
+      {lift:.16,dep:.82, rot:18,yaw:1.5,roll:.62,pitch:.20,e1:'sine.in',   e2:'sine.out'},
+      {lift:.02,dep:1.35,rot:8, yaw:.6, roll:.28,pitch:-.10,e1:'power1.in', e2:'power3.out'},
+      {lift:.11,dep:.66, rot:20,yaw:1.8,roll:.70,pitch:.24,e1:'sine.inOut',e2:'sine.inOut'},
+      {lift:.07,dep:1.12,rot:24,yaw:1.2,roll:.55,pitch:.12,e1:'power3.in', e2:'back.out(1.1)'}
+    ];
+
     var tl=gsap.timeline({scrollTrigger:{trigger:'.wrap',start:'top top',end:'bottom bottom',
       scrub:1.1,invalidateOnRefresh:true}});
     gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
@@ -281,17 +291,19 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
       }else{
-        // desktop: hloubkovy oblouk. Uprostred je rukavice daleko (mala), na konci zase u kamery.
-        tl.to('.gl',{x:mid(from,to),y:-innerHeight*.10,scale:.58,rotation:dir*7,
-                     duration:S*.5,ease:'sine.inOut'},t)
-          .to('.gl',{x:rest[to],y:0,scale:1,rotation:0,
-                     duration:S*.5,ease:'sine.inOut'},t+S*.5);
-        // naklon delá 3D model, ne CSS - zatáčí do oblouku jako pták
-        tl.to(rig,{yaw:dir*1.35,roll:dir*-.5,pitch:.16,duration:S*.5,ease:'sine.inOut'},t)
-          .to(rig,{yaw:0,roll:0,pitch:0,duration:S*.5,ease:'sine.inOut'},t+S*.5);
+        var m=MOVES[i];
+        // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
+        tl.to('.gl',{x:mid(from,to),y:-innerHeight*m.lift,scale:m.dep,rotation:dir*m.rot,
+                     duration:S*.5,ease:m.e1},t)
+          .to('.gl',{x:rest[to],y:0,scale:1,rotation:dir*-3,
+                     duration:S*.5,ease:m.e2},t+S*.5);
+        // naklon do oblouku dela 3D model, ne CSS
+        tl.to(rig,{yaw:dir*m.yaw,roll:dir*-m.roll,pitch:m.pitch,duration:S*.5,ease:m.e1},t)
+          .to(rig,{yaw:0,roll:dir*.12,pitch:0,duration:S*.42,ease:m.e2},t+S*.5)
+          .to(rig,{roll:0,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
       }
 
-      enter(BEATS[i+1][0],t+S*.45,from==='R'?'end':'start');
+      enter(BEATS[i+1][0],t+S*.30,from==='R'?'end':'start');
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
   });
