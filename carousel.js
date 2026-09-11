@@ -102,67 +102,19 @@
     });
 
     dots.forEach(function (d, i) { d.classList.toggle('on', i === mid); });
-    if (glow) glow.style.background = cards[mid].dataset.glow || 'oklch(50% .16 32/.55)';
+    if (glow) glow.style.background = cards[mid].dataset.glow || 'oklch(45% .17 25/.55)';
   }
 
-  // ---- tah prstem / mysi ----
-  function down(e) {
-    dragging = true; moved = 0;
-    startX = e.clientX != null ? e.clientX : e.touches[0].clientX;
-    root.classList.add('is-drag');
-  }
-  function move(e) {
-    if (!dragging) return;
-    var x = e.clientX != null ? e.clientX : e.touches[0].clientX;
-    drag = x - startX; moved = Math.max(moved, Math.abs(drag));
-    render();
-  }
-  function up() {
-    if (!dragging) return;
-    dragging = false;
-    root.classList.remove('is-drag');
-    if (drag < -50) go(mid + 1);
-    else if (drag > 50) go(mid - 1);
-    else render();
-    drag = 0;
-  }
-
-  root.addEventListener('mousedown', down);
-  root.addEventListener('mousemove', move);
-  root.addEventListener('mouseup', up);
-  root.addEventListener('mouseleave', up);
-  root.addEventListener('touchstart', down, { passive: true });
-  root.addEventListener('touchmove', move, { passive: true });
-  root.addEventListener('touchend', up);
-
-  // Klik otevre odkaz vzdy, i na bocni karte - jinak to pusobi, ze prekliknuti nejde.
-  // Blokuje se jen tazeni, aby se po swipu neotevirala nahodna karta.
+  // Tazeni je uplne pryc. Drzeni kurzoru kartami posouvalo a klik se pak
+  // vyhodnotil jako swipe, takze odkaz nikdy neprosel. Ovlada se klikem,
+  // sipkami, teckami a sipkami na klavesnici.
   cards.forEach(function (c, i) {
     c.addEventListener('click', function (e) {
-      if (moved > 14) { e.preventDefault(); return; }
-      if (!EXPAND) return;                      // bez rozkliknuti je karta proste odkaz
+      if (!EXPAND) { if (i !== mid) { e.preventDefault(); go(i); } return; }
       e.preventDefault();
       if (i !== mid) { go(i); return; }
       opened ? closeCard() : openCard(i);
     });
-  });
-  // Na mobilu se karta pod prstem mezi touchend a syntetickym clickem posune,
-  // takze klik casto nedorazi. Tuknuti si proto obsluhujeme sami.
-  var tapX = 0, tapY = 0, tapT = 0;
-  root.addEventListener('touchstart', function (e) {
-    var t = e.touches[0]; tapX = t.clientX; tapY = t.clientY; tapT = Date.now();
-  }, { passive: true });
-  root.addEventListener('touchend', function (e) {
-    var t = e.changedTouches[0];
-    if (Math.abs(t.clientX - tapX) > 14 || Math.abs(t.clientY - tapY) > 14) return;
-    if (Date.now() - tapT > 600) return;
-    var card = t.target && t.target.closest ? t.target.closest('.cf-card') : null;
-    var i = card ? cards.indexOf(card) : -1;
-    if (i < 0) return;
-    e.preventDefault();
-    if (i !== mid) { go(i); return; }
-    if (EXPAND) { opened ? closeCard() : openCard(i); }
-    else if (card.getAttribute('href')) location.href = card.getAttribute('href');
   });
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
