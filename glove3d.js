@@ -8,7 +8,7 @@ const BASE_ROT = [-6, 150, 6];          // vychozi natoceni modelu ve stupnich
 const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu cestuje rukavice pres scenu
 // v CSS, takze model se jen mirne naklani - jinak to vypada, ze se toci na miste.
-const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0.5;
+const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 1.6;
 const LEATHER = 0x8a1f16;               // krvava kuze
 const GOLD = 0xd9a441;
 
