@@ -68,9 +68,29 @@ body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
 
 .wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
-.p h1,.p h2{text-shadow:0 0 .55em oklch(45% .17 25/.42),0 3px 22px oklch(6% .02 30/.75)}
-.eyebrow{text-shadow:0 0 .9em oklch(66% .21 26/.5)}
-.sub{text-shadow:0 2px 14px oklch(6% .02 30/.8)}
+.p h1,.p h2{text-shadow:0 0 .5em oklch(45% .17 25/.45),0 3px 24px oklch(6% .02 30/.85)}
+.p{position:relative}
+/* prejezd svetla pres text, jednou za sedm sekund */
+.p::after,#stats::after{content:'';position:absolute;inset:-14% -8%;pointer-events:none;z-index:2;
+  background:linear-gradient(104deg,transparent 40%,oklch(100% 0 0/.20) 47%,
+    oklch(100% 0 0/.06) 52%,transparent 60%);
+  background-size:320% 100%;background-position:130% 0;
+  mix-blend-mode:screen;animation:sunray 7s ease-in-out infinite}
+#stats{position:relative}
+#stats::after{animation-delay:2.4s}
+@keyframes sunray{0%,64%{background-position:130% 0}100%{background-position:-50% 0}}
+
+/* cervene eyebrow bylo na videu skoro neviditelne */
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.24em;color:oklch(74% .20 27);
+  text-shadow:0 0 .8em oklch(66% .21 26/.75),0 2px 10px oklch(6% .02 30/.9)}
+.sub,.p p{color:oklch(86% .012 55);text-shadow:0 2px 16px oklch(6% .02 30/.9)}
+.fine{color:oklch(66% .016 45)}
+
+/* tlacitka: obrys a kulate rohy */
+.btn{border:1px solid oklch(66% .21 26/.5);border-radius:999px;padding:13px 26px}
+.btn:hover{border-color:oklch(74% .20 27);background:oklch(66% .21 26/.10)}
+.btn.solid{border-color:transparent;border-radius:999px}
+.btn.solid:hover{filter:brightness(1.08)}
 .ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
@@ -440,8 +460,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
   // dychani hlavniho nadpisu: vlna po slovech - masky se hybou cele, takze nic neorezavaji
-  gsap.to('.p h1 .wd, .p h2 .wd',{yPercent:-3.5,duration:2.4,ease:'sine.inOut',yoyo:true,repeat:-1,
-    stagger:{each:.14,from:'start'},delay:1.1});
+  gsap.to('.p,#stats',{scale:1.008,transformOrigin:'left center',duration:5.2,
+    ease:'sine.inOut',yoyo:true,repeat:-1});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
@@ -463,10 +483,16 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   if(v){
     var lastY=scrollY, sp=0;
+    var FINE=matchMedia('(hover: hover) and (pointer: fine)').matches;
     gsap.ticker.add(function(){
       var d=Math.abs(scrollY-lastY); lastY=scrollY;
       sp += (Math.min(d/14,1) - sp) * .07;              // dojezd, at tempo neskace
-      var rate = 0.08 + sp * 2.6;                       // v klidu skoro stoji
+      if(sp < .012){                                    // stojis - stoji i obraz
+        if(!v.paused && FINE) v.pause();
+        return;
+      }
+      if(v.paused) v.play().catch(function(){});
+      var rate = 0.10 + sp * 2.6;
       if(Math.abs(v.playbackRate-rate)>.02){
         try{ v.playbackRate = rate; }catch(e){}
       }
