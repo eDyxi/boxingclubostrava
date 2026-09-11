@@ -76,10 +76,10 @@ body.fx #p0{opacity:1}
 
 #stats{display:flex;gap:clamp(24px,7vw,80px);flex-wrap:wrap;margin-bottom:20vh}
 body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;opacity:0;margin:0;padding:0 var(--g)}
-body.fx #stats::before{content:'';position:absolute;left:50%;top:50%;translate:-50% -50%;
-  width:min(1000px,90vw);aspect-ratio:5/2;pointer-events:none;z-index:-1;
-  background:radial-gradient(ellipse at center,oklch(64% .14 72/.32),transparent 70%)}
-body.fx #stats b{text-shadow:0 0 clamp(20px,3.4vw,54px) oklch(78% .16 80/.42),0 0 5px oklch(88% .10 85/.30)}
+#stats>div{position:relative;isolation:isolate}
+#stats>div::before{content:'';position:absolute;inset:-38% -26% -18%;pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse at 50% 42%,oklch(64% .14 72/.34),transparent 68%)}
+#stats b{position:relative;text-shadow:0 0 clamp(18px,3vw,48px) oklch(78% .16 80/.45),0 0 5px oklch(88% .10 85/.32)}
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
@@ -368,6 +368,8 @@ body.fx #stats b{text-shadow:0 0 clamp(20px,3.4vw,54px) oklch(78% .16 80/.42),0 
       enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
     }
     tl.to('.gl',{opacity:0,duration:.05,ease:'none'},.955);
+    // dojezd do cerna, aby hero splynulo s pozadim sekce pod nim
+    tl.to(['.bg','.grain'],{opacity:0,duration:.12,ease:'power2.in'},.88);
 
     var goal=0, last=performance.now();
     var st=ScrollTrigger.create({trigger:'.wrap',start:'top top',end:'bottom bottom',
