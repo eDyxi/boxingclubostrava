@@ -39,7 +39,7 @@ async function boot() {
 }
 
 function render(model) {
-  document.body.classList.add('g3d');           // odkryje canvas, schova <img>
+  document.body.classList.add('g3d');           // odkryje canvas, aby mel rozmery
   const dpr = Math.min(devicePixelRatio || 1, innerWidth < 700 ? 1.5 : 2);
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(dpr);
@@ -65,7 +65,7 @@ function render(model) {
   // Doladi se jen povrch a promitne logo klubu.
   const qs = new URLSearchParams(location.search);
   const num = (k, d) => { const a = (qs.get(k) || '').split(',').map(Number); return a.length === d.length && a.every(n => !isNaN(n)) ? a : d; };
-  const lg = num('logo', [0, .15, .95, 0]);     // stred X, stred Y, velikost, osa
+  const lg = qs.has('logo') ? num('logo', [0, .15, .95, 0]) : null;   // bez parametru se logo nemaluje
 
   const logoTex = new THREE.TextureLoader().load('logo.png',
     t => { t.colorSpace = THREE.SRGBColorSpace; }, undefined, () => { });
@@ -76,7 +76,7 @@ function render(model) {
     m.roughness = .62; m.metalness = 0; m.envMapIntensity = 1.0;
     if (m.map) { m.map.anisotropy = 4; m.map.colorSpace = THREE.SRGBColorSpace; }
     // logo promitnute rovinne z prednI strany - nezavisle na UV mape modelu
-    m.onBeforeCompile = (sh) => {
+    if (lg) m.onBeforeCompile = (sh) => {
       sh.uniforms.uLogo = { value: logoTex };
       sh.uniforms.uLogoRect = { value: new THREE.Vector4(lg[0], lg[1], lg[2], lg[3]) };
       sh.vertexShader = sh.vertexShader
@@ -140,6 +140,15 @@ function render(model) {
 
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; dirty = true; }, { threshold: 0 })
     .observe(canvas);
+
+  // Zkusebni snimek. Kdyz se nevykreslil ani jeden trojuhelnik (spatny shader,
+  // prazdna scena, ztraceny kontext), vratime se k 2D obrazku misto prazdna.
+  renderer.render(scene, camera);
+  if (!renderer.info.render.triangles) {
+    document.body.classList.remove('g3d');
+    renderer.dispose(); canvas.remove();
+    return;
+  }
 
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
