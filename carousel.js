@@ -20,7 +20,9 @@
   var detail = root.querySelector('.cf-detail');
   var opened = false;
 
-  var mid = Math.floor(cards.length / 2);
+  // Prvni karta je hlavni cil, takze se startuje na ni. Drive se startovalo
+  // uprostred a krajni karty byly od zacatku uplne mimo zaber - nesly kliknout.
+  var mid = 0;
   var drag = 0, dragging = false, startX = 0, moved = 0;
   var tiltX = 0, tiltY = 0;
 
@@ -38,7 +40,7 @@
 
   function go(i) {
     if (opened) closeCard();
-    mid = Math.max(0, Math.min(cards.length - 1, i));
+    mid = (i + cards.length) % cards.length;    // dokola, aby byla dosazitelna kazda karta
     render();
   }
 
@@ -93,14 +95,13 @@
       c.style.zIndex = z;
       c.style.opacity = o;
       c.style.filter = f;
+      c.style.pointerEvents = o < .1 ? 'none' : 'auto';   // neviditelna karta nesmi chytat kliky
       c.classList.toggle('is-mid', Math.round(off) === 0);
       c.tabIndex = Math.round(off) === 0 ? 0 : -1;
       c.setAttribute('aria-hidden', o === 0 ? 'true' : 'false');
     });
 
     dots.forEach(function (d, i) { d.classList.toggle('on', i === mid); });
-    if (prevBtn) prevBtn.disabled = mid === 0;
-    if (nextBtn) nextBtn.disabled = mid === cards.length - 1;
     if (glow) glow.style.background = cards[mid].dataset.glow || 'oklch(50% .16 32/.55)';
   }
 
