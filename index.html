@@ -218,11 +218,14 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:flex
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
 
   // dve samostatne rezie; gsap.matchMedia je pri zmene sirky sam od sebe prepne a uklidi
-  gsap.matchMedia().add({mob:'(max-width:700px)'},function(ctx){
+  // POZOR: musi tu byt obe podminky. S jedinou se callback na desktopu vubec nespusti
+  // (zadny dotaz neplati) a cela rezie se nepostavi.
+  var mm=gsap.matchMedia();
+  mm.add({mob:'(max-width:700px)',pc:'(min-width:701px)'},function(ctx){
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
     // rukavice odpociva vpravo, ale posunuta ke stredu
-    function restX(){return mob?0:-innerWidth*.20;}
+    function restX(){return mob?0:-innerWidth*.26;}
     function offL(){return -(innerWidth+gloveEl().offsetWidth);}   // uplne pryc vlevo
     function offR(){return gloveEl().offsetWidth*.6+innerWidth*.12;} // pripravena vpravo mimo obraz
 
