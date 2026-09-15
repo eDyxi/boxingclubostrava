@@ -115,3 +115,14 @@ a.kart:hover::after{background-position:-40% 0}
 .spon img{height:clamp(34px,5vw,52px);width:auto;opacity:.55;filter:grayscale(1);
   transition:opacity .3s ease,filter .3s ease}
 .spon a:hover img{opacity:1;filter:none}
+
+/* ---------- facebook ---------- */
+.feed{padding:clamp(34px,6vw,70px) var(--g) 0;display:grid;gap:clamp(20px,3vw,40px);
+  grid-template-columns:minmax(0,1fr) minmax(0,360px);align-items:start}
+.feed .box{border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  background:oklch(14% .018 30/.62);min-height:520px;position:relative}
+.feed .box .wait{position:absolute;inset:0;display:grid;place-items:center;padding:24px;
+  text-align:center;color:var(--ink-faint);font-size:13px}
+.feed .side p{color:var(--ink-dim);font-size:15px;margin:0 0 16px}
+.feed .side .kart{margin-bottom:12px}
+@media (max-width:820px){ .feed{grid-template-columns:1fr} }
