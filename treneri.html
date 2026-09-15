@@ -10,67 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="carousel.css">
-<style>
-:root{
-  --paper:oklch(11% .014 30); --ink:oklch(96% .008 60);
-  --ink-dim:oklch(76% .014 50); --ink-faint:oklch(54% .02 40);
-  --gold:oklch(66% .21 26); --blood:oklch(45% .17 25); --line:oklch(28% .03 30);
-  --g:clamp(20px,6vw,110px);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:Archivo,system-ui,sans-serif;font-size:17px;line-height:1.5;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit}
+<link rel="stylesheet" href="page.css">
 
-/* ---------- pozadi: pomalu dychajici barevne plochy, zadne video ---------- */
-.field{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--paper)}
-.field i{position:absolute;display:block;border-radius:50%;filter:blur(90px);opacity:.5;
-  will-change:transform}
-.field i:nth-child(1){width:52vw;aspect-ratio:1;left:-8vw;top:-12vh;background:oklch(45% .17 25);
-  animation:drift1 26s ease-in-out infinite}
-.field i:nth-child(2){width:44vw;aspect-ratio:1;right:-10vw;top:18vh;background:oklch(38% .16 18);
-  animation:drift2 33s ease-in-out infinite}
-.field i:nth-child(3){width:60vw;aspect-ratio:1;left:18vw;bottom:-24vh;background:oklch(28% .13 30);
-  animation:drift3 41s ease-in-out infinite}
-@keyframes drift1{50%{transform:translate3d(9vw,7vh,0) scale(1.18)}}
-@keyframes drift2{50%{transform:translate3d(-11vw,10vh,0) scale(.84)}}
-@keyframes drift3{50%{transform:translate3d(7vw,-9vh,0) scale(1.12)}}
-
-/* bile svetlo za kurzorem */
-.torch{position:fixed;z-index:1;width:520px;height:520px;left:0;top:0;margin:-260px 0 0 -260px;
-  border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;
-  background:radial-gradient(circle closest-side,oklch(100% 0 0/.16),oklch(100% 0 0/0) 72%)}
-body.lit .torch{opacity:1}
-
-/* zrno, at plochy nepasovaly */
-.grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
-
-main{position:relative;z-index:3}
-
-/* ---------- hlavicka ---------- */
-.top{display:flex;align-items:center;justify-content:space-between;gap:20px;
-  padding:clamp(18px,3vh,34px) var(--g)}
-.top a.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-.top .brand img{width:clamp(34px,4.4vw,46px);height:auto;display:block}
-.top .brand span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
-.back{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-dim);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
-.back:hover{color:var(--gold);border-color:var(--gold)}
-@media (max-width:700px){.top .brand span{display:none}}
-
-.intro{padding:clamp(30px,6vw,70px) var(--g) 0;max-width:780px}
-.eyebrow{font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
-.intro h1{text-shadow:0 0 .5em oklch(45% .17 25/.4),0 3px 22px oklch(6% .02 30/.75);font-size:clamp(36px,8vw,86px);font-weight:800;text-transform:uppercase;
-  letter-spacing:-.035em;line-height:.98;margin:.28em 0 0}
-.intro h1 em{font-family:"Bodoni Moda",Georgia,serif;font-style:italic;font-weight:400;
-  text-transform:none;color:var(--gold);letter-spacing:0}
-.intro p{color:var(--ink-dim);max-width:46ch;margin:1.2em 0 0}
-
-.rozc{padding-top:clamp(40px,7vw,80px)}
-.fine{padding:0 var(--g) clamp(60px,10vw,120px);color:var(--ink-faint);font-size:13px}
-</style>
 </head>
 <body>
 
@@ -144,22 +85,7 @@ main{position:relative;z-index:3}
 </main>
 
 <script src="carousel.js" defer></script>
-<script>
-// bile svetlo sleduje kurzor; na dotykovych zarizenich se nezapina
-(function(){
-  var t=document.querySelector('.torch');
-  if(!t || !matchMedia('(hover: hover)').matches) return;
-  var x=innerWidth/2, y=innerHeight/2, cx=x, cy=y;
-  addEventListener('pointermove',function(e){
-    x=e.clientX; y=e.clientY; document.body.classList.add('lit');
-  },{passive:true});
-  addEventListener('pointerleave',function(){document.body.classList.remove('lit');});
-  (function frame(){
-    cx+=(x-cx)*.14; cy+=(y-cy)*.14;
-    t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
-    requestAnimationFrame(frame);
-  })();
-})();
-</script>
+<script src="page.js" defer></script>
+
 </body>
 </html>
