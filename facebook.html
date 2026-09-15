@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facebook — Boxing Club Ostrava</title>
+<meta name="description" content="Co je nového v Boxing Clubu Ostrava — příspěvky přímo z klubového Facebooku.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="page.css">
+</head>
+<body>
+
+<div class="field" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="torch" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main>
+  <div class="top">
+    <a class="brand" href="index.html">
+      <img src="logo.png" alt="" width="512" height="512">
+      <span>Boxing Club Ostrava</span>
+    </a>
+    <a class="back" href="index.html">Zpět na úvod</a>
+  </div>
+
+  <header class="intro">
+    <div class="eyebrow">Facebook</div>
+    <h1>Co je <em>nového</em></h1>
+    <p>Výsledky z turnajů, zrušené tréninky, fotky ze zápasů. Příspěvky se sem
+       natahují přímo z klubového Facebooku, takže tu vždycky visí to poslední.</p>
+  </header>
+
+  <section class="feed">
+    <div class="box" id="fbbox">
+      <div class="wait" id="fbwait">Načítám příspěvky z Facebooku…</div>
+      <div class="fb-page"
+           data-href="https://www.facebook.com/BoxingClubOstrava/"
+           data-tabs="timeline"
+           data-width="500"
+           data-height="820"
+           data-small-header="true"
+           data-adapt-container-width="true"
+           data-hide-cover="true"
+           data-show-facepile="false">
+        <blockquote cite="https://www.facebook.com/BoxingClubOstrava/" class="fb-xfbml-parse-ignore">
+          <a href="https://www.facebook.com/BoxingClubOstrava/">Boxing Club Ostrava na Facebooku</a>
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="side">
+      <p>Když se příspěvky nenačtou, blokuje je nejspíš rozšíření proti sledování
+         nebo odmítnuté cookies. Obsah je pořád dostupný přímo na Facebooku.</p>
+      <a class="kart" href="https://www.facebook.com/BoxingClubOstrava/" target="_blank" rel="noopener">
+        <span>Otevřít</span>
+        <strong>facebook.com/<wbr>BoxingClubOstrava</strong>
+        <em>Celá stránka klubu včetně fotoalb a událostí.</em>
+      </a>
+      <a class="kart" href="treninky.html">
+        <span>Rozpis</span>
+        <strong>Kdy se trénuje</strong>
+        <em>Změny tréninků klub hlásí i na Facebooku.</em>
+      </a>
+    </div>
+  </section>
+
+  <p class="fine">Příspěvky zobrazuje oficiální Facebook Page Plugin. Vzhled vevnitř
+     určuje Facebook, nejde ho sladit s naším stylem — ověřit, jestli to takhle stačí.</p>
+</main>
+
+<script src="page.js" defer></script>
+<script>
+// SDK se stahuje az kdyz se sekce dostane do zaberu - jinak by stranku zdrzoval
+// pul megabajtu skriptu, ktery vetsina navstevniku ani neuvidi.
+(function(){
+  var box=document.getElementById('fbbox'), wait=document.getElementById('fbwait'), done=false;
+  function load(){
+    if(done) return; done=true;
+    var s=document.createElement('script');
+    s.async=true; s.defer=true; s.crossOrigin='anonymous';
+    s.src='https://connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v21.0';
+    s.onerror=function(){ wait.textContent='Facebook se nepodařilo načíst. Otevři stránku klubu vedle.'; };
+    document.body.appendChild(s);
+    // kdyz se plugin do osmi sekund nevykresli, necháme misto nej vysvetleni
+    setTimeout(function(){
+      if(!box.querySelector('iframe')) wait.textContent='Příspěvky se nenačetly — nejspíš je blokuje prohlížeč.';
+      else wait.remove();
+    },8000);
+  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e,o){
+      if(e[0].isIntersecting){ load(); o.disconnect(); }
+    },{rootMargin:'300px'}).observe(box);
+  } else load();
+})();
+</script>
+</body>
+</html>
