@@ -88,3 +88,30 @@ main{position:relative;z-index:3}
   text-transform:uppercase;color:var(--gold)}
 .price em{display:block;margin-top:8px;font-style:normal;font-size:13px;color:var(--ink-dim)}
 @media (max-width:620px){ .day{grid-template-columns:1fr;gap:8px} }
+
+/* ---------- kontakt ---------- */
+.kont{padding:clamp(40px,7vw,80px) var(--g) 0;display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.kart{display:block;text-decoration:none;color:inherit;position:relative;overflow:hidden;
+  border:1px solid var(--line);border-radius:18px;padding:24px 26px 26px;
+  background:oklch(14% .018 30/.62);backdrop-filter:blur(6px);
+  transition:border-color .3s ease,transform .3s cubic-bezier(.2,.95,.35,1)}
+a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
+.kart span{display:block;font-size:11px;font-weight:800;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold)}
+.kart strong{display:block;margin-top:10px;font-size:clamp(20px,2.6vw,27px);font-weight:800;
+  letter-spacing:-.02em;line-height:1.15;word-break:break-word}
+.kart em{display:block;margin-top:8px;font-style:normal;font-size:14px;color:var(--ink-dim)}
+.kart::after{content:'';position:absolute;inset:-40% -20%;pointer-events:none;
+  background:linear-gradient(104deg,transparent 42%,oklch(100% 0 0/.14) 49%,transparent 57%);
+  background-size:320% 100%;background-position:130% 0;mix-blend-mode:screen;
+  transition:background-position .9s cubic-bezier(.2,.9,.3,1)}
+a.kart:hover::after{background-position:-40% 0}
+
+.spon{padding:clamp(48px,8vw,90px) var(--g) 0}
+.spon h2{font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-faint);margin:0 0 18px}
+.spon div{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,4vw,44px)}
+.spon img{height:clamp(34px,5vw,52px);width:auto;opacity:.55;filter:grayscale(1);
+  transition:opacity .3s ease,filter .3s ease}
+.spon a:hover img{opacity:1;filter:none}
