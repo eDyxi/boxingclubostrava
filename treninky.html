@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tréninky — Boxing Club Ostrava</title>
+<meta name="description" content="Rozpis tréninků, skupiny a ceny kondičního boxu v Boxing Clubu Ostrava, ZŠ Nádražní 117.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="carousel.css">
+</head>
+<body>
+
+<div class="field" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="torch" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main>
+  <div class="top">
+    <a class="brand" href="index.html">
+      <img src="logo.png" alt="" width="512" height="512">
+      <span>Boxing Club Ostrava</span>
+    </a>
+    <a class="back" href="index.html">Zpět na úvod</a>
+  </div>
+
+  <header class="intro">
+    <div class="eyebrow">Tréninky</div>
+    <h1>Kdy a <em>kolik</em></h1>
+    <p>Čtyři skupiny, pět dní v týdnu, jedna tělocvična. Na kondiční box se nemusíš
+       nikam hlásit — přijď a zaplať na místě.</p>
+  </header>
+
+  <section class="rozc">
+    <div class="cf" id="cf" data-mode="expand">
+      <div class="cf-glow" aria-hidden="true"></div>
+      <div class="cf-stage">
+        <a class="cf-card" href="#" data-glow="oklch(45% .17 25/.55)"
+           data-name="Kondiční box" data-role="Veřejnost, rodiče, začátečníci"
+           data-bio="Pro každého, kdo chce box jako pohyb, ne jako zápas. Začátečníci, mírně pokročilí i pokročilí trénují spolu. Bez přihlášky, platí se na místě. Ve čtvrtek večer jsou navíc sparingy pro pokročilé a boxující."><span class="cf-panel">
+          <span class="cf-art"><span class="cf-num">01</span></span>
+          <span class="cf-meta"><strong>Kondiční box</strong><em>Po · St · Čt · Pá</em></span>
+        </span></a>
+        <a class="cf-card" href="#" data-glow="oklch(42% .15 22/.55)"
+           data-name="Boxerská akademie" data-role="Žáci sportovních tříd a skupin"
+           data-bio="Denní tréninky pro žáky sportovních tříd. Ve čtvrtek odpoledne je akademie otevřená všem žákům školy."><span class="cf-panel">
+          <span class="cf-art"><span class="cf-num">02</span></span>
+          <span class="cf-meta"><strong>Boxerská akademie</strong><em>Po–Pá, ráno i odpoledne</em></span>
+        </span></a>
+        <a class="cf-card" href="#" data-glow="oklch(48% .17 28/.5)"
+           data-name="Výkonnostní box" data-role="Extraliga, 1. liga, SCM, akademie"
+           data-bio="Závodní příprava. Extraliga, první liga, Sportovní centrum mládeže a akademie trénují společně."><span class="cf-panel">
+          <span class="cf-art"><span class="cf-num">03</span></span>
+          <span class="cf-meta"><strong>Výkonnostní box</strong><em>Po · St · Pá</em></span>
+        </span></a>
+        <a class="cf-card" href="#" data-glow="oklch(38% .16 18/.5)"
+           data-name="Sportovní centrum mládeže" data-role="SCM"
+           data-bio="Mládežnická příprava pod vedením reprezentačního trenéra juniorů. Jezdí se na Národní ligu, na turnaje do Polska a na mistrovství."><span class="cf-panel">
+          <span class="cf-art"><span class="cf-num">04</span></span>
+          <span class="cf-meta"><strong>Centrum mládeže</strong><em>Út · Čt</em></span>
+        </span></a>
+      </div>
+      <div class="cf-nav">
+        <button class="cf-prev" type="button" aria-label="Předchozí">&#8249;</button>
+        <div class="cf-dots"></div>
+        <button class="cf-next" type="button" aria-label="Další">&#8250;</button>
+      </div>
+      <aside class="cf-detail">
+        <div class="cf-d-img"></div>
+        <h2 class="cf-d-name"></h2>
+        <p class="cf-d-role"></p>
+        <p class="cf-d-bio"></p>
+        <a class="cf-d-mail" href="#"></a>
+        <div><button class="cf-d-close" type="button">Zavřít</button></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="plan">
+    <h2>Rozpis týdne</h2>
+    <div class="grid">
+      <div class="day"><b>Pondělí</b><div class="slots">
+        <span class="slot"><b>7:00–7:40</b></span>
+        <span class="slot" data-g="akademie"><b>15:00–16:00</b><small>Akademie</small></span>
+        <span class="slot" data-g="vykon"><b>16:30–18:00</b><small>Výkonnostní box · Akademie</small></span>
+        <span class="slot" data-g="kondice"><b>18:30–20:00</b><small>Kondiční box</small></span>
+      </div></div>
+      <div class="day"><b>Úterý</b><div class="slots">
+        <span class="slot"><b>7:00–7:40</b></span>
+        <span class="slot" data-g="akademie"><b>15:00–16:00</b><small>Akademie</small></span>
+        <span class="slot" data-g="scm"><b>17:00–18:30</b><small>SCM · Akademie</small></span>
+      </div></div>
+      <div class="day"><b>Středa</b><div class="slots">
+        <span class="slot"><b>7:00–7:40</b></span>
+        <span class="slot" data-g="akademie"><b>15:00–16:00</b><small>Akademie</small></span>
+        <span class="slot" data-g="vykon"><b>16:30–18:30</b><small>Výkonnostní box · Akademie</small></span>
+        <span class="slot" data-g="kondice"><b>18:30–20:00</b><small>Kondiční box</small></span>
+      </div></div>
+      <div class="day"><b>Čtvrtek</b><div class="slots">
+        <span class="slot"><b>7:00–7:40</b></span>
+        <span class="slot" data-g="akademie"><b>15:00–16:00</b><small>Akademie · všichni žáci školy</small></span>
+        <span class="slot" data-g="scm"><b>17:00–18:30</b><small>SCM Akademie</small></span>
+        <span class="slot" data-g="kondice"><b>19:00–20:00</b><small>Kondiční box · sparingy</small></span>
+      </div></div>
+      <div class="day"><b>Pátek</b><div class="slots">
+        <span class="slot"><b>7:00–7:40</b></span>
+        <span class="slot" data-g="akademie"><b>15:00–16:00</b><small>Akademie</small></span>
+        <span class="slot" data-g="vykon"><b>15:30–17:00</b><small>Výkonnostní box · Akademie</small></span>
+        <span class="slot" data-g="kondice"><b>17:30–19:00</b><small>Kondiční box</small></span>
+      </div></div>
+    </div>
+
+    <div class="price">
+      <div><strong>140 Kč</strong><span>Jednorázový vstup</span><em>Kondiční box, platíš na místě.</em></div>
+      <div><strong>1 200 Kč</strong><span>Permanentka na 10 vstupů</span><em>Vychází na 120 Kč za trénink.</em></div>
+      <div><strong>733 142 899</strong><span>Zavolej</span><em>Bližší informace k tréninkům.</em></div>
+    </div>
+  </section>
+
+  <p class="fine">Rozpis a ceny převzaté z boxingclubostrava.cz. Přes prázdniny jede klub
+     v omezeném režimu — před spuštěním ověřit u Dalibora, že tohle je aktuální stav.</p>
+</main>
+
+<script src="carousel.js" defer></script>
+<script src="page.js" defer></script>
+</body>
+</html>
