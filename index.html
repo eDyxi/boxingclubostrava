@@ -109,7 +109,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh;text-align:center}
+.outro{position:relative;z-index:5;border-top:1px solid var(--line);
+  padding:16vh var(--g) 12vh;text-align:center;
+  background:linear-gradient(to bottom,oklch(16% .055 25) 0%,oklch(13% .03 27) 46%,var(--paper) 100%)}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
   padding-top:24px;border-top:1px solid var(--line)}
 .affil img{width:46px;height:auto;opacity:.75}
@@ -154,22 +156,22 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude;animation:orbit 4.2s linear infinite;pointer-events:none}
 /* zare: tentyz prechod, jen rozostreny a bez masky, aby svitil ven */
-.cta .btn::after{content:'';position:absolute;inset:-6px;border-radius:999px;z-index:-1;
+.cta .btn::after{content:'';position:absolute;inset:-7px;border-radius:999px;padding:7px;z-index:-1;
   background:conic-gradient(from var(--ang),
     oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
     oklch(72% .20 27/.45) 225deg,oklch(96% .06 30/.9) 285deg,
     oklch(72% .20 27/.45) 345deg,oklch(100% 0 0/0) 360deg);
-  -webkit-mask:radial-gradient(closest-side,transparent 46%,#000 76%);
-  mask:radial-gradient(closest-side,transparent 46%,#000 76%);
-  filter:blur(6px);opacity:.9;animation:orbit 4.2s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;filter:blur(4px);opacity:.9;animation:orbit 4.2s linear infinite;
   transition:opacity .35s ease,filter .35s ease;pointer-events:none}
 .cta .btn:nth-of-type(2)::before,.cta .btn:nth-of-type(2)::after{animation-delay:-2.1s}
-.cta .btn:nth-of-type(2)::after{inset:-4px;filter:blur(4px);opacity:.75}
+.cta .btn:nth-of-type(2)::after{inset:-5px;padding:5px;filter:blur(3px);opacity:.8}
 /* hover: prusvitne tlacitko jen zesili obrys, plne jen o kousek ztmavne */
 .cta .btn:hover{transform:scale(1.035) translateY(-2px);
   box-shadow:inset 0 0 0 1.5px oklch(100% 0 0/.95)}
 .cta .btn.solid:hover{box-shadow:none;filter:brightness(.88)}
-.cta .btn:hover::after{filter:blur(9px)}
+.cta .btn:hover::after{filter:blur(6px);opacity:1}
 @keyframes orbit{to{--ang:360deg}}
 
 /* Dychani zare. drop-shadow kopiruje tvar pismen, takze ho maska slova neorizne
@@ -196,13 +198,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro .affil a:hover img{opacity:1;filter:none}
 
 /* Pozadi za rozcestnikem: stejne plovouci cervene plochy jako na podstrankach. */
-.rozc{position:relative;overflow:hidden;background:var(--paper)}
+.rozc{position:relative;overflow:hidden;
+  background:linear-gradient(to bottom,var(--paper) 0%,oklch(11.5% .018 28) 38%,
+    oklch(14% .042 26) 78%,oklch(16% .055 25) 100%)}
 .rozc>.field{position:absolute;inset:0;z-index:0;pointer-events:none}
 /* Horni okraj rozcestniku zacina v barve hero a cervene plochy z ni teprve vyplynou. */
-.rozc::before{content:'';position:absolute;left:0;right:0;top:0;height:38vh;z-index:0;
+.rozc::before{content:'';position:absolute;left:0;right:0;top:0;height:46vh;z-index:0;
   pointer-events:none;background:linear-gradient(to bottom,var(--paper) 0%,
-    oklch(11% .014 30/.82) 34%,oklch(11% .014 30/.4) 68%,transparent 100%)}
-.rozc>.field i{position:absolute;display:block;border-radius:50%;filter:blur(90px);opacity:.42}
+    oklch(11% .014 30/.92) 40%,oklch(11% .014 30/.5) 72%,transparent 100%)}
+.rozc>.field i{position:absolute;display:block;border-radius:50%;filter:blur(100px);opacity:.16}
 .rozc>.field i:nth-child(1){width:52vw;aspect-ratio:1;left:-8vw;top:-14vh;
   background:oklch(45% .17 25);animation:drift1 26s ease-in-out infinite}
 .rozc>.field i:nth-child(2){width:44vw;aspect-ratio:1;right:-10vw;top:14vh;
@@ -352,7 +356,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921k">
+<link rel="stylesheet" href="carousel.css?v=20260921l">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -617,8 +621,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921k"></script>
-<script src="carousel.js?v=20260921k" defer></script>
+<script type="module" src="glove3d.js?v=20260921l"></script>
+<script src="carousel.js?v=20260921l" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
