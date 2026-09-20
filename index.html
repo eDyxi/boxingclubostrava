@@ -148,6 +148,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .cta .btn.solid:hover{filter:brightness(1.06)}
 @keyframes orbit{to{--ang:360deg}}
 @media (prefers-reduced-motion:reduce){.cta .btn::before{animation:none}}
+.cf-meta div{display:block}
 </style>
 
 <div class="wrap">
@@ -216,30 +217,30 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   <div class="cf" id="cf">
     <div class="cf-glow" aria-hidden="true"></div>
     <div class="cf-stage">
-      <a class="cf-card" href="treneri.html" data-glow="oklch(50% .16 32/.55)"><span class="cf-panel">
+      <div class="cf-card" data-href="treneri.html" data-glow="oklch(50% .16 32/.55)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">01</span></span>
-        <span class="cf-meta"><strong>Trenéři</strong><em>Kdo tě povede</em></span>
-      </span></a>
-      <a class="cf-card" href="treninky.html" data-glow="oklch(42% .15 22/.55)"><span class="cf-panel">
+        <span class="cf-meta"><div><strong>Trenéři</strong><em>Kdo tě povede</em></div></span>
+      </span></div>
+      <div class="cf-card" data-href="treninky.html" data-glow="oklch(42% .15 22/.55)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">02</span></span>
-        <span class="cf-meta"><strong>Tréninky</strong><em>Skupiny a rozvrh</em></span>
-      </span></a>
-      <a class="cf-card" href="#" data-glow="oklch(46% .18 25/.55)"><span class="cf-panel">
+        <span class="cf-meta"><div><strong>Tréninky</strong><em>Skupiny a rozvrh</em></div></span>
+      </span></div>
+      <div class="cf-card" data-href="#" data-glow="oklch(46% .18 25/.55)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">03</span></span>
-        <span class="cf-meta"><strong>Zápasy</strong><em>Výsledky a turnaje</em></span>
-      </span></a>
-      <a class="cf-card" href="#" data-glow="oklch(38% .16 18/.5)"><span class="cf-panel">
+        <span class="cf-meta"><div><strong>Zápasy</strong><em>Výsledky a turnaje</em></div></span>
+      </span></div>
+      <div class="cf-card" data-href="#" data-glow="oklch(38% .16 18/.5)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">04</span></span>
-        <span class="cf-meta"><strong>Galerie</strong><em>Z ringu i ze zákulisí</em></span>
-      </span></a>
-      <a class="cf-card" href="facebook.html" data-glow="oklch(48% .17 28/.5)"><span class="cf-panel">
+        <span class="cf-meta"><div><strong>Galerie</strong><em>Z ringu i ze zákulisí</em></div></span>
+      </span></div>
+      <div class="cf-card" data-href="facebook.html" data-glow="oklch(48% .17 28/.5)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">05</span></span>
-        <span class="cf-meta"><strong>Facebook</strong><em>Co je nového</em></span>
-      </span></a>
-      <a class="cf-card" href="kontakt.html" data-glow="oklch(36% .13 20/.5)"><span class="cf-panel">
+        <span class="cf-meta"><div><strong>Facebook</strong><em>Co je nového</em></div></span>
+      </span></div>
+      <div class="cf-card" data-href="kontakt.html" data-glow="oklch(36% .13 20/.5)"><span class="cf-panel">
         <span class="cf-art"><span class="cf-num">06</span></span>
-        <span class="cf-meta"><strong>Kontakt</strong><em>Kde nás najdeš</em></span>
-      </span></a>
+        <span class="cf-meta"><div><strong>Kontakt</strong><em>Kde nás najdeš</em></div></span>
+      </span></div>
     </div>
     <div class="cf-nav">
       <button class="cf-prev" type="button" aria-label="Předchozí">&#8249;</button>
@@ -264,7 +265,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921b">
+<link rel="stylesheet" href="carousel.css?v=20260921c">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -479,8 +480,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   });
   if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
     .to(chars,{keyframes:[
-      {yPercent:-7,color:'#ded7cc',duration:.26,ease:'sine.inOut'},
-      {yPercent:0,color:'#f4f1ec',duration:.5,ease:'sine.inOut'}
+      {yPercent:-7,opacity:.42,duration:.26,ease:'sine.inOut'},
+      {yPercent:0,opacity:1,duration:.5,ease:'sine.inOut'}
     ],stagger:{each:.022}});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
@@ -522,6 +523,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921b"></script>
-<script src="carousel.js?v=20260921b" defer></script>
+<script type="module" src="glove3d.js?v=20260921c"></script>
+<script src="carousel.js?v=20260921c" defer></script>
 </html>
