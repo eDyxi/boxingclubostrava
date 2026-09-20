@@ -146,6 +146,20 @@
     document.body.appendChild(dbg);
   }
   function log(t) { if (dbg) dbg.textContent = t; }
+
+  // Karty jsou natocene ve 3D a prohlizec obcas pod kurzorem zadnou nenajde.
+  // Dohledame ji proto sami podle skutecne vykreslene plochy.
+  function cardAt(x, y) {
+    var best = -1, bestAbs = 99;
+    for (var k = 0; k < cards.length; k++) {
+      if (parseFloat(cards[k].style.opacity || '1') < .15) continue;
+      var r = cards[k].getBoundingClientRect();
+      if (x < r.left || x > r.right || y < r.top || y > r.bottom) continue;
+      var a = Math.abs(k - mid);
+      if (a < bestAbs) { bestAbs = a; best = k; }
+    }
+    return best;
+  }
   // Druha cesta pres click - kdyby pointerdown na nejakem zarizeni nedorazil.
   root.addEventListener('click', function (e) {
     var el = hit(e.target);
@@ -157,11 +171,13 @@
   root.addEventListener('pointerdown', function (e) {
     if (e.button && e.button !== 0) return;             // jen leve tlacitko
     var el = hit(e.target);
-    log('down: ' + (el ? el.className : 'mimo kartu'));
-    if (!el) return;
-    var card = el.classList.contains('cf-card') ? el : el.closest('.cf-card');
-    var i = cards.indexOf(card);
-    log('down karta ' + i + ', uprostred ' + mid);
+    var i = -1;
+    if (el) {
+      var card = el.classList.contains('cf-card') ? el : el.closest('.cf-card');
+      i = cards.indexOf(card);
+    }
+    if (i < 0) { i = cardAt(e.clientX, e.clientY); el = i >= 0 ? cards[i] : null; }
+    log('karta ' + i + ', uprostred ' + mid + (el && el.classList.contains('cf-go') ? ', tlacitko' : ''));
     if (i < 0) return;
 
     if (el.classList.contains('cf-go')) {
