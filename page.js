@@ -1,3 +1,33 @@
+// Rozklad nadpisu na pismena, aby se dal animovat stejne jako na hlavni strance.
+// Bez GSAP - vsechno jede pres CSS, kazde pismeno ma svoje poradi v promenne --i.
+(function () {
+  var h = document.querySelector('.intro h1');
+  if (!h) return;
+  var n = 0;
+  (function walk(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (x) {
+      if (x.nodeType === 3) {
+        if (!x.nodeValue.trim()) return;
+        var f = document.createDocumentFragment();
+        x.nodeValue.split(/(\s+)/).forEach(function (tok) {
+          if (!tok) return;
+          if (/^\s+$/.test(tok)) { f.appendChild(document.createTextNode(tok)); return; }
+          var w = document.createElement('span'); w.className = 'wd';
+          tok.split('').forEach(function (c) {
+            var sp = document.createElement('span'); sp.className = 'ch';
+            var it = document.createElement('i'); it.className = 'sh'; it.textContent = c;
+            sp.style.setProperty('--i', n); it.style.setProperty('--i', n); n++;
+            sp.appendChild(it); w.appendChild(sp);
+          });
+          f.appendChild(w);
+        });
+        node.replaceChild(f, x);
+      } else if (x.nodeType === 1 && x.tagName !== 'BR') walk(x);
+    });
+  })(h);
+  document.documentElement.classList.add('js');
+})();
+
 // Bile svetlo sleduje kurzor. Na dotykovych zarizenich se nezapina.
 (function () {
   var t = document.querySelector('.torch');
