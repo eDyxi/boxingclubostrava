@@ -135,6 +135,17 @@
   // Aktivace na pointerdown. V okamziku stisku je prvek pod kurzorem jisty,
   // takze na nasledny pohyb uz nezalezi.
   function hit(t) { return t && t.closest ? t.closest('.cf-go, .cf-card') : null; }
+
+  // Vypis pro ladeni: pridej ?dbg do adresy a v rohu uvidis, co stisk zasahl.
+  var dbg = null;
+  if (location.search.indexOf('dbg') > -1) {
+    dbg = document.createElement('div');
+    dbg.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9999;background:#000c;' +
+      'color:#0f0;font:12px monospace;padding:6px 9px;border-radius:6px;pointer-events:none';
+    dbg.textContent = 'karusel pripraven, karet: ' + cards.length;
+    document.body.appendChild(dbg);
+  }
+  function log(t) { if (dbg) dbg.textContent = t; }
   // Druha cesta pres click - kdyby pointerdown na nejakem zarizeni nedorazil.
   root.addEventListener('click', function (e) {
     var el = hit(e.target);
@@ -146,9 +157,11 @@
   root.addEventListener('pointerdown', function (e) {
     if (e.button && e.button !== 0) return;             // jen leve tlacitko
     var el = hit(e.target);
+    log('down: ' + (el ? el.className : 'mimo kartu'));
     if (!el) return;
     var card = el.classList.contains('cf-card') ? el : el.closest('.cf-card');
     var i = cards.indexOf(card);
+    log('down karta ' + i + ', uprostred ' + mid);
     if (i < 0) return;
 
     if (el.classList.contains('cf-go')) {
