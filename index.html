@@ -105,13 +105,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh}
+.outro{position:relative;z-index:5;background:var(--paper);border-top:1px solid var(--line);padding:16vh var(--g) 12vh;text-align:center}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
   padding-top:24px;border-top:1px solid var(--line)}
 .affil img{width:46px;height:auto;opacity:.75}
 .affil span{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
-.outro h2{font-size:clamp(34px,7vw,68px);font-weight:800;line-height:1.02;letter-spacing:-.03em;text-transform:uppercase;max-width:14ch}
-.outro p{color:var(--ink-dim);margin-top:20px;max-width:42ch}
+.outro h2{font-size:clamp(34px,7vw,68px);font-weight:800;line-height:1.02;letter-spacing:-.03em;text-transform:uppercase;max-width:18ch;margin-inline:auto}
+.outro p{color:var(--ink-dim);margin-top:20px;max-width:52ch;margin-inline:auto}
 .contact{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;gap:24px 56px;flex-wrap:wrap}
 .contact a{color:var(--ink);text-decoration:none;font-size:clamp(20px,3.4vw,30px);font-weight:600}
 .contact .l{display:block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;font-weight:600}
@@ -150,16 +150,21 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude;animation:orbit 4.2s linear infinite;pointer-events:none}
 /* zare: tentyz prechod, jen rozostreny a bez masky, aby svitil ven */
-.cta .btn::after{content:'';position:absolute;inset:-4px;border-radius:999px;z-index:-1;
+.cta .btn::after{content:'';position:absolute;inset:-3px;border-radius:999px;padding:4px;z-index:-1;
   background:conic-gradient(from var(--ang),
     oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
     oklch(72% .20 27/.45) 225deg,oklch(96% .06 30/.9) 285deg,
     oklch(72% .20 27/.45) 345deg,oklch(100% 0 0/0) 360deg);
-  filter:blur(6px);opacity:.7;animation:orbit 4.2s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;filter:blur(5px);opacity:.75;animation:orbit 4.2s linear infinite;
   transition:opacity .35s ease,filter .35s ease;pointer-events:none}
 .cta .btn:nth-of-type(2)::before,.cta .btn:nth-of-type(2)::after{animation-delay:-2.1s}
-.cta .btn:hover{transform:scale(1.06);background:oklch(97% .008 60/.12)}
-.cta .btn:hover::after{opacity:1;filter:blur(9px)}
+.cta .btn:nth-of-type(2)::after{inset:-2px;padding:3px;filter:blur(3px);opacity:.55}
+.cta .btn:nth-of-type(2):hover::after{opacity:.75}
+/* hover: jen o kus dopredu a mirne tmavsi vypln, zadne rozzareni */
+.cta .btn:hover{transform:scale(1.03) translateY(-2px);background:oklch(20% .02 30/.55)}
+.cta .btn:hover::after{opacity:.9}
 @keyframes orbit{to{--ang:360deg}}
 
 /* Dychani zare. drop-shadow kopiruje tvar pismen, takze ho maska slova neorizne
@@ -175,6 +180,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   .cta .btn::before,.cta .btn::after{animation:none}
   .eyebrow,#p0 h1 em{animation:none}
 }
+
+.outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(18px,4vw,54px)}
+.outro .contact div{text-align:center}
+.outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:clamp(16px,3.4vw,40px);border-top:1px solid var(--line);margin-top:clamp(40px,7vw,72px);padding-top:28px}
+.outro .affil .l{flex-basis:100%;margin-bottom:6px}
+.outro .affil img{height:clamp(28px,4vw,42px);width:auto;opacity:.5;filter:grayscale(1);
+  transition:opacity .3s ease,filter .3s ease}
+.outro .affil a:hover img{opacity:1;filter:none}
 </style>
 
 <div class="wrap">
@@ -281,17 +295,24 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   <p>Nemusíš se hlásit dopředu. Přijď v tričku a botách, zbytek vyřešíme na místě.</p>
   <div class="contact">
     <div><span class="l">Telefon</span><a href="tel:+420733142899">+420 733 142 899</a></div>
-    <div><span class="l">Kde</span><a href="#kontakt">ZŠ Nádražní 117</a></div>
+    <div><span class="l">Napiš</span><a href="mailto:dalibor.frohlich@boxingostrava.cz">Dalibor Fröhlich</a></div>
+    <div><span class="l">Kde</span><a href="kontakt.html">ZŠ Nádražní 117</a></div>
+    <div><span class="l">Rozpis</span><a href="treninky.html">Kdy se trénuje</a></div>
+    <div><span class="l">Sleduj</span><a href="facebook.html">Facebook klubu</a></div>
   </div>
   <div class="affil">
-    <img src="logo-cba.png" alt="" width="512" height="512" loading="lazy" decoding="async">
-    <span>Člen České boxerské asociace</span>
+    <span class="l">Podporují nás</span>
+    <a href="http://www.czechboxing.cz/" target="_blank" rel="noopener"><img src="logo-cba.png" alt="Česká boxerská asociace" loading="lazy"></a>
+    <a href="https://www.msk.cz/" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2024/01/ms-kraj.jpg" alt="Moravskoslezský kraj" loading="lazy"></a>
+    <a href="https://www.ostrava.cz/cs" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/ostrava.jpg" alt="Ostrava" loading="lazy"></a>
+    <a href="https://moap.ostrava.cz/cs" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/moap.png" alt="Moravská Ostrava a Přívoz" loading="lazy"></a>
+    <a href="http://www.kubicapartners.cz/portal/home/" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/kubica.png" alt="Kubica Partners" loading="lazy"></a>
   </div>
 </section>
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921f">
+<link rel="stylesheet" href="carousel.css?v=20260921g">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -556,6 +577,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921f"></script>
-<script src="carousel.js?v=20260921f" defer></script>
+<script type="module" src="glove3d.js?v=20260921g"></script>
+<script src="carousel.js?v=20260921g" defer></script>
 </html>
