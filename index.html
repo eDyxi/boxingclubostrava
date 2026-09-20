@@ -199,13 +199,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* Pozadi za rozcestnikem: stejne plovouci cervene plochy jako na podstrankach. */
 .rozc{position:relative;overflow:hidden;
-  background:linear-gradient(to bottom,var(--paper) 0%,oklch(11.5% .018 28) 38%,
-    oklch(14% .042 26) 78%,oklch(16% .055 25) 100%)}
+  background:linear-gradient(to bottom,var(--paper) 0%,var(--paper) 26%,
+    oklch(11.5% .018 28) 48%,oklch(14% .042 26) 80%,oklch(16% .055 25) 100%)}
 .rozc>.field{position:absolute;inset:0;z-index:0;pointer-events:none}
 /* Horni okraj rozcestniku zacina v barve hero a cervene plochy z ni teprve vyplynou. */
-.rozc::before{content:'';position:absolute;left:0;right:0;top:0;height:46vh;z-index:0;
-  pointer-events:none;background:linear-gradient(to bottom,var(--paper) 0%,
-    oklch(11% .014 30/.92) 40%,oklch(11% .014 30/.5) 72%,transparent 100%)}
+.rozc::before{content:'';position:absolute;left:0;right:0;top:0;height:62vh;z-index:0;
+  pointer-events:none;background:linear-gradient(to bottom,var(--paper) 0%,var(--paper) 30%,
+    oklch(11% .014 30/.9) 56%,oklch(11% .014 30/.45) 80%,transparent 100%)}
 .rozc>.field i{position:absolute;display:block;border-radius:50%;filter:blur(100px);opacity:.16}
 .rozc>.field i:nth-child(1){width:52vw;aspect-ratio:1;left:-8vw;top:-14vh;
   background:oklch(45% .17 25);animation:drift1 26s ease-in-out infinite}
@@ -356,7 +356,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921l">
+<link rel="stylesheet" href="carousel.css?v=20260921m">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -621,8 +621,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921l"></script>
-<script src="carousel.js?v=20260921l" defer></script>
+<script type="module" src="glove3d.js?v=20260921m"></script>
+<script src="carousel.js?v=20260921m" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
