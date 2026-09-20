@@ -607,4 +607,22 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 </script>
 <script type="module" src="glove3d.js?v=20260921i"></script>
 <script src="carousel.js?v=20260921i" defer></script>
+<script>
+// Bile svetlo za kurzorem v posledni sekci.
+(function(){
+  var o=document.querySelector('.outro'), t=o&&o.querySelector('.torch');
+  if(!t||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var x=0,y=0,cx=0,cy=0,raf=0,on=false;
+  function frame(){
+    cx+=(x-cx)*.14; cy+=(y-cy)*.14;
+    t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
+    if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
+  }
+  o.addEventListener('mousemove',function(e){
+    var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
+    on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
+  },{passive:true});
+  o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
+})();
+</script>
 </html>
