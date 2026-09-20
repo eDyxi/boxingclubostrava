@@ -50,6 +50,7 @@
         if ((c.dataset.href || '').indexOf('http') === 0) { btn.target = '_blank'; btn.rel = 'noopener'; }
       }
       btn.className = 'cf-go';
+      btn.addEventListener('click', function (e) { e.stopPropagation(); });
       meta.appendChild(btn);
     }
     var d = document.createElement('i');
@@ -132,12 +133,36 @@
   // aby ho nemohlo nic po ceste spolknout.
   // Na prostredni karte, ktera je obycejny odkaz, nedelame NIC - prechod si
   // vyridi prohlizec sam. Zadny preventDefault, zadne location.assign.
-  cards.forEach(function (c, i) {
-    c.addEventListener('click', function () {
-      if (i !== mid) { go(i); return; }
-      if (EXPAND) { opened ? closeCard() : openCard(i); }
-    });
+  // Na desktopu se karta naklani za kurzorem. Kdyz se pohne mezi stiskem a
+  // pustenim tlacitka, prohlizec uz udalost click nevystreli - proto prekliky
+  // fungovaly na mobilu a na PC ne. Resime to dvema zpusoby zaroven:
+  // 1) behem stisku kartou nehybeme, 2) prechod vyhodnocujeme na pointerup.
+  var pressed = false, downEl = null;
+  root.addEventListener('pointerdown', function () { pressed = true; });
+  addEventListener('pointerup', function () {
+    setTimeout(function () { pressed = false; }, 90);
   });
+
+  function hit(t) { return t && t.closest ? t.closest('.cf-go, .cf-card') : null; }
+  document.addEventListener('pointerdown', function (e) { downEl = hit(e.target); }, true);
+  document.addEventListener('pointerup', function (e) {
+    var up = hit(e.target), el = downEl;
+    downEl = null;
+    if (!el || el !== up) return;                       // stisk a pusteni na jinem miste
+    var card = el.classList.contains('cf-card') ? el : el.closest('.cf-card');
+    var i = cards.indexOf(card);
+    if (i < 0) return;
+    if (el.classList.contains('cf-go')) {
+      if (EXPAND) { openCard(i); return; }
+      var h = el.getAttribute('href');
+      if (!h || h === '#') return;
+      if (el.getAttribute('target') === '_blank') window.open(h, '_blank', 'noopener');
+      else window.location.href = h;
+      return;
+    }
+    if (i !== mid) { go(i); return; }
+    if (EXPAND) { opened ? closeCard() : openCard(i); }
+  }, true);
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
   addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
@@ -152,7 +177,7 @@
     var m = cards[mid];
     m.style.setProperty('--gx', ((nx + 1) / 2 * 100).toFixed(0) + '%');
     m.style.setProperty('--gy', ((ny + 1) / 2 * 100).toFixed(0) + '%');
-    if (!dragging) render();
+    if (!dragging && !pressed) render();
   }, { passive: true });
 
   if (HOVER) root.addEventListener('mouseleave', function () { tiltX = tiltY = 0; render(); });
@@ -164,20 +189,6 @@
   });
   if (prevBtn) prevBtn.addEventListener('click', function () { go(mid - 1); });
   if (nextBtn) nextBtn.addEventListener('click', function () { go(mid + 1); });
-
-  // POSLEDNI POJISTKA. Prechod resime na urovni dokumentu v zachytavaci fazi,
-  // tedy driv, nez se k udalosti dostane cokoli jineho. Kdyby nekde v strance
-  // byl posluchac, ktery klik rusi, tohle se provede pred nim.
-  document.addEventListener('click', function (e) {
-    var b = e.target && e.target.closest ? e.target.closest('.cf-go') : null;
-    if (!b || b.tagName !== 'A') return;
-    var h = b.getAttribute('href');
-    if (!h || h === '#') return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (b.getAttribute('target') === '_blank') window.open(h, '_blank', 'noopener');
-    else window.location.href = h;
-  }, true);
 
   addEventListener('resize', render, { passive: true });
   render();
