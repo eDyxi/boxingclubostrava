@@ -32,6 +32,26 @@
   cards.forEach(function (c, i) {
     var p = c.querySelector('.cf-panel');
     var g = document.createElement('span'); g.className = 'cf-glare'; p.appendChild(g);
+
+    // Tlacitko vedle popisku. Samostatny odkaz, na kterem neni nic, co by klik
+    // mohlo zachytit - proto by prekliky mely fungovat vzdycky.
+    var meta = c.querySelector('.cf-meta');
+    if (meta) {
+      var btn;
+      if (EXPAND) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = c.dataset.cta || 'Profil';
+        btn.addEventListener('click', function (e) { e.stopPropagation(); openCard(i); });
+      } else {
+        btn = document.createElement('a');
+        btn.setAttribute('href', c.dataset.href || '#');
+        btn.textContent = c.dataset.cta || 'Otevřít';
+        if ((c.dataset.href || '').indexOf('http') === 0) { btn.target = '_blank'; btn.rel = 'noopener'; }
+      }
+      btn.className = 'cf-go';
+      meta.appendChild(btn);
+    }
     var d = document.createElement('i');
     d.addEventListener('click', function () { go(i); });
     dotsBox.appendChild(d);
@@ -113,9 +133,9 @@
   // Na prostredni karte, ktera je obycejny odkaz, nedelame NIC - prechod si
   // vyridi prohlizec sam. Zadny preventDefault, zadne location.assign.
   cards.forEach(function (c, i) {
-    c.addEventListener('click', function (e) {
-      if (i !== mid) { e.preventDefault(); go(i); return; }
-      if (EXPAND) { e.preventDefault(); opened ? closeCard() : openCard(i); }
+    c.addEventListener('click', function () {
+      if (i !== mid) { go(i); return; }
+      if (EXPAND) { opened ? closeCard() : openCard(i); }
     });
   });
 
