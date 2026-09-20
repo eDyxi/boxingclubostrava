@@ -119,3 +119,23 @@
   .cf-on.is-open .cf-detail{translate:0 0}
   .cf-on.is-open .is-mid{opacity:.25!important}
 }
+
+/* ---------- tlacitko na karte ---------- */
+.cf-meta{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.cf-meta>div{min-width:0}
+.cf-go{position:relative;flex:0 0 auto;isolation:isolate;cursor:pointer;
+  display:inline-block;text-decoration:none;color:var(--ink);
+  font:inherit;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  border:2px solid oklch(97% .008 60/.9);border-radius:999px;padding:9px 15px;
+  background:transparent;transition:background .3s ease}
+.cf-go:hover{background:oklch(97% .008 60/.14)}
+.cf-go::before{content:'';position:absolute;inset:-2px;border-radius:999px;padding:2px;
+  background:conic-gradient(from var(--ang),transparent 0 56%,
+    oklch(100% 0 0) 72%,oklch(78% .17 27) 84%,transparent 90%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;animation:orbit 3.2s linear infinite;pointer-events:none;opacity:0;
+  transition:opacity .35s ease}
+.cf-on .is-mid .cf-go::before{opacity:1}
+.cf-card{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.cf-go::before{animation:none}}
