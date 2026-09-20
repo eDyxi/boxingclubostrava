@@ -67,19 +67,9 @@ body.fx .p.r{left:auto;right:var(--g);text-align:right}
 body.fx .p.r p{margin-left:auto}
 body.fx #p0{opacity:1}
 
-.wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.14em;margin-bottom:-.14em}
+.wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding:.24em 0 .14em;margin:-.24em 0 -.14em}
 .p h1,.p h2{text-shadow:0 0 .5em oklch(45% .17 25/.45),0 3px 24px oklch(6% .02 30/.85)}
 .p{position:relative}
-/* prejezd svetla pres text, jednou za sedm sekund */
-.p::after,#stats::after{content:'';position:absolute;inset:-14% -8%;pointer-events:none;z-index:2;
-  background:linear-gradient(104deg,transparent 40%,oklch(100% 0 0/.20) 47%,
-    oklch(100% 0 0/.06) 52%,transparent 60%);
-  background-size:320% 100%;background-position:130% 0;
-  mix-blend-mode:screen;animation:sunray 7s ease-in-out infinite}
-#stats{position:relative}
-#stats::after{animation-delay:2.4s}
-@keyframes sunray{0%,64%{background-position:130% 0}100%{background-position:-50% 0}}
-
 /* cervene eyebrow bylo na videu skoro neviditelne */
 .eyebrow{font-size:12px;font-weight:800;letter-spacing:.24em;color:oklch(74% .20 27);
   text-shadow:0 0 .8em oklch(66% .21 26/.75),0 2px 10px oklch(6% .02 30/.9)}
@@ -87,10 +77,21 @@ body.fx #p0{opacity:1}
 .fine{color:oklch(66% .016 45)}
 
 /* tlacitka: obrys a kulate rohy */
-.btn{border:1px solid oklch(66% .21 26/.5);border-radius:999px;padding:13px 26px}
-.btn:hover{border-color:oklch(74% .20 27);background:oklch(66% .21 26/.10)}
-.btn.solid{border-color:transparent;border-radius:999px}
-.btn.solid:hover{filter:brightness(1.08)}
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+.btn{position:relative;border:2px solid oklch(97% .008 60/.92);border-radius:999px;
+  padding:14px 28px;isolation:isolate}
+.btn::before{content:'';position:absolute;inset:-2px;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--ang),transparent 0 58%,
+    oklch(100% 0 0) 72%,oklch(72% .21 27) 84%,transparent 90%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;animation:orbit 3.4s linear infinite;pointer-events:none}
+.btn:nth-of-type(2)::before{animation-delay:-1.7s}
+.btn:hover{background:oklch(97% .008 60/.10)}
+.btn.solid{border-color:oklch(100% 0 0)}
+.btn.solid:hover{filter:brightness(1.06)}
+@keyframes orbit{to{--ang:360deg}}
+@media (prefers-reduced-motion:reduce){.btn::before{animation:none}}
 .ch{display:inline-block}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
@@ -257,7 +258,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css">
+<link rel="stylesheet" href="carousel.css?v=20260921">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -462,6 +463,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // dychani hlavniho nadpisu: vlna po slovech - masky se hybou cele, takze nic neorezavaji
   gsap.to('.p,#stats',{scale:1.008,transformOrigin:'left center',duration:5.2,
     ease:'sine.inOut',yoyo:true,repeat:-1});
+
+  // Odlesk jede po jednotlivych pismenech, ne jako svetly obdelnik pres panel.
+  // Kurzivni slovo v headlinu vynechavame, aby si udrzelo svou barvu.
+  var chars=gsap.utils.toArray('.p h1 .ch, .p h2 .ch').filter(function(el){
+    return !el.closest('em');
+  });
+  if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.4,delay:2.2})
+    .to(chars,{keyframes:[
+      {yPercent:-17,scale:1.06,color:'oklch(100% 0 0)',duration:.17,ease:'power3.out'},
+      {yPercent:0,scale:1,color:'oklch(96% .008 60)',duration:.44,ease:'power2.inOut'}
+    ],stagger:{each:.017}});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
@@ -502,6 +514,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js"></script>
-<script src="carousel.js" defer></script>
+<script type="module" src="glove3d.js?v=20260921"></script>
+<script src="carousel.js?v=20260921" defer></script>
 </html>
