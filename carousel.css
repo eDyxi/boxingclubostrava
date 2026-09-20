@@ -139,3 +139,22 @@
 .cf-on .is-mid .cf-go::before{opacity:1}
 .cf-card{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.cf-go::before{animation:none}}
+
+/* tlacitko na karte: stejny svetelny mec, jen mensi */
+.cf-go{transition:transform .35s cubic-bezier(.2,.9,.3,1),background .3s ease}
+.cf-go::before{background:conic-gradient(from var(--ang),
+    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 145deg,
+    oklch(72% .20 27/.35) 220deg,oklch(94% .08 30/.9) 282deg,
+    oklch(72% .20 27/.35) 348deg,oklch(100% 0 0/0) 360deg);
+  animation-duration:4.2s}
+.cf-go::after{content:'';position:absolute;inset:-7px;border-radius:999px;z-index:-1;
+  background:conic-gradient(from var(--ang),
+    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
+    oklch(72% .20 27/.5) 228deg,oklch(96% .06 30/.95) 285deg,
+    oklch(72% .20 27/.5) 344deg,oklch(100% 0 0/0) 360deg);
+  filter:blur(9px);opacity:0;animation:orbit 4.2s linear infinite;
+  transition:opacity .35s ease,filter .35s ease;pointer-events:none}
+.cf-on .is-mid .cf-go::after{opacity:.8}
+.cf-go:hover{transform:scale(1.07)}
+.cf-on .is-mid .cf-go:hover::after{opacity:1;filter:blur(14px)}
+@media (prefers-reduced-motion:reduce){.cf-go::after{animation:none}}
