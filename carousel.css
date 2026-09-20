@@ -126,7 +126,7 @@
 .cf-go{position:relative;flex:0 0 auto;isolation:isolate;cursor:pointer;
   display:inline-block;text-decoration:none;color:var(--ink);
   font:inherit;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
-  border:2px solid oklch(97% .008 60/.9);border-radius:999px;padding:9px 15px;
+  border:1px solid oklch(97% .008 60/.8);border-radius:999px;padding:8px 14px;
   background:transparent;transition:background .3s ease}
 .cf-go:hover{background:oklch(97% .008 60/.14)}
 .cf-go::before{content:'';position:absolute;inset:-2px;border-radius:999px;padding:2px;
@@ -143,23 +143,23 @@
 /* tlacitko na karte: prstencova zare. Maska nesmi byt ostra jako u obrysu,
    jinak by orizla i rozostreni a glow by zmizel - proto mekky radialni prechod. */
 .cf-go{transition:transform .3s cubic-bezier(.2,.9,.3,1),box-shadow .3s ease}
-.cf-go::before{background:conic-gradient(from var(--ang),
+  .cf-go::before{padding:1px;background:conic-gradient(from var(--ang),
     oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
     oklch(72% .20 27/.4) 225deg,oklch(96% .06 30/.95) 285deg,
     oklch(72% .20 27/.4) 345deg,oklch(100% 0 0/0) 360deg);
   animation-duration:4.2s}
-.cf-go::after{content:'';position:absolute;inset:-7px;border-radius:999px;z-index:-1;
+.cf-go::after{content:'';position:absolute;inset:-4px;border-radius:999px;padding:4px;z-index:-1;
   background:conic-gradient(from var(--ang),
     oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
     oklch(72% .20 27/.55) 228deg,oklch(96% .06 30/1) 285deg,
     oklch(72% .20 27/.55) 344deg,oklch(100% 0 0/0) 360deg);
-  -webkit-mask:radial-gradient(closest-side,transparent 52%,#000 82%);
-  mask:radial-gradient(closest-side,transparent 52%,#000 82%);
-  filter:blur(6px);opacity:0;animation:orbit 4.2s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;filter:blur(3px);opacity:0;animation:orbit 4.2s linear infinite;
   transition:opacity .3s ease,filter .3s ease;pointer-events:none}
 .cf-on .is-mid .cf-go::after{opacity:.9}
 .cf-go:hover{transform:scale(1.03);box-shadow:inset 0 0 0 1px oklch(100% 0 0/.9)}
-.cf-on .is-mid .cf-go:hover::after{filter:blur(9px)}
+.cf-on .is-mid .cf-go:hover::after{filter:blur(5px)}
 @media (prefers-reduced-motion:reduce){.cf-go::after{animation:none}}
 
 /* naklon cele sceny za kurzorem */
