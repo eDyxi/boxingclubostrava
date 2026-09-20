@@ -132,23 +132,45 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* Tlacitka az uplne na konci, aby je puvodni pravidla neprebila zpatky na hranaty tvar. */
 @property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
-.cta .btn{position:relative;isolation:isolate;overflow:visible;
+.cta .btn{position:relative;isolation:isolate;
   border:3px solid oklch(97% .008 60/.95) !important;border-radius:999px !important;
-  padding:15px 30px !important}
+  padding:15px 30px !important;
+  transition:transform .35s cubic-bezier(.2,.9,.3,1),background .35s ease}
+/* obrys: jeden plynuly prechod, zadne kratke carky */
 .cta .btn::before{content:'';position:absolute;inset:-3px;border-radius:999px;padding:3px;
-  background:conic-gradient(from var(--ang),transparent 0 60%,
-    oklch(100% 0 0) 74%,oklch(88% .02 60) 84%,transparent 90%);
+  background:conic-gradient(from var(--ang),
+    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 140deg,
+    oklch(72% .20 27/.35) 215deg,oklch(92% .10 30/.85) 262deg,
+    oklch(100% 0 0/1) 285deg,oklch(92% .10 30/.85) 308deg,
+    oklch(72% .20 27/.35) 350deg,oklch(100% 0 0/0) 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;animation:orbit 3.6s linear infinite;pointer-events:none}
-.cta .btn:nth-of-type(2)::before{animation-delay:-1.8s;
-  background:conic-gradient(from var(--ang),transparent 0 60%,
-    oklch(100% 0 0) 74%,oklch(78% .17 27) 84%,transparent 90%)}
-.cta .btn:hover{background:oklch(97% .008 60/.12)}
-.cta .btn.solid:hover{filter:brightness(1.06)}
+  mask-composite:exclude;animation:orbit 4.2s linear infinite;pointer-events:none}
+/* zare: tentyz prechod, jen rozostreny a bez masky, aby svitil ven */
+.cta .btn::after{content:'';position:absolute;inset:-9px;border-radius:999px;z-index:-1;
+  background:conic-gradient(from var(--ang),
+    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
+    oklch(72% .20 27/.45) 225deg,oklch(96% .06 30/.9) 285deg,
+    oklch(72% .20 27/.45) 345deg,oklch(100% 0 0/0) 360deg);
+  filter:blur(11px);opacity:.75;animation:orbit 4.2s linear infinite;
+  transition:opacity .35s ease,filter .35s ease;pointer-events:none}
+.cta .btn:nth-of-type(2)::before,.cta .btn:nth-of-type(2)::after{animation-delay:-2.1s}
+.cta .btn:hover{transform:scale(1.06);background:oklch(97% .008 60/.12)}
+.cta .btn:hover::after{opacity:1;filter:blur(16px)}
 @keyframes orbit{to{--ang:360deg}}
-@media (prefers-reduced-motion:reduce){.cta .btn::before{animation:none}}
-.cf-meta div{display:block}
+
+/* dychani zare u cervenych popisku */
+.eyebrow,#p0 h1 em{animation:dech 4.6s ease-in-out infinite}
+.p:nth-of-type(2) .eyebrow{animation-delay:-1.2s}
+.p:nth-of-type(3) .eyebrow{animation-delay:-2.4s}
+@keyframes dech{
+  0%,100%{text-shadow:0 0 .55em oklch(66% .21 26/.45),0 2px 10px oklch(6% .02 30/.9)}
+  50%{text-shadow:0 0 1.5em oklch(70% .22 27/.95),0 0 .35em oklch(80% .18 28/.6),0 2px 10px oklch(6% .02 30/.9)}
+}
+@media (prefers-reduced-motion:reduce){
+  .cta .btn::before,.cta .btn::after{animation:none}
+  .eyebrow,#p0 h1 em{animation:none}
+}
 </style>
 
 <div class="wrap">
@@ -265,7 +287,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921c">
+<link rel="stylesheet" href="carousel.css?v=20260921d">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -336,10 +358,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
     // klidove pozice se stridaji, text je vzdy na opacne strane
-    function inset(){return innerWidth*.10;}   // obe klidove pozice blize ke stredu
+    function inset(){return innerWidth*.10;}
+    // Leva strana potrebuje vetsi odsazeni - rukavice je u leveho okraje sirsi
+    // nez u praveho, protoze vychazi z 3D ramecku.
+    function insetL(){return innerWidth*.19;}
     var rest={
       R:function(){return mob?0:-inset();},
-      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);},
+      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-insetL(),120);},
       OUT:function(){return mob?0:gloveEl().offsetWidth*.6+innerWidth*.55;}   // uplne z obrazu, scena patri cislum
     };
     function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
@@ -523,6 +548,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921c"></script>
-<script src="carousel.js?v=20260921c" defer></script>
+<script type="module" src="glove3d.js?v=20260921d"></script>
+<script src="carousel.js?v=20260921d" defer></script>
 </html>
