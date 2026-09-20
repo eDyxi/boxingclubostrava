@@ -165,6 +165,20 @@
   if (prevBtn) prevBtn.addEventListener('click', function () { go(mid - 1); });
   if (nextBtn) nextBtn.addEventListener('click', function () { go(mid + 1); });
 
+  // POSLEDNI POJISTKA. Prechod resime na urovni dokumentu v zachytavaci fazi,
+  // tedy driv, nez se k udalosti dostane cokoli jineho. Kdyby nekde v strance
+  // byl posluchac, ktery klik rusi, tohle se provede pred nim.
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('.cf-go') : null;
+    if (!b || b.tagName !== 'A') return;
+    var h = b.getAttribute('href');
+    if (!h || h === '#') return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (b.getAttribute('target') === '_blank') window.open(h, '_blank', 'noopener');
+    else window.location.href = h;
+  }, true);
+
   addEventListener('resize', render, { passive: true });
   render();
 })();
