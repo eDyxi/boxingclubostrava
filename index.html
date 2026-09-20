@@ -77,22 +77,9 @@ body.fx #p0{opacity:1}
 .fine{color:oklch(66% .016 45)}
 
 /* tlacitka: obrys a kulate rohy */
-@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
-.btn{position:relative;border:2px solid oklch(97% .008 60/.92);border-radius:999px;
-  padding:14px 28px;isolation:isolate}
-.btn::before{content:'';position:absolute;inset:-2px;border-radius:inherit;padding:2px;
-  background:conic-gradient(from var(--ang),transparent 0 58%,
-    oklch(100% 0 0) 72%,oklch(72% .21 27) 84%,transparent 90%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;animation:orbit 3.4s linear infinite;pointer-events:none}
-.btn:nth-of-type(2)::before{animation-delay:-1.7s}
-.btn:hover{background:oklch(97% .008 60/.10)}
-.btn.solid{border-color:oklch(100% 0 0)}
-.btn.solid:hover{filter:brightness(1.06)}
-@keyframes orbit{to{--ang:360deg}}
-@media (prefers-reduced-motion:reduce){.btn::before{animation:none}}
+
 .ch{display:inline-block}
+.sh{display:inline-block;font-style:normal;will-change:transform}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 .p h2{font-size:clamp(26px,5.6vw,46px);font-weight:800;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;overflow-wrap:anywhere}
 .p p{color:var(--ink-dim);font-size:15px;max-width:44ch}
@@ -142,6 +129,25 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 }
 @media (min-width:701px) and (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(72svh,700px)} }
 @media (prefers-reduced-motion:reduce){ .bg video{display:none} }
+
+/* Tlacitka az uplne na konci, aby je puvodni pravidla neprebila zpatky na hranaty tvar. */
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+.cta .btn{position:relative;isolation:isolate;overflow:visible;
+  border:3px solid oklch(97% .008 60/.95) !important;border-radius:999px !important;
+  padding:15px 30px !important}
+.cta .btn::before{content:'';position:absolute;inset:-3px;border-radius:999px;padding:3px;
+  background:conic-gradient(from var(--ang),transparent 0 60%,
+    oklch(100% 0 0) 74%,oklch(88% .02 60) 84%,transparent 90%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;animation:orbit 3.6s linear infinite;pointer-events:none}
+.cta .btn:nth-of-type(2)::before{animation-delay:-1.8s;
+  background:conic-gradient(from var(--ang),transparent 0 60%,
+    oklch(100% 0 0) 74%,oklch(78% .17 27) 84%,transparent 90%)}
+.cta .btn:hover{background:oklch(97% .008 60/.12)}
+.cta .btn.solid:hover{filter:brightness(1.06)}
+@keyframes orbit{to{--ang:360deg}}
+@media (prefers-reduced-motion:reduce){.cta .btn::before{animation:none}}
 </style>
 
 <div class="wrap">
@@ -258,7 +264,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921">
+<link rel="stylesheet" href="carousel.css?v=20260921b">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -301,7 +307,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
             if(/^\s+$/.test(tok)){f.appendChild(document.createTextNode(tok));return;}
             var w=document.createElement('span'); w.className='wd';
             (mode==='char'?tok.split(''):[tok]).forEach(function(c){
-              var sp=document.createElement('span'); sp.className='ch'; sp.textContent=c; w.appendChild(sp);
+              var sp=document.createElement('span'); sp.className='ch';
+              var it=document.createElement('i'); it.className='sh'; it.textContent=c;
+              sp.appendChild(it); w.appendChild(sp);
             });
             f.appendChild(w);
           });
@@ -327,7 +335,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var mob=ctx.conditions.mob, unit=mob?'word':'char';
 
     // klidove pozice se stridaji, text je vzdy na opacne strane
-    function inset(){return innerWidth*.015;}   // prakticky az na okraj, tah co nejdelsi
+    function inset(){return innerWidth*.10;}   // obe klidove pozice blize ke stredu
     var rest={
       R:function(){return mob?0:-inset();},
       L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-inset(),120);},
@@ -466,14 +474,14 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   // Odlesk jede po jednotlivych pismenech, ne jako svetly obdelnik pres panel.
   // Kurzivni slovo v headlinu vynechavame, aby si udrzelo svou barvu.
-  var chars=gsap.utils.toArray('.p h1 .ch, .p h2 .ch').filter(function(el){
+  var chars=gsap.utils.toArray('.p h1 .sh, .p h2 .sh').filter(function(el){
     return !el.closest('em');
   });
-  if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.4,delay:2.2})
+  if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
     .to(chars,{keyframes:[
-      {yPercent:-17,scale:1.06,color:'oklch(100% 0 0)',duration:.17,ease:'power3.out'},
-      {yPercent:0,scale:1,color:'oklch(96% .008 60)',duration:.44,ease:'power2.inOut'}
-    ],stagger:{each:.017}});
+      {yPercent:-7,color:'#ded7cc',duration:.26,ease:'sine.inOut'},
+      {yPercent:0,color:'#f4f1ec',duration:.5,ease:'sine.inOut'}
+    ],stagger:{each:.022}});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
@@ -514,6 +522,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921"></script>
-<script src="carousel.js?v=20260921" defer></script>
+<script type="module" src="glove3d.js?v=20260921b"></script>
+<script src="carousel.js?v=20260921b" defer></script>
 </html>
