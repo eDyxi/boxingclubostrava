@@ -65,7 +65,7 @@
 /* ---------- ovladani ---------- */
 .cf-on .cf-nav{display:flex;align-items:center;justify-content:center;gap:14px;
   position:absolute;left:0;right:0;bottom:-6px;z-index:40;pointer-events:none}
-.cf-nav button,.cf-dots i{pointer-events:auto}
+.cf-nav button,.cf-dots i{pointer-events:auto;position:relative;z-index:45}
 .cf-nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
   background:oklch(15% .018 32);color:var(--ink);cursor:pointer;font-size:17px;line-height:1;
   transition:border-color .25s ease,color .25s ease}
