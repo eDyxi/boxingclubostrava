@@ -135,6 +135,14 @@
   // Aktivace na pointerdown. V okamziku stisku je prvek pod kurzorem jisty,
   // takze na nasledny pohyb uz nezalezi.
   function hit(t) { return t && t.closest ? t.closest('.cf-go, .cf-card') : null; }
+  // Druha cesta pres click - kdyby pointerdown na nejakem zarizeni nedorazil.
+  root.addEventListener('click', function (e) {
+    var el = hit(e.target);
+    if (!el || el.classList.contains('cf-go')) return;
+    var i = cards.indexOf(el);
+    if (i >= 0 && i !== mid) go(i);
+  });
+
   root.addEventListener('pointerdown', function (e) {
     if (e.button && e.button !== 0) return;             // jen leve tlacitko
     var el = hit(e.target);
