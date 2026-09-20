@@ -145,6 +145,7 @@
 
     if (el.classList.contains('cf-go')) {
       e.preventDefault();
+      if (i !== mid) { go(i); return; }          // z boku nejdriv doprostred
       if (EXPAND) { openCard(i); return; }
       var h = el.getAttribute('href');
       if (!h || h === '#') return;
@@ -163,12 +164,32 @@
   // a pustenim a prohlizec pak klik vubec nevystrelil - na mysi. Na dotyku se
   // nic takoveho nedelo, proto to na mobilu slo a na PC ne.
   // Odlesk se posouva, ale scenu uz neprekresluje.
+  // Naklon jde na celou scenu, ne na jednotlive karty. Karty si tim padem
+  // nemeni pozici vuci sobe a stisk vzdycky dopadne tam, kam ma.
+  var tX = 0, tY = 0, cX = 0, cY = 0, over = false, raf = 0;
+  function ease() {
+    cX += (tX - cX) * .07; cY += (tY - cY) * .07;
+    stage.style.transform = 'rotateX(' + cX.toFixed(2) + 'deg) rotateY(' + cY.toFixed(2) + 'deg)';
+    if (over || Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01) raf = requestAnimationFrame(ease);
+    else raf = 0;
+  }
   root.addEventListener('mousemove', function (e) {
-    var m = cards[mid]; if (!m) return;
     var r = root.getBoundingClientRect();
-    m.style.setProperty('--gx', (((e.clientX - r.left) / r.width) * 100).toFixed(0) + '%');
-    m.style.setProperty('--gy', (((e.clientY - r.top) / r.height) * 100).toFixed(0) + '%');
+    var nx = (e.clientX - r.left) / r.width, ny = (e.clientY - r.top) / r.height;
+    tY = (nx - .5) * 16;            // z leveho rohu do praveho
+    tX = (.5 - ny) * 10;
+    over = true;
+    var m = cards[mid];
+    if (m) {
+      m.style.setProperty('--gx', (nx * 100).toFixed(0) + '%');
+      m.style.setProperty('--gy', (ny * 100).toFixed(0) + '%');
+    }
+    if (!raf) raf = requestAnimationFrame(ease);
   }, { passive: true });
+  root.addEventListener('mouseleave', function () {
+    over = false; tX = 0; tY = 0;
+    if (!raf) raf = requestAnimationFrame(ease);
+  });
 
   // ---- klavesnice ----
   root.addEventListener('keydown', function (e) {
