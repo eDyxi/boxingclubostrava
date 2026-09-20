@@ -24,7 +24,6 @@
   // uprostred a krajni karty byly od zacatku uplne mimo zaber - nesly kliknout.
   var mid = 0;
   var drag = 0, dragging = false, startX = 0, moved = 0;
-  var tiltX = 0, tiltY = 0;
 
   root.classList.add('cf-on');
 
@@ -50,7 +49,7 @@
         if ((c.dataset.href || '').indexOf('http') === 0) { btn.target = '_blank'; btn.rel = 'noopener'; }
       }
       btn.className = 'cf-go';
-      btn.addEventListener('click', function (e) { e.stopPropagation(); });
+
       meta.appendChild(btn);
     }
     var d = document.createElement('i');
@@ -95,7 +94,7 @@
 
       if (abs < .5) {
         // prostredni karta: mirny naklon za kurzorem, jinak celem k divakovi
-        var rx = tiltX, ry = -off * 25 + tiltY;
+        var rx = 0, ry = -off * 25;
         t = 'translateX(' + (off * 80) + 'px) translateZ(0px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) scale(' + Math.max(.88, 1 - abs * .15) + ')';
         z = 30;
         f = 'brightness(1.05) drop-shadow(0 25px 45px oklch(6% .02 30/.6))';
@@ -133,26 +132,19 @@
   // aby ho nemohlo nic po ceste spolknout.
   // Na prostredni karte, ktera je obycejny odkaz, nedelame NIC - prechod si
   // vyridi prohlizec sam. Zadny preventDefault, zadne location.assign.
-  // Na desktopu se karta naklani za kurzorem. Kdyz se pohne mezi stiskem a
-  // pustenim tlacitka, prohlizec uz udalost click nevystreli - proto prekliky
-  // fungovaly na mobilu a na PC ne. Resime to dvema zpusoby zaroven:
-  // 1) behem stisku kartou nehybeme, 2) prechod vyhodnocujeme na pointerup.
-  var pressed = false, downEl = null;
-  root.addEventListener('pointerdown', function () { pressed = true; });
-  addEventListener('pointerup', function () {
-    setTimeout(function () { pressed = false; }, 90);
-  });
-
+  // Aktivace na pointerdown. V okamziku stisku je prvek pod kurzorem jisty,
+  // takze na nasledny pohyb uz nezalezi.
   function hit(t) { return t && t.closest ? t.closest('.cf-go, .cf-card') : null; }
-  document.addEventListener('pointerdown', function (e) { downEl = hit(e.target); }, true);
-  document.addEventListener('pointerup', function (e) {
-    var up = hit(e.target), el = downEl;
-    downEl = null;
-    if (!el || el !== up) return;                       // stisk a pusteni na jinem miste
+  root.addEventListener('pointerdown', function (e) {
+    if (e.button && e.button !== 0) return;             // jen leve tlacitko
+    var el = hit(e.target);
+    if (!el) return;
     var card = el.classList.contains('cf-card') ? el : el.closest('.cf-card');
     var i = cards.indexOf(card);
     if (i < 0) return;
+
     if (el.classList.contains('cf-go')) {
+      e.preventDefault();
       if (EXPAND) { openCard(i); return; }
       var h = el.getAttribute('href');
       if (!h || h === '#') return;
@@ -162,25 +154,21 @@
     }
     if (i !== mid) { go(i); return; }
     if (EXPAND) { opened ? closeCard() : openCard(i); }
-  }, true);
+  });
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
   addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
 
-  // ---- naklon za kurzorem + odlesk (jen prostredni karta, jen s mysi) ----
-  var HOVER = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (HOVER) root.addEventListener('mousemove', function (e) {
+  // Naklon za kurzorem je odstraneny. Kvuli nemu se karta hybala mezi stiskem
+  // a pustenim a prohlizec pak klik vubec nevystrelil - na mysi. Na dotyku se
+  // nic takoveho nedelo, proto to na mobilu slo a na PC ne.
+  // Odlesk se posouva, ale scenu uz neprekresluje.
+  root.addEventListener('mousemove', function (e) {
+    var m = cards[mid]; if (!m) return;
     var r = root.getBoundingClientRect();
-    var nx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2)));
-    var ny = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2)));
-    tiltX = -ny * 6; tiltY = nx * 8;
-    var m = cards[mid];
-    m.style.setProperty('--gx', ((nx + 1) / 2 * 100).toFixed(0) + '%');
-    m.style.setProperty('--gy', ((ny + 1) / 2 * 100).toFixed(0) + '%');
-    if (!dragging && !pressed) render();
+    m.style.setProperty('--gx', (((e.clientX - r.left) / r.width) * 100).toFixed(0) + '%');
+    m.style.setProperty('--gy', (((e.clientY - r.top) / r.height) * 100).toFixed(0) + '%');
   }, { passive: true });
-
-  if (HOVER) root.addEventListener('mouseleave', function () { tiltX = tiltY = 0; render(); });
 
   // ---- klavesnice ----
   root.addEventListener('keydown', function (e) {
