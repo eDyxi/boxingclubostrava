@@ -27,7 +27,11 @@ img,video{display:block;max-width:100%}
 .wrap{position:relative}
 body.fx .wrap{height:600vh}
 
+/* Spodek hero prechazi do barvy dalsi sekce, aby video nekoncilo hranou. */
 .hero{position:relative;overflow:hidden;padding:22vh var(--g) 12vh}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:34vh;z-index:3;
+  pointer-events:none;background:linear-gradient(to bottom,
+    oklch(11% .014 30/0) 0%,oklch(11% .014 30/.55) 52%,oklch(11% .014 30/.92) 82%,var(--paper) 100%)}
 body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
@@ -150,22 +154,22 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude;animation:orbit 4.2s linear infinite;pointer-events:none}
 /* zare: tentyz prechod, jen rozostreny a bez masky, aby svitil ven */
-.cta .btn::after{content:'';position:absolute;inset:-18px;border-radius:999px;z-index:-1;
+.cta .btn::after{content:'';position:absolute;inset:-11px;border-radius:999px;z-index:-1;
   background:conic-gradient(from var(--ang),
     oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
     oklch(72% .20 27/.45) 225deg,oklch(96% .06 30/.9) 285deg,
     oklch(72% .20 27/.45) 345deg,oklch(100% 0 0/0) 360deg);
   -webkit-mask:radial-gradient(closest-side,transparent 46%,#000 76%);
   mask:radial-gradient(closest-side,transparent 46%,#000 76%);
-  filter:blur(14px);opacity:1;animation:orbit 4.2s linear infinite;
+  filter:blur(10px);opacity:.95;animation:orbit 4.2s linear infinite;
   transition:opacity .35s ease,filter .35s ease;pointer-events:none}
 .cta .btn:nth-of-type(2)::before,.cta .btn:nth-of-type(2)::after{animation-delay:-2.1s}
-.cta .btn:nth-of-type(2)::after{inset:-12px;filter:blur(10px);opacity:.85}
+.cta .btn:nth-of-type(2)::after{inset:-8px;filter:blur(7px);opacity:.8}
 /* hover: prusvitne tlacitko jen zesili obrys, plne jen o kousek ztmavne */
 .cta .btn:hover{transform:scale(1.035) translateY(-2px);
   box-shadow:inset 0 0 0 1.5px oklch(100% 0 0/.95)}
 .cta .btn.solid:hover{box-shadow:none;filter:brightness(.88)}
-.cta .btn:hover::after{filter:blur(20px)}
+.cta .btn:hover::after{filter:blur(14px)}
 @keyframes orbit{to{--ang:360deg}}
 
 /* Dychani zare. drop-shadow kopiruje tvar pismen, takze ho maska slova neorizne
@@ -208,11 +212,14 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* Bile svetlo za kurzorem v posledni sekci. */
 .outro{overflow:hidden}
-.outro>.torch{position:absolute;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;
-  border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;z-index:0;
-  background:radial-gradient(circle closest-side,oklch(100% 0 0/.13),oklch(100% 0 0/0) 72%)}
-.outro.lit>.torch{opacity:1}
+.torch{position:absolute;left:0;top:0;width:560px;height:560px;margin:-280px 0 0 -280px;
+  border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;
+  background:radial-gradient(circle closest-side,oklch(100% 0 0/.15),oklch(100% 0 0/0) 72%)}
+.outro>.torch{z-index:0}
+.rozc>.torch{z-index:1}
+.outro.lit>.torch,.rozc.lit>.torch{opacity:1}
 .outro>*:not(.torch){position:relative;z-index:1}
+.rozc>.rozc-head,.rozc>.cf{position:relative;z-index:2}
 .outro .affil{padding-left:clamp(0px,2.5vw,40px)}
 @media (prefers-reduced-motion:reduce){.rozc>.field i{animation:none}}
 </style>
@@ -277,6 +284,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <section class="rozc" id="rozcestnik">
   <div class="field" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="torch" aria-hidden="true"></div>
   <div class="rozc-head">
     <div class="eyebrow">Kam dál</div>
     <h2>Vyber si, co tě zajímá.</h2>
@@ -340,7 +348,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921i">
+<link rel="stylesheet" href="carousel.css?v=20260921j">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -605,24 +613,27 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921i"></script>
-<script src="carousel.js?v=20260921i" defer></script>
+<script type="module" src="glove3d.js?v=20260921j"></script>
+<script src="carousel.js?v=20260921j" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
-  var o=document.querySelector('.outro'), t=o&&o.querySelector('.torch');
-  if(!t||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  var x=0,y=0,cx=0,cy=0,raf=0,on=false;
-  function frame(){
-    cx+=(x-cx)*.14; cy+=(y-cy)*.14;
-    t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
-    if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
-  }
-  o.addEventListener('mousemove',function(e){
-    var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
-    on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
-  },{passive:true});
-  o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
+  if(!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  ['.rozc','.outro'].forEach(function(sel){
+    var o=document.querySelector(sel), t=o&&o.querySelector('.torch');
+    if(!t) return;
+    var x=0,y=0,cx=0,cy=0,raf=0,on=false;
+    function frame(){
+      cx+=(x-cx)*.14; cy+=(y-cy)*.14;
+      t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
+      if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
+    }
+    o.addEventListener('mousemove',function(e){
+      var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
+      on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
+    },{passive:true});
+    o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
+  });
 })();
 </script>
 </html>
