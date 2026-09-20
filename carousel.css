@@ -91,10 +91,10 @@
   width:min(430px,44%);translate:0 -50%;opacity:0;pointer-events:none;
   transition:opacity .45s ease,translate .45s cubic-bezier(.2,.95,.35,1)}
 .cf-on.is-open .cf-detail{opacity:1;pointer-events:auto;translate:0 -50%}
-.cf-on .cf-detail{translate:26px -50%}
+.cf-on .cf-detail{translate:30px -50%}
 
 .cf-on.is-open .cf-card{pointer-events:none}
-.cf-on.is-open .cf-card:not(.is-mid){opacity:0!important}
+.cf-on.is-open .cf-card:not(.is-mid){opacity:0!important;pointer-events:none!important}
 .cf-on.is-open .is-mid{pointer-events:auto}
 
 .cf-d-img{width:74px;height:74px;border-radius:50%;background:oklch(18% .02 32) center/cover;
