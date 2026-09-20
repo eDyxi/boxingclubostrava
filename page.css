@@ -130,11 +130,41 @@ a.kart:hover::after{background-position:-40% 0}
 /* Na sirokem displeji sedi uvodni text vedle karuselu - misto tam je i s
    rozkliknutym profilem. Pod 1100 px se to vrati pod sebe. */
 @media (min-width:1100px){
-  .split{display:grid;grid-template-columns:minmax(260px,28%) 1fr;
-    gap:clamp(12px,1.6vw,28px);align-items:center;padding:clamp(24px,4vw,56px) var(--g) 0}
+  .split{display:grid;grid-template-columns:minmax(240px,24%) 1fr;
+    gap:clamp(4px,.8vw,16px);align-items:center;padding:clamp(24px,4vw,56px) var(--g) 0}
   .split>.intro{padding:0;max-width:none}
   .split>.rozc{padding:0}
   .split .cf-on{height:min(560px,72vh)}
   .split .cf-on .cf-detail{width:min(360px,40%)}
-  .split>.rozc{margin-left:clamp(-72px,-4vw,-20px)}   /* karusel o kus doleva, text ma svuj sloupec */
+  .split>.rozc{margin-left:clamp(-150px,-8vw,-50px)}   /* karusel co nejvic doleva, text ma svuj sloupec */
+}
+
+
+/* ---------- animace textu, stejna jako na hlavni strance ---------- */
+.wd{display:inline-block;overflow:hidden;vertical-align:bottom;padding:.24em 0 .14em;margin:-.24em 0 -.14em}
+.ch{display:inline-block}
+.sh{display:inline-block;font-style:normal;will-change:transform}
+.intro h1{text-shadow:0 0 .5em oklch(45% .17 25/.45),0 3px 24px oklch(6% .02 30/.85)}
+
+/* najezd pismen zdola pri nacteni */
+.js .intro h1 .ch{animation:najezd .75s cubic-bezier(.2,.9,.3,1) backwards;
+  animation-delay:calc(.15s + var(--i) * 16ms)}
+@keyframes najezd{from{transform:translateY(120%)}to{transform:translateY(0)}}
+
+/* odlesk: tmavsi vlna, ktera projede textem jednou za sedm sekund */
+.js .intro h1 .sh{animation:odlesk 7s ease-in-out infinite;
+  animation-delay:calc(2.2s + var(--i) * 22ms)}
+@keyframes odlesk{
+  0%,90%,100%{transform:translateY(0);opacity:1}
+  94%{transform:translateY(-7%);opacity:.42}
+}
+
+/* dychani zare u cervenych popisku */
+.eyebrow,.intro h1 em{text-shadow:none;animation:dech 4.6s ease-in-out infinite}
+@keyframes dech{
+  0%,100%{filter:drop-shadow(0 0 3px rgba(255,86,76,.35)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
+  50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
+}
+@media (prefers-reduced-motion:reduce){
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em{animation:none}
 }
