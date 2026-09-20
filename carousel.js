@@ -77,10 +77,12 @@
     mail.hidden = !c.dataset.mail;
     opened = true;
     root.classList.add('is-open');
+    render();
   }
   function closeCard() {
     opened = false;
     root.classList.remove('is-open');
+    render();
   }
 
   function render() {
@@ -93,9 +95,11 @@
       var t, o = 1, f = 'none', z = 10 - Math.round(abs) * 2;
 
       if (abs < .5) {
-        // prostredni karta: mirny naklon za kurzorem, jinak celem k divakovi
+        // prostredni karta. Kdyz je otevreny profil, uhne doleva, aby na nej zbylo misto.
         var rx = 0, ry = -off * 25;
-        t = 'translateX(' + (off * 80) + 'px) translateZ(0px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) scale(' + Math.max(.88, 1 - abs * .15) + ')';
+        var ox = opened ? -Math.min(root.clientWidth * .22, 240) : 0;
+        var sc = Math.max(.88, 1 - abs * .15) * (opened ? .92 : 1);
+        t = 'translateX(' + (off * 80 + ox) + 'px) translateZ(0px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) scale(' + sc + ')';
         z = 30;
         f = 'brightness(1.05) drop-shadow(0 25px 45px oklch(6% .02 30/.6))';
       } else if (abs < 1.6) {
