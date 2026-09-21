@@ -36,7 +36,8 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .bg img{position:absolute;inset:0}
-.bg video{position:relative;opacity:1;transition:opacity .4s ease}
+.bg video{position:absolute;inset:0;opacity:0;transition:opacity .14s linear}
+.bg video.on{opacity:1}
 .bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
 /* iOS kresli pres pauznute video vlastni play tlacitko - pryc s nim */
 .bg video::-webkit-media-controls,
@@ -239,6 +240,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* klik mysi nenechava obrys fokusu */
 :focus:not(:focus-visible){outline:none}
+
+/* Pri otaceni vrstvy s rukavici se na okraji platna vykreslovala tenka linka -
+   posledni radek pixelu se pri prevzorkovani rozmazal. Orez o pixel a vyhlazeni hrany. */
+#g3d{clip-path:inset(1px);outline:1px solid transparent;backface-visibility:hidden}
+.gl,.gtilt{backface-visibility:hidden}
 </style>
 
 <div class="wrap">
@@ -246,7 +252,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     <div class="torch" aria-hidden="true"></div>
     <div class="bg">
       <img src="ring-fpv-poster.webp" alt="" width="1280" height="720" decoding="async">
-      <video src="ring-fpv.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
+      <video class="fwd on" src="ring-fpv.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
+      <video class="rev" src="ring-fpv-rev.mp4" muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -366,7 +373,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921u">
+<link rel="stylesheet" href="carousel.css?v=20260921v">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -461,7 +468,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var tl=gsap.timeline({paused:true});
     gsap.set('.p,#stats',{pointerEvents:'none'});
     gsap.set('#p0',{pointerEvents:'auto'});
-    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:1,transformOrigin:'50% 50%'});
+    // uvodni poza: vetsi, naklonena a mirne vytocena do boku, logo k divakovi
+    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.035;},y:0,
+      rotation:mob?0:22,scale:mob?1:1.26,transformOrigin:'50% 50%'});
+    if(!mob){ rig.yaw=-.42; rig.roll=.08; }
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -595,45 +605,55 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   ScrollTrigger.refresh();
 
-  // Video ridi scroll, ale pres rychlost prehravani, ne pres preskakovani na snimek.
-  // Seekovani podle scrollu drive trhalo a couvalo - tady se jen meni tempo, takze
-  // obraz jde vzdycky dopredu a plynule. V klidu skoro stoji, pri scrollu se rozjede.
-  var v=document.querySelector('.bg video');
-  function tryPlay(){
-    if(!v) return;
-    var pr=v.play();
-    if(pr&&pr.then) pr.then(function(){v.style.opacity=1;},function(){v.style.opacity=0;});
-  }
-  tryPlay();
+  // --- video ---
+  // Dva soubory: dopredny a predem otoceny pozpatku. Pri scrollu nahoru se prepne
+  // na otoceny, na zrcadlovem case, a hraje normalne dopredu. Prohlizec tak nikdy
+  // nehraje pozpatku ani neseekuje po snimcich - kvalita je v obou smerech stejna.
+  var vf=document.querySelector('.bg video.fwd'), vr=document.querySelector('.bg video.rev');
+  var FINE=matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var cur=vf, dir=1, touched=false, token=0;
+  function tryPlay(el){ if(!el) return; var pr=el.play(); if(pr&&pr.then) pr.then(null,function(){}); }
+  tryPlay(vf);                                              // po otevreni stranky hned hraje
   ['pointerdown','keydown','wheel','touchstart'].forEach(function(ev){
-    addEventListener(ev,tryPlay,{once:true,passive:true});
+    addEventListener(ev,function(){ if(cur&&cur.paused&&!touched) tryPlay(cur); },{once:true,passive:true});
   });
-  document.addEventListener('visibilitychange',function(){ if(!document.hidden) tryPlay(); });
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden&&!touched) tryPlay(cur); });
 
-  if(v){
+  function flip(d){
+    if(!vr||!vf||d===dir) return;
+    var from=cur, to=(d===1?vf:vr), dur=from.duration;
+    if(!dur||!isFinite(dur)) return;
+    dir=d; var my=++token;
+    to.currentTime=Math.max(0,Math.min(dur-.05,dur-from.currentTime));
+    // prehodit az ve chvili, kdy ma novy soubor snimek pripraveny - zadne probliknuti
+    to.addEventListener('seeked',function(){
+      if(my!==token) return;
+      to.playbackRate=from.playbackRate;
+      tryPlay(to);
+      to.classList.add('on'); from.classList.remove('on');
+      from.pause(); cur=to;
+    },{once:true});
+  }
+
+  if(vf){
     var lastY=scrollY, sp=0;
-    var FINE=matchMedia('(hover: hover) and (pointer: fine)').matches;
     gsap.ticker.add(function(){
-      var d=Math.abs(scrollY-lastY); lastY=scrollY;
-      sp += (Math.min(d/14,1) - sp) * .07;              // dojezd, at tempo neskace
-      if(sp < .012){                                    // stojis - stoji i obraz
-        if(!v.paused && FINE) v.pause();
-        return;
-      }
-      if(v.paused) v.play().catch(function(){});
-      var rate = 0.10 + sp * 2.6;
-      if(Math.abs(v.playbackRate-rate)>.02){
-        try{ v.playbackRate = rate; }catch(e){}
-      }
+      var dy=scrollY-lastY; lastY=scrollY;
+      if(Math.abs(dy)>.5){ touched=true; flip(dy>0?1:-1); }
+      sp+=(Math.min(Math.abs(dy)/14,1)-sp)*.07;
+      if(!touched) return;                                  // do prvniho scrollu hraje normalne
+      if(sp<.012){ if(!cur.paused&&FINE) cur.pause(); return; }
+      if(cur.paused) tryPlay(cur);
+      var rate=.10+sp*2.6;
+      if(Math.abs(cur.playbackRate-rate)>.02){ try{ cur.playbackRate=rate; }catch(e){} }
     });
   }
 
-
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921u"></script>
-<script src="carousel.js?v=20260921u" defer></script>
-<script src="repel.js?v=20260921u" defer></script>
+<script type="module" src="glove3d.js?v=20260921v"></script>
+<script src="carousel.js?v=20260921v" defer></script>
+<script src="repel.js?v=20260921v" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
