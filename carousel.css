@@ -87,8 +87,8 @@
 
 /* ---------- rozkliknuty profil ---------- */
 .cf-detail{display:none}
-.cf-on .cf-detail{display:block;position:absolute;right:0;top:50%;z-index:50;
-  width:min(430px,44%);translate:0 -50%;opacity:0;pointer-events:none;
+.cf-on .cf-detail{display:block;position:absolute;right:auto;left:calc(50% + 18px);top:50%;z-index:50;
+  width:min(380px,42%);translate:0 -50%;opacity:0;pointer-events:none;
   transition:opacity .45s ease,translate .45s cubic-bezier(.2,.95,.35,1)}
 .cf-on.is-open .cf-detail{opacity:1;pointer-events:auto;translate:0 -50%}
 .cf-on .cf-detail{translate:30px -50%}
