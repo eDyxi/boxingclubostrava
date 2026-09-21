@@ -36,9 +36,9 @@
   var last = 0, live = 0;
   addEventListener('pointermove', function (e) {
     x = e.clientX; y = e.clientY; document.body.classList.add('lit');
-    // stopa jako na hladine: kruh kazdych 45 ms, nejvys sestnact najednou
+    // stopa jako na hladine: kruh kazdych 150 ms, nejvys sest najednou
     var now = performance.now();
-    if (now - last < 45 || live > 16) return; last = now;
+    if (now - last < 150 || live > 6) return; last = now;
     var d = document.createElement('i'); d.className = 'rip';
     d.style.left = x + 'px'; d.style.top = y + 'px';
     document.body.appendChild(d); live++;
