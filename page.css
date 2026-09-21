@@ -177,3 +177,6 @@ a.kart:hover::after{background-position:-40% 0}
 @media (prefers-reduced-motion:reduce){.rip{display:none}}
 
 .rep .wd{overflow:visible}
+
+/* klik mysi nenechava obrys fokusu */
+:focus:not(:focus-visible){outline:none}
