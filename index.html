@@ -229,10 +229,18 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   animation:rip 1.15s cubic-bezier(.2,.8,.3,1) forwards}
 @keyframes rip{from{transform:scale(.12);opacity:.85}to{transform:scale(1);opacity:0}}
 .rozc>.rip{z-index:1}.outro>.rip{z-index:0}
+/* v hero cervene a tlumene, pod textem i rukavici */
+.hero>.torch{z-index:3;background:radial-gradient(circle closest-side,oklch(62% .21 27/.2),oklch(62% .21 27/0) 72%)}
+.hero.lit>.torch{opacity:1}
+.hero>.rip{z-index:3;border-color:oklch(66% .21 26/.32);box-shadow:inset 0 0 14px oklch(66% .21 26/.12)}
+
+/* pri najeti mysi se pismena nadpisu rozestoupi od kurzoru */
+#p0 h1.rep .wd{overflow:visible}
 </style>
 
 <div class="wrap">
   <section class="hero">
+    <div class="torch" aria-hidden="true"></div>
     <div class="bg">
       <img src="ring-fpv-poster.webp" alt="" width="1280" height="720" decoding="async">
       <video src="ring-fpv.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
@@ -355,7 +363,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921q">
+<link rel="stylesheet" href="carousel.css?v=20260921r">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -620,13 +628,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921q"></script>
-<script src="carousel.js?v=20260921q" defer></script>
+<script type="module" src="glove3d.js?v=20260921r"></script>
+<script src="carousel.js?v=20260921r" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
   if(!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  ['.rozc','.outro'].forEach(function(sel){
+  ['.hero','.rozc','.outro'].forEach(function(sel){
     var o=document.querySelector(sel), t=o&&o.querySelector('.torch');
     if(!t) return;
     var x=0,y=0,cx=0,cy=0,raf=0,on=false;
@@ -639,9 +647,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     o.addEventListener('mousemove',function(e){
       var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
       on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
-      // stopa jako na hladine: kruh kazdych 45 ms, nejvys sestnact najednou
+      // stopa jako na hladine: kruh kazdych 150 ms, nejvys sest najednou
       var now=performance.now();
-      if(now-last<45||live>16) return; last=now;
+      if(now-last<150||live>6) return; last=now;
       var d=document.createElement('i'); d.className='rip';
       d.style.left=x+'px'; d.style.top=y+'px';
       o.appendChild(d); live++;
@@ -649,6 +657,50 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     },{passive:true});
     o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
   });
+})();
+</script>
+<script>
+// Pismena v hlavnim nadpisu uhybaji kurzoru. Pouziva se vlastnost translate,
+// ne transform - ten si drzi GSAP pro najezd a odlesk, takze se nepoperou.
+(function(){
+  var h=document.querySelector('#p0 h1');
+  if(!h||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var L=[], st=[], mx=-9999, my=-9999, raf=0, active=false;
+  var R=120, F=34;                                   // dosah a sila odstrceni
+  function collect(){
+    L=[].slice.call(h.querySelectorAll('.sh'));
+    st=L.map(function(){return {x:0,y:0,cx:0,cy:0};});
+  }
+  function measure(){
+    for(var k=0;k<L.length;k++){
+      var r=L[k].getBoundingClientRect();
+      st[k].cx=r.left+r.width/2-st[k].x; st[k].cy=r.top+r.height/2-st[k].y;
+    }
+  }
+  function tick(){
+    var moving=false;
+    for(var k=0;k<L.length;k++){
+      var s=st[k], tx=0, ty=0;
+      if(active){
+        var dx=s.cx-mx, dy=s.cy-my, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<R){ var f=1-d/R; f*=f; tx=dx/(d||1)*F*f; ty=dy/(d||1)*F*f; }
+      }
+      s.x+=(tx-s.x)*.16; s.y+=(ty-s.y)*.16;
+      L[k].style.translate=s.x.toFixed(1)+'px '+s.y.toFixed(1)+'px';
+      if(Math.abs(s.x)>.08||Math.abs(s.y)>.08) moving=true;
+    }
+    if(active||moving) raf=requestAnimationFrame(tick);
+    else { raf=0; h.classList.remove('rep'); }
+  }
+  h.addEventListener('mouseenter',function(){
+    if(!L.length) collect();
+    measure(); active=true; h.classList.add('rep');
+    if(!raf) raf=requestAnimationFrame(tick);
+  });
+  h.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; },{passive:true});
+  h.addEventListener('mouseleave',function(){ active=false; if(!raf) raf=requestAnimationFrame(tick); });
+  addEventListener('scroll',function(){ if(active) measure(); },{passive:true});
 })();
 </script>
 </html>
