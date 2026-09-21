@@ -186,7 +186,9 @@
       return;
     }
     if (i !== mid) { go(i); return; }
-    if (EXPAND) { opened ? closeCard() : openCard(i); }
+    if (EXPAND) { opened ? closeCard() : openCard(i); return; }
+    var href = cards[i].dataset.href;               // prostredni karta na uvodu = prechod
+    if (href && href !== '#') window.location.href = href;
   });
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
