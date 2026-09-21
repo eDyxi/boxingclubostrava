@@ -33,24 +33,24 @@
   var t = document.querySelector('.torch');
   if (!t || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   var x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y;
-  var last = 0, live = 0, moveFrom = 0, lastMove = 0, stopT = 0;
-  function drop() {
-    if (live > 4) return;
-    var d = document.createElement('i'); d.className = 'rip';
-    d.style.left = x + 'px'; d.style.top = y + 'px';
-    document.body.appendChild(d); live++;
-    d.addEventListener('animationend', function () { d.remove(); live--; });
-  }
+  // bubliny za kurzorem, jako proud vody (kruhy na hladine jsou pryc)
+  var last = 0, live = 0, px = 0, py = 0;
+  var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   addEventListener('pointermove', function (e) {
     x = e.clientX; y = e.clientY; document.body.classList.add('lit');
-    // Kruhy na hladine: az po pul sekunde souvisleho pohybu, pak kazdych 240 ms.
-    // Kdyz se mys zastavi, udela se prave jeden.
-    var now = performance.now();
-    if (now - lastMove > 220) moveFrom = now;
-    lastMove = now;
-    clearTimeout(stopT); stopT = setTimeout(drop, 160);
-    if (now - moveFrom < 500 || now - last < 200) return;
-    last = now; drop();
+    if (calm) return;
+    var now = performance.now(), vx = x - px, vy = y - py; px = x; py = y;
+    if (now - last < 55 || live > 22) return; last = now;
+    var b = document.createElement('i'); b.className = 'bub';
+    var sz = 5 + Math.random() * 9;
+    b.style.setProperty('--s', sz.toFixed(1) + 'px');
+    b.style.setProperty('--t', (1.1 + Math.random() * .9).toFixed(2) + 's');
+    b.style.setProperty('--dx', (-vx * .9 + (Math.random() - .5) * 26).toFixed(1) + 'px');
+    b.style.setProperty('--dy', (-vy * .9 - 18 - Math.random() * 30).toFixed(1) + 'px');
+    b.style.left = (x + (Math.random() - .5) * 10).toFixed(1) + 'px';
+    b.style.top = (y + (Math.random() - .5) * 10).toFixed(1) + 'px';
+    document.body.appendChild(b); live++;
+    b.addEventListener('animationend', function () { b.remove(); live--; });
   }, { passive: true });
   addEventListener('pointerleave', function () { document.body.classList.remove('lit'); });
   (function frame() {
