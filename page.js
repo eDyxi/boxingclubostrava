@@ -49,7 +49,7 @@
     if (now - lastMove > 220) moveFrom = now;
     lastMove = now;
     clearTimeout(stopT); stopT = setTimeout(drop, 160);
-    if (now - moveFrom < 500 || now - last < 240) return;
+    if (now - moveFrom < 500 || now - last < 200) return;
     last = now; drop();
   }, { passive: true });
   addEventListener('pointerleave', function () { document.body.classList.remove('lit'); });
