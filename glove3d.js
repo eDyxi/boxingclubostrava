@@ -46,7 +46,7 @@ async function boot() {
 
 function render(model) {
   document.body.classList.add('g3d');           // odkryje canvas, aby mel rozmery
-  const dpr = Math.min(devicePixelRatio || 1, innerWidth < 700 ? 1.5 : 2);
+  const dpr = Math.min((devicePixelRatio || 1) * (innerWidth < 700 ? 1 : 1.5), innerWidth < 700 ? 1.5 : 3);
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(dpr);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -99,8 +99,8 @@ function render(model) {
           if (ax == 1.0 || ax == 3.0) { pp.x = -pp.x; facing = -facing; }
           vec2 duv = (pp - uLogoRect.xy) / uLogoRect.z + 0.5;
           if (duv.x > 0.0 && duv.x < 1.0 && duv.y > 0.0 && duv.y < 1.0 && facing > 0.10) {
-            vec4 lgc = texture2D(uLogo, vec2(duv.x, 1.0 - duv.y));
-            diffuseColor.rgb = mix(diffuseColor.rgb, lgc.rgb, lgc.a * smoothstep(0.10, 0.40, facing));
+            vec4 lgc = texture2D(uLogo, vec2(duv.x, duv.y));   // bez prevraceni - jinak bylo vzhuru nohama
+            diffuseColor.rgb = mix(diffuseColor.rgb, lgc.rgb, smoothstep(0.35, 0.85, lgc.a) * smoothstep(0.10, 0.40, facing));
           }`);
     };
     m.needsUpdate = true;
