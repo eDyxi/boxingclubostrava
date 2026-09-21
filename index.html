@@ -81,7 +81,7 @@ body.fx #p0{opacity:1}
 /* cervene eyebrow bylo na videu skoro neviditelne */
 .eyebrow{font-size:12px;font-weight:800;letter-spacing:.24em;color:oklch(74% .20 27);
   text-shadow:0 0 .8em oklch(66% .21 26/.75),0 2px 10px oklch(6% .02 30/.9)}
-.sub,.p p{color:oklch(86% .012 55);text-shadow:0 2px 16px oklch(6% .02 30/.9)}
+.sub,.p p{color:oklch(88% .012 55);text-shadow:0 1px 2px rgba(8,3,2,.85),0 0 14px rgba(8,3,2,.45)}
 .fine{color:oklch(66% .016 45)}
 
 /* tlacitka: obrys a kulate rohy */
@@ -110,7 +110,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.outro{position:relative;z-index:5;border-top:1px solid var(--line);
+.outro{position:relative;z-index:5;border-top:0;
   padding:16vh var(--g) 12vh;text-align:center;
   background:linear-gradient(to bottom,oklch(16% .055 25) 0%,oklch(13% .03 27) 46%,var(--paper) 100%)}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
@@ -250,6 +250,22 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .p p:not(.fine),.sub,.intro p,.outro p{font-weight:560;font-stretch:112%;
   letter-spacing:-.012em;line-height:1.52}
 .p p:not(.fine){font-size:16px}
+
+/* bubliny za kurzorem v rozcestniku - jako proud vody */
+.bub{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;z-index:1;
+  width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.55),rgba(255,255,255,.12) 45%,rgba(255,255,255,0) 70%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+  animation:bub var(--t) cubic-bezier(.25,.6,.35,1) forwards}
+@keyframes bub{
+  0%{transform:translate(0,0) scale(.4);opacity:0}
+  15%{opacity:.9}
+  100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}
+}
+/* posledni sekce: nahore stejna barva jako konec rozcestniku i s cervenou mlhou */
+.outro::before{content:'';position:absolute;left:0;right:0;top:0;height:40vh;z-index:0;pointer-events:none;
+  background:radial-gradient(70% 90% at 30% 0%,oklch(38% .16 18/.14),transparent 70%),
+    radial-gradient(60% 80% at 80% 0%,oklch(45% .17 25/.10),transparent 70%)}
 </style>
 
 <div class="wrap">
@@ -258,7 +274,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     <div class="bg">
       <img src="ring-fpv-poster.webp" alt="" width="1280" height="720" decoding="async">
       <video class="fwd on" src="ring-fpv.mp4" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
-      <video class="rev" src="ring-fpv-rev.mp4" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
+      <video class="rev" src="ring-fpv-rev.mp4" muted playsinline preload="metadata" aria-hidden="true" disablepictureinpicture></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -378,7 +394,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921y">
+<link rel="stylesheet" href="carousel.css?v=20260921z">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -477,9 +493,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // aby byl videt palec. Zadne naklapeni ani roztahovani cele vrstvy.
     // Uvodni poza. Natoceni dela 3D model, ne otaceni cele vrstvy - to se
     // pocita z obrazku a rukavice se tim rozmazala a roztahla.
-    gsap.set('.gl',{x:function(){return mob?0:rest.R()+innerWidth*.03;},y:0,rotation:0,scale:1,
+    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05;},y:0,rotation:0,scale:1,
       transformOrigin:'50% 50%'});
-    if(!mob){ rig.yaw=.34; rig.roll=.42; rig.pitch=-.3; }
+    if(!mob){ rig.yaw=.46; rig.roll=.96; rig.pitch=-.5; }          // naklon 55 stupnu
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -600,8 +616,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
   // dychani hlavniho nadpisu: vlna po slovech - masky se hybou cele, takze nic neorezavaji
-  gsap.to('.p,#stats',{scale:1.008,transformOrigin:'left center',duration:5.2,
-    ease:'sine.inOut',yoyo:true,repeat:-1});
+
 
   // Odlesk jede po jednotlivych pismenech, ne jako svetly obdelnik pres panel.
   // Kurzivni slovo v headlinu vynechavame, aby si udrzelo svou barvu.
@@ -658,9 +673,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921y"></script>
-<script src="carousel.js?v=20260921y" defer></script>
-<script src="repel.js?v=20260921y" defer></script>
+<script type="module" src="glove3d.js?v=20260921z"></script>
+<script src="carousel.js?v=20260921z" defer></script>
+<script src="repel.js?v=20260921z" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
@@ -699,38 +714,29 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 })();
 </script>
 <script>
-// Cervene plochy v pozadi rozcestniku reaguji na kurzor jako hladina: kazda se
-// nechá mirne unest pohybem mysi a pri rychlem pohybu se lehce nafoukne.
-// Posun jde pres vlastnost translate/scale, takze se nepere s jejich CSS driftem.
+// Za kurzorem v sekci Kam dal: drobne bubliny, ktere se odtrhnou a odplavou -
+// jako proud vody za rukou. Pozadi samo se nehybe.
 (function(){
   var sec=document.querySelector('.rozc');
   if(!sec||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var B=[].slice.call(sec.querySelectorAll('.field i'));
-  var W=[.9,-.7,.5];                               // kazda plocha jinak silne a jinym smerem
-  var st=B.map(function(){return {x:0,y:0,s:1};});
-  var tx=0,ty=0,speed=0,lx=0,ly=0,raf=0,on=false;
-  function frame(){
-    speed*=.92;
-    var moving=false;
-    for(var k=0;k<B.length;k++){
-      var s=st[k], w=W[k]||.5;
-      var gx=on?tx*w:0, gy=on?ty*w:0, gs=1+Math.min(speed,1)*.08*Math.abs(w);
-      s.x+=(gx-s.x)*.05; s.y+=(gy-s.y)*.05; s.s+=(gs-s.s)*.08;
-      B[k].style.translate=s.x.toFixed(1)+'px '+s.y.toFixed(1)+'px';
-      B[k].style.scale=s.s.toFixed(3);
-      if(Math.abs(s.x-gx)>.3||Math.abs(s.y-gy)>.3||Math.abs(s.s-gs)>.002) moving=true;
-    }
-    raf=(on||moving)?requestAnimationFrame(frame):0;
-  }
+  var last=0, live=0, px=0, py=0;
   sec.addEventListener('mousemove',function(e){
-    var r=sec.getBoundingClientRect();
-    tx=(e.clientX-r.left-r.width/2)*.12; ty=(e.clientY-r.top-r.height/2)*.12;
-    var d=Math.hypot(e.clientX-lx,e.clientY-ly); lx=e.clientX; ly=e.clientY;
-    speed=Math.min(1.4,speed+d/180);
-    on=true; if(!raf) raf=requestAnimationFrame(frame);
+    var r=sec.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    var now=performance.now(), vx=x-px, vy=y-py; px=x; py=y;
+    if(now-last<55||live>22) return; last=now;
+    var b=document.createElement('i'); b.className='bub';
+    var s=5+Math.random()*9;
+    b.style.setProperty('--s',s.toFixed(1)+'px');
+    b.style.setProperty('--t',(1.1+Math.random()*.9).toFixed(2)+'s');
+    // odplouva proti smeru pohybu a lehce nahoru
+    b.style.setProperty('--dx',(-vx*.9+(Math.random()-.5)*26).toFixed(1)+'px');
+    b.style.setProperty('--dy',(-vy*.9-18-Math.random()*30).toFixed(1)+'px');
+    b.style.left=(x+(Math.random()-.5)*10).toFixed(1)+'px';
+    b.style.top=(y+(Math.random()-.5)*10).toFixed(1)+'px';
+    sec.appendChild(b); live++;
+    b.addEventListener('animationend',function(){ b.remove(); live--; });
   },{passive:true});
-  sec.addEventListener('mouseleave',function(){ on=false; if(!raf) raf=requestAnimationFrame(frame); });
 })();
 </script>
 </html>
