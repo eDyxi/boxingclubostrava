@@ -110,7 +110,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.outro{position:relative;z-index:5;border-top:0;
+.outro{position:relative;z-index:5;border-top:1px solid var(--line);
   padding:16vh var(--g) 12vh;text-align:center;
   background:linear-gradient(to bottom,oklch(16% .055 25) 0%,oklch(13% .03 27) 46%,var(--paper) 100%)}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
@@ -262,10 +262,16 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   15%{opacity:.9}
   100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}
 }
-/* posledni sekce: nahore stejna barva jako konec rozcestniku i s cervenou mlhou */
-.outro::before{content:'';position:absolute;left:0;right:0;top:0;height:40vh;z-index:0;pointer-events:none;
-  background:radial-gradient(70% 90% at 30% 0%,oklch(38% .16 18/.14),transparent 70%),
-    radial-gradient(60% 80% at 80% 0%,oklch(45% .17 25/.10),transparent 70%)}
+/* Spodek rozcestniku se srovna do jedne barvy (plochy v pozadi pod nim zmizi),
+   posledni sekce z presne te barvy zacina a pokracuje do cerne. */
+.rozc::after{content:'';position:absolute;left:0;right:0;bottom:0;height:34vh;z-index:0;
+  pointer-events:none;background:linear-gradient(to bottom,oklch(16% .055 25/0),oklch(16% .055 25) 92%)}
+
+#p0.free h1 .wd{overflow:visible}
+
+.hero>.bub{z-index:3}.rozc>.bub{z-index:1}.outro>.bub{z-index:0}
+.bub.red{background:radial-gradient(circle at 35% 30%,rgba(255,150,140,.6),rgba(255,70,60,.16) 45%,rgba(255,70,60,0) 70%);
+  box-shadow:inset 0 0 0 1px rgba(255,110,100,.3)}
 </style>
 
 <div class="wrap">
@@ -394,7 +400,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921z">
+<link rel="stylesheet" href="carousel.css?v=20260922a">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -452,7 +458,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
   // --- rezie hero ---
   var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','OUT'],['#p4','L']];
-  var S=.13, H=(1-S*(BEATS.length-1))/BEATS.length;
+  // Prvni zastavka je delsi - zakaznik si musi stihnout precist hlavni nadpis,
+  // nez ho rukavice rozdrti. H0 je 2,2x bezna pauza, ostatni se o zbytek podeli.
+  var S=.13, H=(1-S*(BEATS.length-1))/(BEATS.length+1.2), H0=H*2.2;
+  window.__smash={at:H0+S*.52};                   // od teto chvile je rukavice mimo obraz
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
 
   // dve samostatne rezie; gsap.matchMedia je pri zmene sirky sam od sebe prepne a uklidi
@@ -493,7 +502,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // aby byl videt palec. Zadne naklapeni ani roztahovani cele vrstvy.
     // Uvodni poza. Natoceni dela 3D model, ne otaceni cele vrstvy - to se
     // pocita z obrazku a rukavice se tim rozmazala a roztahla.
-    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05;},y:0,rotation:0,scale:1,
+    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05+20;},y:0,rotation:0,scale:1,
       transformOrigin:'50% 50%'});
     if(!mob){ rig.yaw=.46; rig.roll=.96; rig.pitch=-.5; }          // naklon 55 stupnu
 
@@ -541,15 +550,40 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     }
 
     for(var i=0;i<BEATS.length-1;i++){
-      var t=i*(H+S)+H, from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
+      var t=H0+i*(H+S), from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
+      var smash=(i===0&&!mob);
 
-      leave(BEATS[i][0],t+S*.30);           // stary text setre rukavice, kdyz na nej doleti
+      if(!smash) leave(BEATS[i][0],t+S*.30);   // stary text setre rukavice, kdyz na nej doleti
 
       if(mob){
         // mobil zustava jak byl: rukavice nahore na stredu, jen se preklapi
         tl.to('.gl',{rotation:dir*13,duration:S,ease:'sine.inOut'},t);
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
+      }else if(smash){
+        // PRVNI PRELET: rukavice proleti hlavnim nadpisem, rozdrti ho a pismena
+        // se rozletí. Pak zmizi za levym okrajem a vrati se na levou pozici.
+        var p0=document.getElementById('p0');
+        var letters=parts(p0.querySelector('h1'),'char');
+        tl.to('.gl',{x:function(){return -innerWidth*.52;},y:-innerHeight*.03,rotation:-10,
+                     duration:S*.30,ease:'power2.in'},t);
+        tl.to(rig,{yaw:.9,roll:.2,pitch:-.2,duration:S*.30,ease:'power2.in'},t);
+        tl.to(letters,{
+            x:function(){return -60-Math.random()*380;},
+            y:function(){return (Math.random()-.5)*520;},
+            rotation:function(){return (Math.random()-.5)*320;},
+            opacity:0,duration:S*.34,ease:'power3.out',
+            stagger:{each:S*.0035,from:'end'}},t+S*.16);
+        tl.to(p0.querySelectorAll('.sub,.cta'),{opacity:0,x:-60,duration:S*.14,ease:'power2.in'},t+S*.22);
+        tl.set(p0,{pointerEvents:'none'},t+S*.2);
+        tl.to(p0,{opacity:0,duration:S*.06,ease:'none'},t+S*.46);
+        // pryc z obrazu doleva
+        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.2);},
+                     duration:S*.2,ease:'power1.in'},t+S*.30);
+        // mimo obraz: srovnat a vratit se zleva na levou pozici
+        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+S*.52);
+        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:S*.42,ease:'power3.out'},t+S*.55);
+        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:S*.42,ease:'power3.out'},t+S*.55);
       }else{
         var m=MOVES[i];
         // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
@@ -597,8 +631,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       r+=(tr-r)*.08; dx+=(td-dx)*.08;
       tilt.style.transform='translate3d('+dx.toFixed(2)+'px,'+(dx*.22).toFixed(2)+'px,0) rotate('+r.toFixed(2)+'deg)';
       if(!matchMedia('(max-width:700px)').matches){
-        var k=Math.max(0,Math.min(1,(window.__heroP||0)/.05)); k=k*k*(3-2*k);
-        tilt.style.scale=(1.5-.5*k).toFixed(3);
+        // Rukavice se nezmensuje na obrazovce. Velka zustane, dokud neodleti
+        // z obrazu, a na normalni velikost se prepne az tam, kde neni videt.
+        var at=(window.__smash&&window.__smash.at)||.12;
+        tilt.style.scale=((window.__heroP||0)<at?1.5:1).toFixed(3);
       }
     });
   })();
@@ -611,7 +647,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   var small=matchMedia('(max-width:700px)').matches;
   var p0=document.getElementById('p0');
   gsap.from(parts(p0.querySelector('h1'),small?'word':'char'),
-    {yPercent:120,duration:.85,ease:'power3.out',stagger:small?.09:.016,delay:.15});
+    {yPercent:120,duration:.85,ease:'power3.out',stagger:small?.09:.016,delay:.15,
+     onComplete:function(){ p0.classList.add('free'); }});
   gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
 
@@ -673,70 +710,44 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921z"></script>
-<script src="carousel.js?v=20260921z" defer></script>
-<script src="repel.js?v=20260921z" defer></script>
+<script type="module" src="glove3d.js?v=20260922a"></script>
+<script src="carousel.js?v=20260922a" defer></script>
+<script src="repel.js?v=20260922a" defer></script>
 <script>
-// Bile svetlo za kurzorem v posledni sekci.
+// Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
+// proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
 (function(){
   if(!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
   ['.hero','.rozc','.outro'].forEach(function(sel){
     var o=document.querySelector(sel), t=o&&o.querySelector('.torch');
-    if(!t) return;
-    var x=0,y=0,cx=0,cy=0,raf=0,on=false;
+    if(!o) return;
+    var red=(sel==='.hero');
+    var x=0,y=0,cx=0,cy=0,raf=0,on=false, last=0,live=0,px=0,py=0;
     function frame(){
       cx+=(x-cx)*.14; cy+=(y-cy)*.14;
-      t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
+      if(t) t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
       if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
-    }
-    var last=0, live=0, moveFrom=0, lastMove=0, stopT=0;
-    function drop(){
-      if(live>4) return;
-      var d=document.createElement('i'); d.className='rip';
-      d.style.left=x+'px'; d.style.top=y+'px';
-      o.appendChild(d); live++;
-      d.addEventListener('animationend',function(){ d.remove(); live--; });
     }
     o.addEventListener('mousemove',function(e){
       var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
       on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
-      // Kruhy na hladine: az po pul sekunde souvisleho pohybu, pak kazdych 240 ms.
-      // Kdyz se mys zastavi, udela se prave jeden.
-      var now=performance.now();
-      if(now-lastMove>220) moveFrom=now;
-      lastMove=now;
-      clearTimeout(stopT); stopT=setTimeout(drop,160);
-      if(now-moveFrom<500||now-last<200) return;
-      last=now; drop();
+      if(calm) return;
+      var now=performance.now(), vx=x-px, vy=y-py; px=x; py=y;
+      if(now-last<55||live>22) return; last=now;
+      var b=document.createElement('i'); b.className=red?'bub red':'bub';
+      var sz=5+Math.random()*9;
+      b.style.setProperty('--s',sz.toFixed(1)+'px');
+      b.style.setProperty('--t',(1.1+Math.random()*.9).toFixed(2)+'s');
+      b.style.setProperty('--dx',(-vx*.9+(Math.random()-.5)*26).toFixed(1)+'px');
+      b.style.setProperty('--dy',(-vy*.9-18-Math.random()*30).toFixed(1)+'px');
+      b.style.left=(x+(Math.random()-.5)*10).toFixed(1)+'px';
+      b.style.top=(y+(Math.random()-.5)*10).toFixed(1)+'px';
+      o.appendChild(b); live++;
+      b.addEventListener('animationend',function(){ b.remove(); live--; });
     },{passive:true});
     o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
   });
-})();
-</script>
-<script>
-// Za kurzorem v sekci Kam dal: drobne bubliny, ktere se odtrhnou a odplavou -
-// jako proud vody za rukou. Pozadi samo se nehybe.
-(function(){
-  var sec=document.querySelector('.rozc');
-  if(!sec||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var last=0, live=0, px=0, py=0;
-  sec.addEventListener('mousemove',function(e){
-    var r=sec.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
-    var now=performance.now(), vx=x-px, vy=y-py; px=x; py=y;
-    if(now-last<55||live>22) return; last=now;
-    var b=document.createElement('i'); b.className='bub';
-    var s=5+Math.random()*9;
-    b.style.setProperty('--s',s.toFixed(1)+'px');
-    b.style.setProperty('--t',(1.1+Math.random()*.9).toFixed(2)+'s');
-    // odplouva proti smeru pohybu a lehce nahoru
-    b.style.setProperty('--dx',(-vx*.9+(Math.random()-.5)*26).toFixed(1)+'px');
-    b.style.setProperty('--dy',(-vy*.9-18-Math.random()*30).toFixed(1)+'px');
-    b.style.left=(x+(Math.random()-.5)*10).toFixed(1)+'px';
-    b.style.top=(y+(Math.random()-.5)*10).toFixed(1)+'px';
-    sec.appendChild(b); live++;
-    b.addEventListener('animationend',function(){ b.remove(); live--; });
-  },{passive:true});
 })();
 </script>
 </html>
