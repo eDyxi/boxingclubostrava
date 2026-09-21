@@ -140,16 +140,7 @@
   // takze na nasledny pohyb uz nezalezi.
   function hit(t) { return t && t.closest ? t.closest('.cf-go, .cf-card') : null; }
 
-  // Vypis pro ladeni: pridej ?dbg do adresy a v rohu uvidis, co stisk zasahl.
-  var dbg = null;
-  if (location.search.indexOf('dbg') > -1) {
-    dbg = document.createElement('div');
-    dbg.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9999;background:#000c;' +
-      'color:#0f0;font:12px monospace;padding:6px 9px;border-radius:6px;pointer-events:none';
-    dbg.textContent = 'karusel pripraven, karet: ' + cards.length;
-    document.body.appendChild(dbg);
-  }
-  function log(t) { if (dbg) dbg.textContent = t; }
+  function log() {}
 
   // Karty jsou natocene ve 3D a prohlizec obcas pod kurzorem zadnou nenajde.
   // Dohledame ji proto sami podle skutecne vykreslene plochy.
