@@ -71,9 +71,9 @@ function render(model) {
   // Doladi se jen povrch a promitne logo klubu.
   const qs = new URLSearchParams(location.search);
   const num = (k, d) => { const a = (qs.get(k) || '').split(',').map(Number); return a.length === d.length && a.every(n => !isNaN(n)) ? a : d; };
-  const lg = qs.get('logo') === 'off' ? null : num('logo', [0, .06, .42, 0]);   // ?logo=off vypne, ?logo=cx,cy,velikost,osa ladi
+  const lg = qs.get('logo') === 'off' ? null : num('logo', [.1, .14, .66, 0]);   // ?logo=off vypne, ?logo=cx,cy,velikost,osa ladi
 
-  const logoTex = new THREE.TextureLoader().load('logo.png',
+  const logoTex = new THREE.TextureLoader().load('logo-glove.png',
     t => { t.colorSpace = THREE.SRGBColorSpace; }, undefined, () => { });
 
   model.traverse(o => {
