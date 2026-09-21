@@ -33,16 +33,24 @@
   var t = document.querySelector('.torch');
   if (!t || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   var x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y;
-  var last = 0, live = 0;
-  addEventListener('pointermove', function (e) {
-    x = e.clientX; y = e.clientY; document.body.classList.add('lit');
-    // stopa jako na hladine: kruh kazdych 150 ms, nejvys sest najednou
-    var now = performance.now();
-    if (now - last < 150 || live > 6) return; last = now;
+  var last = 0, live = 0, moveFrom = 0, lastMove = 0, stopT = 0;
+  function drop() {
+    if (live > 4) return;
     var d = document.createElement('i'); d.className = 'rip';
     d.style.left = x + 'px'; d.style.top = y + 'px';
     document.body.appendChild(d); live++;
     d.addEventListener('animationend', function () { d.remove(); live--; });
+  }
+  addEventListener('pointermove', function (e) {
+    x = e.clientX; y = e.clientY; document.body.classList.add('lit');
+    // Kruhy na hladine: az po pul sekunde souvisleho pohybu, pak kazdych 240 ms.
+    // Kdyz se mys zastavi, udela se prave jeden.
+    var now = performance.now();
+    if (now - lastMove > 220) moveFrom = now;
+    lastMove = now;
+    clearTimeout(stopT); stopT = setTimeout(drop, 160);
+    if (now - moveFrom < 500 || now - last < 240) return;
+    last = now; drop();
   }, { passive: true });
   addEventListener('pointerleave', function () { document.body.classList.remove('lit'); });
   (function frame() {
