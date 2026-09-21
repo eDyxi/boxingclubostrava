@@ -46,7 +46,7 @@ async function boot() {
 
 function render(model) {
   document.body.classList.add('g3d');           // odkryje canvas, aby mel rozmery
-  const dpr = Math.min((devicePixelRatio || 1) * (innerWidth < 700 ? 1 : 1.5), innerWidth < 700 ? 1.5 : 3);
+  const dpr = Math.min((devicePixelRatio || 1) * (innerWidth < 700 ? 1 : 1.9), innerWidth < 700 ? 1.5 : 3.6);
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(dpr);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -176,7 +176,10 @@ function render(model) {
     );
     // Pri silnem naklonu je rukavice sirsi nez ramecek - kamera o kus couvne,
     // aby se nic neorizlo.
-    camera.position.z = baseZ * (1 + .3 * Math.abs(Math.sin(pose.r)));
+    const cr = Math.abs(Math.cos(pose.r)), sr = Math.abs(Math.sin(pose.r));
+    const visH = 2 * baseZ * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2), visW = visH * camera.aspect;
+    const need = Math.max((size.x * cr + size.y * sr) / (visW * .96), (size.x * sr + size.y * cr) / (visH * .9));
+    camera.position.z = baseZ * Math.max(1, need);
     renderer.render(scene, camera);
     dirty = false;
   });
