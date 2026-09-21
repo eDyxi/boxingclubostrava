@@ -69,14 +69,14 @@
   }
 
   function init() {
-    // nadpisy - po pismenech (popisky ani odstavce ne)
+    // Hlavni nadpis na uvodu ma plnou silu - ten je presne takhle dobre.
+    // Vsechny ostatni nadpisy jen jemne, s mensim dosahem.
     document.querySelectorAll('.p h1, .p h2, .rozc-head h2, .outro h2, .intro h1').forEach(function (h) {
       split(h);
-      attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); }, 120, 34);
+      var main = h.matches('#p0 h1');
+      attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); },
+             main ? 120 : 70, main ? 34 : 11);
     });
-    // cisla - po celych polozkach, protoze jejich text prepisuje odpocet
-    var st = document.getElementById('stats');
-    if (st) attach(st, function () { return [].slice.call(st.children); }, 190, 26);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
