@@ -236,6 +236,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* pri najeti mysi se pismena nadpisu rozestoupi od kurzoru */
 .rep .wd{overflow:visible}
+
+/* klik mysi nenechava obrys fokusu */
+:focus:not(:focus-visible){outline:none}
 </style>
 
 <div class="wrap">
@@ -363,7 +366,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921s">
+<link rel="stylesheet" href="carousel.css?v=20260921t">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -628,9 +631,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921s"></script>
-<script src="carousel.js?v=20260921s" defer></script>
-<script src="repel.js?v=20260921s" defer></script>
+<script type="module" src="glove3d.js?v=20260921t"></script>
+<script src="carousel.js?v=20260921t" defer></script>
+<script src="repel.js?v=20260921t" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
