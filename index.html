@@ -36,8 +36,8 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
 
 .bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .bg img{position:absolute;inset:0}
-.bg video{position:absolute;inset:0;opacity:0;transition:opacity .14s linear}
-.bg video.on{opacity:1}
+.bg video{position:absolute;inset:0;opacity:1;z-index:1}
+.bg video.on{z-index:2}
 .bg video,.bg img{width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
 /* iOS kresli pres pauznute video vlastni play tlacitko - pryc s nim */
 .bg video::-webkit-media-controls,
@@ -52,7 +52,7 @@ body.fx .hero{position:sticky;top:0;height:100svh;padding:0}
   display:grid;align-items:center;justify-items:end;padding:0 clamp(6px,3vw,56px)}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto}
-.gtilt{display:grid;justify-items:inherit;will-change:transform}
+.gtilt{display:grid;justify-items:inherit;will-change:transform;transform-origin:32% 50%}
 .gtilt>*{grid-area:1/1}
 #glove{height:min(52svh,580px);width:auto;max-width:none;
   filter:drop-shadow(0 40px 70px oklch(6% .02 30/.85));opacity:.97}
@@ -110,7 +110,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats b{display:block;font-size:clamp(48px,12vw,110px);font-weight:800;line-height:1;letter-spacing:-.04em}
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
-.outro{position:relative;z-index:5;border-top:1px solid var(--line);
+.outro{position:relative;z-index:5;border-top:2px solid #050302;
   padding:16vh var(--g) 12vh;text-align:center;
   background:linear-gradient(to bottom,oklch(16% .055 25) 0%,oklch(13% .03 27) 46%,var(--paper) 100%)}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
@@ -400,7 +400,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260922a">
+<link rel="stylesheet" href="carousel.css?v=20260922b">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -460,8 +460,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   var BEATS=[['#p0','R'],['#p1','L'],['#p2','R'],['#p3','L'],['#stats','OUT'],['#p4','L']];
   // Prvni zastavka je delsi - zakaznik si musi stihnout precist hlavni nadpis,
   // nez ho rukavice rozdrti. H0 je 2,2x bezna pauza, ostatni se o zbytek podeli.
-  var S=.13, H=(1-S*(BEATS.length-1))/(BEATS.length+1.2), H0=H*2.2;
-  window.__smash={at:H0+S*.52};                   // od teto chvile je rukavice mimo obraz
+  // Prvni zastavka je delsi, aby se hlavni nadpis stihl precist. Prvni prelet
+  // (rana do nadpisu) trva dele nez ostatni, aby byl videt. Zbytek se podeli.
+  var S=.12, S0=.20, H=(1-S0-S*(BEATS.length-2))/(BEATS.length+1.2), H0=H*2.2;
+  function tOf(i){ return i===0?H0:H0+S0+H+(i-1)*(S+H); }
+  window.__smash={at:H0+S0*.52};                  // od teto chvile je rukavice mimo obraz
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
 
   // dve samostatne rezie; gsap.matchMedia je pri zmene sirky sam od sebe prepne a uklidi
@@ -550,8 +553,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     }
 
     for(var i=0;i<BEATS.length-1;i++){
-      var t=H0+i*(H+S), from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
-      var smash=(i===0&&!mob);
+      var smash=(i===0&&!mob), D=smash?S0:S;
+      var t=mob?(H0+i*(H+S)):tOf(i), from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
 
       if(!smash) leave(BEATS[i][0],t+S*.30);   // stary text setre rukavice, kdyz na nej doleti
 
@@ -561,29 +564,38 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         tl.to('.gl',{scale:1.07,duration:S*.5,ease:'sine.out'},t)
           .to('.gl',{scale:1,duration:S*.5,ease:'sine.in'},t+S*.5);
       }else if(smash){
-        // PRVNI PRELET: rukavice proleti hlavnim nadpisem, rozdrti ho a pismena
-        // se rozletí. Pak zmizi za levym okrajem a vrati se na levou pozici.
+        // PRVNI PRELET: skutecna rana. Rukavice se natoci pestí proti smeru uderu
+        // (vytoceni do 90 stupnu, videt je hlavne palec), prorazi nadpis, pismena se
+        // rozletí a text se otrese. Pak zmizi vlevo a vrati se na levou pozici.
         var p0=document.getElementById('p0');
         var letters=parts(p0.querySelector('h1'),'char');
-        tl.to('.gl',{x:function(){return -innerWidth*.52;},y:-innerHeight*.03,rotation:-10,
-                     duration:S*.30,ease:'power2.in'},t);
-        tl.to(rig,{yaw:.9,roll:.2,pitch:-.2,duration:S*.30,ease:'power2.in'},t);
+        // napriahnuti - kratce se stahne zpet, nez vyrazi
+        tl.to('.gl',{x:function(){return rest.R()-innerWidth*.05+20+innerWidth*.03;},
+                     duration:D*.10,ease:'power1.out'},t);
+        tl.to(rig,{yaw:1.1,roll:1.25,pitch:-.25,duration:D*.12,ease:'power2.out'},t);
+        // uder
+        tl.to('.gl',{x:function(){return -innerWidth*.52;},y:-innerHeight*.03,
+                     duration:D*.24,ease:'power3.in'},t+D*.10);
+        tl.to(rig,{yaw:1.52,roll:1.5,pitch:-.12,duration:D*.2,ease:'power2.in'},t+D*.12);
         tl.to(letters,{
-            x:function(){return -60-Math.random()*380;},
-            y:function(){return (Math.random()-.5)*520;},
-            rotation:function(){return (Math.random()-.5)*320;},
-            opacity:0,duration:S*.34,ease:'power3.out',
-            stagger:{each:S*.0035,from:'end'}},t+S*.16);
-        tl.to(p0.querySelectorAll('.sub,.cta'),{opacity:0,x:-60,duration:S*.14,ease:'power2.in'},t+S*.22);
-        tl.set(p0,{pointerEvents:'none'},t+S*.2);
-        tl.to(p0,{opacity:0,duration:S*.06,ease:'none'},t+S*.46);
+            x:function(){return -80-Math.random()*420;},
+            y:function(){return (Math.random()-.5)*560;},
+            rotation:function(){return (Math.random()-.5)*340;},
+            opacity:0,duration:D*.36,ease:'power3.out',
+            stagger:{each:D*.003,from:'end'}},t+D*.24);
+        tl.fromTo(p0,{x:0},{keyframes:[{x:-14,duration:D*.02},{x:9,duration:D*.02},
+                                        {x:-5,duration:D*.02},{x:0,duration:D*.03}]},t+D*.26);
+        tl.to(p0.querySelectorAll('.sub,.cta'),{opacity:0,x:-70,duration:D*.14,ease:'power2.in'},t+D*.27);
+        tl.set(p0,{pointerEvents:'none'},t+D*.24);
+        tl.to(p0,{opacity:0,duration:D*.06,ease:'none'},t+D*.52);
         // pryc z obrazu doleva
-        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.2);},
-                     duration:S*.2,ease:'power1.in'},t+S*.30);
+        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
+                     duration:D*.16,ease:'power1.in'},t+D*.34);
         // mimo obraz: srovnat a vratit se zleva na levou pozici
-        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+S*.52);
-        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:S*.42,ease:'power3.out'},t+S*.55);
-        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:S*.42,ease:'power3.out'},t+S*.55);
+        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+D*.52);
+        tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+D*.52);
+        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:D*.42,ease:'power3.out'},t+D*.55);
+        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:D*.42,ease:'power3.out'},t+D*.55);
       }else{
         var m=MOVES[i];
         // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
@@ -634,7 +646,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         // Rukavice se nezmensuje na obrazovce. Velka zustane, dokud neodleti
         // z obrazu, a na normalni velikost se prepne az tam, kde neni videt.
         var at=(window.__smash&&window.__smash.at)||.12;
-        tilt.style.scale=((window.__heroP||0)<at?1.5:1).toFixed(3);
+        tilt.style.scale=((window.__heroP||0)<at?1.85:1).toFixed(3);
       }
     });
   })();
@@ -687,8 +699,12 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     ready(to,function(){
       var dur=to.duration, t=Math.max(0,Math.min(dur-.05,dur-from.currentTime));
       to.addEventListener('seeked',function(){
-        to.classList.add('on'); from.classList.remove('on');
-        cur=to; dir=d; busy=false;
+        // prehodit az po vykresleni snimku - novy soubor je navrchu, stary pod nim,
+        // takze neni okamzik, kdy by bylo videt cokoli jineho
+        requestAnimationFrame(function(){
+          to.classList.add('on'); from.classList.remove('on');
+          cur=to; dir=d; busy=false;
+        });
       },{once:true});
       to.currentTime=t;
     });
@@ -710,9 +726,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260922a"></script>
-<script src="carousel.js?v=20260922a" defer></script>
-<script src="repel.js?v=20260922a" defer></script>
+<script type="module" src="glove3d.js?v=20260922b"></script>
+<script src="carousel.js?v=20260922b" defer></script>
+<script src="repel.js?v=20260922b" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
