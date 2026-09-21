@@ -97,7 +97,7 @@
       if (abs < .5) {
         // prostredni karta. Kdyz je otevreny profil, uhne doleva, aby na nej zbylo misto.
         var rx = 0, ry = -off * 25;
-        var ox = opened ? -Math.min(root.clientWidth * .22, 240) : 0;
+        var ox = opened ? -Math.min(root.clientWidth * .13, 150) : 0;
         var sc = Math.max(.88, 1 - abs * .15) * (opened ? .92 : 1);
         t = 'translateX(' + (off * 80 + ox) + 'px) translateZ(0px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) scale(' + sc + ')';
         z = 30;
