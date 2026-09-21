@@ -224,7 +224,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 @media (prefers-reduced-motion:reduce){.rozc>.field i{animation:none}}
 
 /* kruhy na hladine za kurzorem */
-.rip{position:absolute;left:0;top:0;width:60px;height:60px;margin:-30px 0 0 -30px;border:0;border-radius:50%;box-shadow:none;background:radial-gradient(circle,rgba(255,255,255,0) 58%,rgba(255,255,255,.34) 64%,rgba(255,255,255,.10) 70%,rgba(255,255,255,0) 74%);will-change:transform,opacity;
+.rip{position:absolute;left:0;top:0;width:60px;height:60px;margin:-30px 0 0 -30px;border:0;border-radius:50%;box-shadow:none;background:radial-gradient(circle,rgba(255,255,255,0) 58%,rgba(255,255,255,.18) 64%,rgba(255,255,255,.05) 70%,rgba(255,255,255,0) 74%);will-change:transform,opacity;
   pointer-events:none;
   animation:rip 1.6s cubic-bezier(.2,.8,.3,1) forwards}
 @keyframes rip{from{transform:scale(.35);opacity:.9}to{transform:scale(1);opacity:0}}
@@ -232,7 +232,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 /* v hero cervene a tlumene, pod textem i rukavici */
 .hero>.torch{z-index:3;background:radial-gradient(circle closest-side,oklch(62% .21 27/.32),oklch(62% .21 27/0) 72%)}
 .hero.lit>.torch{opacity:1}
-.hero>.rip{z-index:3;background:radial-gradient(circle,rgba(255,80,70,0) 58%,rgba(255,80,70,.5) 64%,rgba(255,80,70,.14) 70%,rgba(255,80,70,0) 74%)}
+.hero>.rip{z-index:3;background:radial-gradient(circle,rgba(255,80,70,0) 58%,rgba(255,80,70,.28) 64%,rgba(255,80,70,.08) 70%,rgba(255,80,70,0) 74%)}
 
 /* pri najeti mysi se pismena nadpisu rozestoupi od kurzoru */
 .rep .wd{overflow:visible}
@@ -372,7 +372,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921w">
+<link rel="stylesheet" href="carousel.css?v=20260921x">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -469,7 +469,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     gsap.set('#p0',{pointerEvents:'auto'});
     // Uvodni poza: puvodni pozice, jen o kus vetsi a 3D model mirne vytoceny doleva,
     // aby byl videt palec. Zadne naklapeni ani roztahovani cele vrstvy.
-    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:mob?1:1.1,transformOrigin:'50% 50%'});
+    gsap.set('.gl',{x:rest.R,y:0,rotation:mob?0:45,scale:mob?1:1.2,transformOrigin:'50% 50%'});
     if(!mob){ rig.yaw=.34; rig.roll=0; }
 
     function enter(sel,at,dir){
@@ -645,9 +645,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921w"></script>
-<script src="carousel.js?v=20260921w" defer></script>
-<script src="repel.js?v=20260921w" defer></script>
+<script type="module" src="glove3d.js?v=20260921x"></script>
+<script src="carousel.js?v=20260921x" defer></script>
+<script src="repel.js?v=20260921x" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
@@ -678,7 +678,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       if(now-lastMove>220) moveFrom=now;
       lastMove=now;
       clearTimeout(stopT); stopT=setTimeout(drop,160);
-      if(now-moveFrom<500||now-last<240) return;
+      if(now-moveFrom<500||now-last<200) return;
       last=now; drop();
     },{passive:true});
     o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
