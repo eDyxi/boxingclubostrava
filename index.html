@@ -575,7 +575,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         // napriahnuti - kratce se stahne zpet, nez vyrazi
         tl.to('.gl',{x:function(){return rest.R()-innerWidth*.05+60+innerWidth*.03;},
                      duration:D*.10,ease:'power1.out'},t);
-        tl.to(rig,{yaw:.5,roll:1.2,pitch:-.55,duration:D*.12,ease:'power2.out'},t);
+        tl.to(rig,{yaw:.5,roll:1.2,pitch:-.8,duration:D*.12,ease:'power2.out'},t);
         // uder
         tl.to('.gl',{x:function(){return -innerWidth*.52;},
                      y:function(){                      // na vysku nadpisu, ktery rozbiji
@@ -583,7 +583,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
                        return (h.top+h.height/2)-(g.top+g.height/2);
                      },
                      duration:D*.24,ease:'power3.in'},t+D*.10);
-        tl.to(rig,{yaw:.55,roll:1.571,pitch:-.9,duration:D*.2,ease:'power2.in'},t+D*.12);   // 90 st. + osa X: strana palce a nejkratsi strana
+        tl.to(rig,{yaw:.55,roll:1.571,pitch:-1.571,duration:D*.2,ease:'power2.in'},t+D*.12);   // 90 st. + osa X: strana palce a nejkratsi strana
         tl.to(letters,{
             x:function(){return -80-Math.random()*420;},
             y:function(){return (Math.random()-.5)*560;},
