@@ -114,11 +114,13 @@ function render(model) {
   const pivot = new THREE.Group();
   pivot.add(model);
   scene.add(pivot);
+  let baseZ = 5;
   const fit = () => {                     // nafitovat na vysku ramecku, ne na nejvetsi rozmer
     const half = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
     const dh = (size.y / 2 / FIT) / half;
     const dw = (Math.max(size.x, size.z) / 2 / .62) / (half * camera.aspect);
-    camera.position.set(0, 0, Math.max(dh, dw));
+    baseZ = Math.max(dh, dw);
+    camera.position.set(0, 0, baseZ);
   };
 
   const q = new URLSearchParams(location.search).get('g');
@@ -172,6 +174,9 @@ function render(model) {
       base[1] + pose.y + cur * SPIN + Math.sin(t * .27) * .06,
       base[2] + pose.r + Math.sin(t * .21) * .04 + cur * .25
     );
+    // Pri silnem naklonu je rukavice sirsi nez ramecek - kamera o kus couvne,
+    // aby se nic neorizlo.
+    camera.position.z = baseZ * (1 + .3 * Math.abs(Math.sin(pose.r)));
     renderer.render(scene, camera);
     dirty = false;
   });
