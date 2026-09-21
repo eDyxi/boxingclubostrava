@@ -139,40 +139,31 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 @media (min-width:701px) and (max-width:900px){ #glove{height:min(58svh,560px)} #g3d{height:min(72svh,700px)} }
 @media (prefers-reduced-motion:reduce){ .bg video{display:none} }
 
-/* Tlacitka az uplne na konci, aby je puvodni pravidla neprebila zpatky na hranaty tvar. */
-@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
-.cta .btn{position:relative;isolation:isolate;
-  border:3px solid oklch(97% .008 60/.95) !important;border-radius:999px !important;
-  padding:15px 30px !important;
-  transition:transform .35s cubic-bezier(.2,.9,.3,1),background .35s ease}
-/* obrys: jeden plynuly prechod, zadne kratke carky */
-.cta .btn::before{content:'';position:absolute;inset:-3px;border-radius:999px;padding:3px;
-  background:conic-gradient(from var(--ang),
-    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 140deg,
-    oklch(72% .20 27/.35) 215deg,oklch(92% .10 30/.85) 262deg,
-    oklch(100% 0 0/1) 285deg,oklch(92% .10 30/.85) 308deg,
-    oklch(72% .20 27/.35) 350deg,oklch(100% 0 0/0) 360deg);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;animation:orbit 4.2s linear infinite;pointer-events:none}
-/* zare: tentyz prechod, jen rozostreny a bez masky, aby svitil ven */
-.cta .btn::after{content:'';position:absolute;inset:-7px;border-radius:999px;padding:7px;z-index:-1;
-  background:conic-gradient(from var(--ang),
-    oklch(100% 0 0/0) 0deg,oklch(100% 0 0/0) 150deg,
-    oklch(72% .20 27/.45) 225deg,oklch(96% .06 30/.9) 285deg,
-    oklch(72% .20 27/.45) 345deg,oklch(100% 0 0/0) 360deg);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;filter:blur(4px);opacity:.9;animation:orbit 4.2s linear infinite;
-  transition:opacity .35s ease,filter .35s ease;pointer-events:none}
-.cta .btn:nth-of-type(2)::before,.cta .btn:nth-of-type(2)::after{animation-delay:-2.1s}
-.cta .btn:nth-of-type(2)::after{inset:-5px;padding:5px;filter:blur(3px);opacity:.8}
-/* hover: prusvitne tlacitko jen zesili obrys, plne jen o kousek ztmavne */
-.cta .btn:hover{transform:scale(1.035) translateY(-2px);
-  box-shadow:inset 0 0 0 1.5px oklch(100% 0 0/.95)}
-.cta .btn.solid:hover{box-shadow:none;filter:brightness(.88)}
-.cta .btn:hover::after{filter:blur(6px);opacity:1}
+/* Tlacitka: skleneny styl. Pruhledne ma matne sklo s jemnym obrysem, plne je
+   cerveny prechod s vnitrnim odleskem. Obema jednou za cas projede svetlo. */
+.cta .btn{position:relative;overflow:hidden;isolation:isolate;
+  border:1px solid oklch(100% 0 0/.34) !important;border-radius:999px !important;
+  padding:15px 30px !important;background:oklch(100% 0 0/.06);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  box-shadow:inset 0 1px 0 oklch(100% 0 0/.2),0 12px 30px -14px oklch(6% .02 30/.9);
+  transition:transform .4s cubic-bezier(.2,.9,.3,1),box-shadow .4s ease,
+    background .4s ease,border-color .4s ease}
+.cta .btn.solid{border-color:oklch(80% .14 28/.55) !important;
+  background:linear-gradient(180deg,oklch(62% .21 27),oklch(49% .2 25));
+  box-shadow:inset 0 1px 0 oklch(100% 0 0/.35),0 14px 34px -12px oklch(50% .2 25/.75)}
+.cta .btn::before{content:none !important}
+.cta .btn::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:linear-gradient(110deg,transparent 32%,oklch(100% 0 0/.26) 48%,transparent 64%);
+  transform:translateX(-130%);animation:sheen 5.6s cubic-bezier(.4,0,.2,1) infinite}
+.cta .btn:nth-of-type(2)::after{animation-delay:2.8s}
+@keyframes sheen{0%,72%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+.cta .btn:hover{transform:translateY(-2px) scale(1.03)}
+.cta .btn:not(.solid):hover{border-color:oklch(100% 0 0/.75) !important;background:oklch(100% 0 0/.11);
+  box-shadow:inset 0 1px 0 oklch(100% 0 0/.28),0 16px 34px -12px oklch(6% .02 30/.95)}
+.cta .btn.solid:hover{background:linear-gradient(180deg,oklch(57% .21 27),oklch(45% .2 25));
+  box-shadow:inset 0 1px 0 oklch(100% 0 0/.3),0 18px 40px -12px oklch(50% .2 25/.9)}
 @keyframes orbit{to{--ang:360deg}}
+@media (prefers-reduced-motion:reduce){.cta .btn::after{animation:none}}
 
 /* Dychani zare. drop-shadow kopiruje tvar pismen, takze ho maska slova neorizne
    do obdelniku - presne to delal text-shadow. */
@@ -220,7 +211,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* Bile svetlo za kurzorem v posledni sekci. */
 .outro{overflow:hidden}
-.torch{position:absolute;left:0;top:0;width:560px;height:560px;margin:-280px 0 0 -280px;
+.torch{position:absolute;left:0;top:0;width:280px;height:280px;margin:-140px 0 0 -140px;
   border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;
   background:radial-gradient(circle closest-side,oklch(100% 0 0/.15),oklch(100% 0 0/0) 72%)}
 .outro>.torch{z-index:0}
@@ -230,6 +221,14 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .rozc>.rozc-head,.rozc>.cf{position:relative;z-index:2}
 .outro .affil{padding-left:clamp(0px,2.5vw,40px)}
 @media (prefers-reduced-motion:reduce){.rozc>.field i{animation:none}}
+
+/* kruhy na hladine za kurzorem */
+.rip{position:absolute;left:0;top:0;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;
+  pointer-events:none;border:1px solid oklch(100% 0 0/.3);
+  box-shadow:inset 0 0 14px oklch(100% 0 0/.08);
+  animation:rip 1.15s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes rip{from{transform:scale(.12);opacity:.85}to{transform:scale(1);opacity:0}}
+.rozc>.rip{z-index:1}.outro>.rip{z-index:0}
 </style>
 
 <div class="wrap">
@@ -356,7 +355,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921p">
+<link rel="stylesheet" href="carousel.css?v=20260921q">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -621,8 +620,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921p"></script>
-<script src="carousel.js?v=20260921p" defer></script>
+<script type="module" src="glove3d.js?v=20260921q"></script>
+<script src="carousel.js?v=20260921q" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
@@ -636,9 +635,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
       if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
     }
+    var last=0, live=0;
     o.addEventListener('mousemove',function(e){
       var r=o.getBoundingClientRect(); x=e.clientX-r.left; y=e.clientY-r.top;
       on=true; o.classList.add('lit'); if(!raf) raf=requestAnimationFrame(frame);
+      // stopa jako na hladine: kruh kazdych 45 ms, nejvys sestnact najednou
+      var now=performance.now();
+      if(now-last<45||live>16) return; last=now;
+      var d=document.createElement('i'); d.className='rip';
+      d.style.left=x+'px'; d.style.top=y+'px';
+      o.appendChild(d); live++;
+      d.addEventListener('animationend',function(){ d.remove(); live--; });
     },{passive:true});
     o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
   });
