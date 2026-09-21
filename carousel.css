@@ -213,3 +213,20 @@
 @media (prefers-reduced-motion:reduce){
   .cf-on .cf-detail::before,.cf-on .cf-detail::after{animation:none}
 }
+
+/* Tlacitko karty: zadna obihajici zare, jen kratky cerveny zablesk kazdou sekundu. */
+.cf-go::before,.cf-go::after{content:none !important;animation:none !important}
+.cf-on .is-mid .cf-go{animation:blik 1.3s ease-in-out infinite}
+@keyframes blik{
+  0%,55%,100%{border-color:oklch(97% .008 60/.8);color:var(--ink);
+    box-shadow:0 0 0 0 rgba(255,86,76,0)}
+  22%{border-color:oklch(70% .21 27);color:oklch(96% .03 30);
+    box-shadow:0 0 14px 1px rgba(255,86,76,.55),inset 0 0 10px rgba(255,86,76,.22)}
+}
+.cf-on .is-mid .cf-go:hover{animation-play-state:paused;border-color:oklch(100% 0 0)}
+@media (prefers-reduced-motion:reduce){.cf-on .is-mid .cf-go{animation:none}}
+
+/* Klik mysi nesmi nechat obrys fokusu - to byl ten tenky obdelnik, co se pokazde
+   ukazal jinak velky podle toho, na kterou kartu jsi klikl. Klavesnice ho mit bude. */
+.cf-card:focus,.cf-go:focus{outline:none}
+.cf-card:focus-visible,.cf-go:focus-visible{outline:2px solid oklch(70% .21 27);outline-offset:4px}
