@@ -75,7 +75,7 @@
       split(h);
       var main = h.matches('#p0 h1');
       attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); },
-             main ? 120 : 70, main ? 34 : 11);
+             main ? 128 : 75, main ? 36 : 12);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
