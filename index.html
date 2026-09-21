@@ -224,16 +224,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 @media (prefers-reduced-motion:reduce){.rozc>.field i{animation:none}}
 
 /* kruhy na hladine za kurzorem */
-.rip{position:absolute;left:0;top:0;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;
-  pointer-events:none;border:1px solid oklch(100% 0 0/.3);
-  box-shadow:inset 0 0 14px oklch(100% 0 0/.08);
+.rip{position:absolute;left:0;top:0;width:60px;height:60px;margin:-30px 0 0 -30px;border:0;border-radius:50%;box-shadow:none;background:radial-gradient(circle,rgba(255,255,255,0) 58%,rgba(255,255,255,.34) 64%,rgba(255,255,255,.10) 70%,rgba(255,255,255,0) 74%);will-change:transform,opacity;
+  pointer-events:none;
   animation:rip 1.6s cubic-bezier(.2,.8,.3,1) forwards}
-@keyframes rip{from{transform:scale(.12);opacity:.85}to{transform:scale(1);opacity:0}}
+@keyframes rip{from{transform:scale(.35);opacity:.9}to{transform:scale(1);opacity:0}}
 .rozc>.rip{z-index:1}.outro>.rip{z-index:0}
 /* v hero cervene a tlumene, pod textem i rukavici */
 .hero>.torch{z-index:3;background:radial-gradient(circle closest-side,oklch(62% .21 27/.32),oklch(62% .21 27/0) 72%)}
 .hero.lit>.torch{opacity:1}
-.hero>.rip{z-index:3;border-color:oklch(66% .21 26/.48);box-shadow:inset 0 0 16px oklch(66% .21 26/.18)}
+.hero>.rip{z-index:3;background:radial-gradient(circle,rgba(255,80,70,0) 58%,rgba(255,80,70,.5) 64%,rgba(255,80,70,.14) 70%,rgba(255,80,70,0) 74%)}
 
 /* pri najeti mysi se pismena nadpisu rozestoupi od kurzoru */
 .rep .wd{overflow:visible}
@@ -252,8 +251,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     <div class="torch" aria-hidden="true"></div>
     <div class="bg">
       <img src="ring-fpv-poster.webp" alt="" width="1280" height="720" decoding="async">
-      <video class="fwd on" src="ring-fpv.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
-      <video class="rev" src="ring-fpv-rev.mp4" muted loop playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
+      <video class="fwd on" src="ring-fpv.mp4" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
+      <video class="rev" src="ring-fpv-rev.mp4" muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture></video>
     </div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -373,7 +372,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260921v">
+<link rel="stylesheet" href="carousel.css?v=20260921w">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -468,10 +467,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var tl=gsap.timeline({paused:true});
     gsap.set('.p,#stats',{pointerEvents:'none'});
     gsap.set('#p0',{pointerEvents:'auto'});
-    // uvodni poza: vetsi, naklonena a mirne vytocena do boku, logo k divakovi
-    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.035;},y:0,
-      rotation:mob?0:22,scale:mob?1:1.26,transformOrigin:'50% 50%'});
-    if(!mob){ rig.yaw=-.42; rig.roll=.08; }
+    // Uvodni poza: puvodni pozice, jen o kus vetsi a 3D model mirne vytoceny doleva,
+    // aby byl videt palec. Zadne naklapeni ani roztahovani cele vrstvy.
+    gsap.set('.gl',{x:rest.R,y:0,rotation:0,scale:mob?1:1.1,transformOrigin:'50% 50%'});
+    if(!mob){ rig.yaw=.34; rig.roll=0; }
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -606,54 +605,49 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   ScrollTrigger.refresh();
 
   // --- video ---
-  // Dva soubory: dopredny a predem otoceny pozpatku. Pri scrollu nahoru se prepne
-  // na otoceny, na zrcadlovem case, a hraje normalne dopredu. Prohlizec tak nikdy
-  // nehraje pozpatku ani neseekuje po snimcich - kvalita je v obou smerech stejna.
+  // Stoji na prvnim snimku. Hraje jen behem scrollu dolu, rychlosti podle scrollu,
+  // a pri zastaveni se zastavi. Pri scrollu nahoru prepne na predem otocenou kopii
+  // na zrcadlovem case - tedy presne od mista, kde dopredne video stalo.
   var vf=document.querySelector('.bg video.fwd'), vr=document.querySelector('.bg video.rev');
-  var FINE=matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var cur=vf, dir=1, touched=false, token=0;
-  function tryPlay(el){ if(!el) return; var pr=el.play(); if(pr&&pr.then) pr.then(null,function(){}); }
-  tryPlay(vf);                                              // po otevreni stranky hned hraje
-  ['pointerdown','keydown','wheel','touchstart'].forEach(function(ev){
-    addEventListener(ev,function(){ if(cur&&cur.paused&&!touched) tryPlay(cur); },{once:true,passive:true});
-  });
-  document.addEventListener('visibilitychange',function(){ if(!document.hidden&&!touched) tryPlay(cur); });
+  var cur=vf, dir=1, busy=false;
+  function ready(v,cb){ if(v.readyState>=1) cb(); else v.addEventListener('loadedmetadata',cb,{once:true}); }
+  if(vf){ vf.pause(); ready(vf,function(){ vf.currentTime=0; }); }
+  if(vr){ vr.pause(); }
 
   function flip(d){
-    if(!vr||!vf||d===dir) return;
-    var from=cur, to=(d===1?vf:vr), dur=from.duration;
-    if(!dur||!isFinite(dur)) return;
-    dir=d; var my=++token;
-    to.currentTime=Math.max(0,Math.min(dur-.05,dur-from.currentTime));
-    // prehodit az ve chvili, kdy ma novy soubor snimek pripraveny - zadne probliknuti
-    to.addEventListener('seeked',function(){
-      if(my!==token) return;
-      to.playbackRate=from.playbackRate;
-      tryPlay(to);
-      to.classList.add('on'); from.classList.remove('on');
-      from.pause(); cur=to;
-    },{once:true});
+    if(busy||d===dir||!vr||!vf) return;
+    busy=true;
+    var from=cur, to=(d===1?vf:vr);
+    from.pause();
+    ready(to,function(){
+      var dur=to.duration, t=Math.max(0,Math.min(dur-.05,dur-from.currentTime));
+      to.addEventListener('seeked',function(){
+        to.classList.add('on'); from.classList.remove('on');
+        cur=to; dir=d; busy=false;
+      },{once:true});
+      to.currentTime=t;
+    });
   }
 
   if(vf){
     var lastY=scrollY, sp=0;
     gsap.ticker.add(function(){
       var dy=scrollY-lastY; lastY=scrollY;
-      if(Math.abs(dy)>.5){ touched=true; flip(dy>0?1:-1); }
-      sp+=(Math.min(Math.abs(dy)/14,1)-sp)*.07;
-      if(!touched) return;                                  // do prvniho scrollu hraje normalne
-      if(sp<.012){ if(!cur.paused&&FINE) cur.pause(); return; }
-      if(cur.paused) tryPlay(cur);
+      if(Math.abs(dy)>.5) flip(dy>0?1:-1);
+      sp+=(Math.min(Math.abs(dy)/14,1)-sp)*.08;
+      if(busy) return;
+      if(sp<.015){ if(!cur.paused) cur.pause(); return; }          // stojis - stoji i obraz
       var rate=.10+sp*2.6;
       if(Math.abs(cur.playbackRate-rate)>.02){ try{ cur.playbackRate=rate; }catch(e){} }
+      if(cur.paused&&!cur.ended){ var p=cur.play(); if(p&&p.catch) p.catch(function(){}); }
     });
   }
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260921v"></script>
-<script src="carousel.js?v=20260921v" defer></script>
-<script src="repel.js?v=20260921v" defer></script>
+<script type="module" src="glove3d.js?v=20260921w"></script>
+<script src="carousel.js?v=20260921w" defer></script>
+<script src="repel.js?v=20260921w" defer></script>
 <script>
 // Bile svetlo za kurzorem v posledni sekci.
 (function(){
@@ -689,6 +683,41 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     },{passive:true});
     o.addEventListener('mouseleave',function(){ on=false; o.classList.remove('lit'); });
   });
+})();
+</script>
+<script>
+// Cervene plochy v pozadi rozcestniku reaguji na kurzor jako hladina: kazda se
+// nechá mirne unest pohybem mysi a pri rychlem pohybu se lehce nafoukne.
+// Posun jde pres vlastnost translate/scale, takze se nepere s jejich CSS driftem.
+(function(){
+  var sec=document.querySelector('.rozc');
+  if(!sec||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var B=[].slice.call(sec.querySelectorAll('.field i'));
+  var W=[.9,-.7,.5];                               // kazda plocha jinak silne a jinym smerem
+  var st=B.map(function(){return {x:0,y:0,s:1};});
+  var tx=0,ty=0,speed=0,lx=0,ly=0,raf=0,on=false;
+  function frame(){
+    speed*=.92;
+    var moving=false;
+    for(var k=0;k<B.length;k++){
+      var s=st[k], w=W[k]||.5;
+      var gx=on?tx*w:0, gy=on?ty*w:0, gs=1+Math.min(speed,1)*.08*Math.abs(w);
+      s.x+=(gx-s.x)*.05; s.y+=(gy-s.y)*.05; s.s+=(gs-s.s)*.08;
+      B[k].style.translate=s.x.toFixed(1)+'px '+s.y.toFixed(1)+'px';
+      B[k].style.scale=s.s.toFixed(3);
+      if(Math.abs(s.x-gx)>.3||Math.abs(s.y-gy)>.3||Math.abs(s.s-gs)>.002) moving=true;
+    }
+    raf=(on||moving)?requestAnimationFrame(frame):0;
+  }
+  sec.addEventListener('mousemove',function(e){
+    var r=sec.getBoundingClientRect();
+    tx=(e.clientX-r.left-r.width/2)*.12; ty=(e.clientY-r.top-r.height/2)*.12;
+    var d=Math.hypot(e.clientX-lx,e.clientY-ly); lx=e.clientX; ly=e.clientY;
+    speed=Math.min(1.4,speed+d/180);
+    on=true; if(!raf) raf=requestAnimationFrame(frame);
+  },{passive:true});
+  sec.addEventListener('mouseleave',function(){ on=false; if(!raf) raf=requestAnimationFrame(frame); });
 })();
 </script>
 </html>
