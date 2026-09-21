@@ -179,3 +179,9 @@ a.kart:hover::after{background-position:-40% 0}
 
 /* klik mysi nenechava obrys fokusu */
 :focus:not(:focus-visible){outline:none}
+
+/* Podtexty: stejna rodina jako nadpisy (Archivo), jen v rozsirenem rezu a strednim
+   tahu. Pripominaji nadpisy, ale nekriciv. Sede drobne texty (.fine) zustavaji. */
+.p p:not(.fine),.sub,.intro p,.outro p{font-weight:560;font-stretch:112%;
+  letter-spacing:-.012em;line-height:1.52}
+.p p:not(.fine){font-size:16px}
