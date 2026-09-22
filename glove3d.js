@@ -78,8 +78,14 @@ function render(model) {
 
   model.traverse(o => {
     if (!o.isMesh) return;
-    const m = o.material;
-    m.roughness = .74; m.metalness = 0; m.envMapIntensity = .55;   // mene odrazu na hranach = zadny svetly lem
+    // Svetly lem po obvodu je Fresnelov odraz: pod ostrym uhlem odrazi kazdy povrch
+    // skoro vsechno svetlo. Fyzikalni material dovoli ten odraz na hranach zastropovat
+    // (specularIntensity ridi i odrazivost pod ostrym uhlem), takze lem zmizi ze vsech uhlu.
+    const m = new THREE.MeshPhysicalMaterial({
+      map: o.material.map, roughness: .72, metalness: 0,
+      envMapIntensity: .6, specularIntensity: .22
+    });
+    o.material = m;
     if (m.map) { m.map.anisotropy = 4; m.map.colorSpace = THREE.SRGBColorSpace; }
     // logo promitnute rovinne z prednI strany - nezavisle na UV mape modelu
     if (lg) m.onBeforeCompile = (sh) => {
