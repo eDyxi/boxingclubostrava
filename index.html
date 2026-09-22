@@ -274,6 +274,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   box-shadow:inset 0 0 0 1px rgba(255,110,100,.3)}
 
 .outro .eyebrow{margin-bottom:.9em}
+
+@media (max-width:700px){
+  .outro{padding-top:7vh}                 /* mezera nad zaverem jako ostatni */
+  .rozc{padding-bottom:36px}
+}
 </style>
 
 <div class="wrap">
@@ -403,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260922d">
+<link rel="stylesheet" href="carousel.css?v=20260922e">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -681,9 +686,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   });
   if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
     .to(chars,{keyframes:[
-      {yPercent:-7,opacity:.42,duration:.26,ease:'sine.inOut'},
-      {yPercent:0,opacity:1,duration:.5,ease:'sine.inOut'}
-    ],stagger:{each:.022}});
+      {yPercent:-7,opacity:.42,duration:small?.16:.26,ease:'sine.inOut'},
+      {yPercent:0,opacity:1,duration:small?.3:.5,ease:'sine.inOut'}
+    ],stagger:{each:small?.012:.022}});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
@@ -733,9 +738,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260922d"></script>
-<script src="carousel.js?v=20260922d" defer></script>
-<script src="repel.js?v=20260922d" defer></script>
+<script type="module" src="glove3d.js?v=20260922e"></script>
+<script src="carousel.js?v=20260922e" defer></script>
+<script src="repel.js?v=20260922e" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
