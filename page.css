@@ -196,12 +196,5 @@ a.kart:hover::after{background-position:-40% 0}
   100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
 
 /* mobil: rychlejsi prejezd svetla pres nadpis */
-@media (max-width:700px){
-  .js .intro h1 .sh{animation-name:paprsek;animation-duration:5s;
-    animation-delay:calc(2.2s + var(--i) * 12ms)}
-}
-/* mobil: pruh svetla - pismeno se rozsviti a zazari, zadny poskok */
-@keyframes paprsek{
-  0%,90%,100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,238,226,0))}
-  93%{filter:brightness(1.75) drop-shadow(0 0 9px rgba(255,238,226,.9))}
+
 }
