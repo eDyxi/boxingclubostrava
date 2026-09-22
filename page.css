@@ -194,3 +194,8 @@ a.kart:hover::after{background-position:-40% 0}
   animation:bub var(--t) cubic-bezier(.25,.6,.35,1) forwards}
 @keyframes bub{0%{transform:translate(0,0) scale(.4);opacity:0}15%{opacity:.9}
   100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
+
+/* mobil: rychlejsi prejezd svetla pres nadpis */
+@media (max-width:700px){
+  .js .intro h1 .sh{animation-duration:5s;animation-delay:calc(2.2s + var(--i) * 12ms)}
+}
