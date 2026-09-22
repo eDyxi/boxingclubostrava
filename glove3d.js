@@ -62,7 +62,7 @@ function render(model) {
   pmrem.dispose();
 
   const key = new THREE.DirectionalLight(GOLD, 2.4); key.position.set(2.5, 3, 2.2);
-  const rim = new THREE.DirectionalLight(0xff5a3c, 1.6); rim.position.set(-3, -.6, -2);
+  const rim = new THREE.DirectionalLight(0xff5a3c, .45); rim.position.set(-3, -.6, -2);
   const fill = new THREE.DirectionalLight(0x9fb6d8, .35); fill.position.set(-1.5, 1.5, 2);
   scene.add(key, rim, fill);
 
@@ -79,7 +79,7 @@ function render(model) {
   model.traverse(o => {
     if (!o.isMesh) return;
     const m = o.material;
-    m.roughness = .62; m.metalness = 0; m.envMapIntensity = 1.0;
+    m.roughness = .74; m.metalness = 0; m.envMapIntensity = .55;   // mene odrazu na hranach = zadny svetly lem
     if (m.map) { m.map.anisotropy = 4; m.map.colorSpace = THREE.SRGBColorSpace; }
     // logo promitnute rovinne z prednI strany - nezavisle na UV mape modelu
     if (lg) m.onBeforeCompile = (sh) => {
