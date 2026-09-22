@@ -163,7 +163,22 @@
     if (i >= 0 && i !== mid) go(i);
   });
 
+  // Dotyk: akce az po zvednuti prstu - jinak by kazdy swipe zacal kliknutim.
+  // Vodorovny tah = posun karet, kratke tuknuti = stejna akce jako klik.
+  var tsx = 0, tsy = 0, touching = false;
+  root.addEventListener('pointerup', function (e) {
+    if (!touching) return; touching = false;
+    var dx = e.clientX - tsx, dy = e.clientY - tsy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) { go(mid + (dx < 0 ? 1 : -1)); return; }
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) act(e);
+  });
+  root.addEventListener('pointercancel', function () { touching = false; });
+
   root.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'touch') { touching = true; tsx = e.clientX; tsy = e.clientY; return; }
+    act(e);
+  });
+  function act(e) {
     if (e.button && e.button !== 0) return;             // jen leve tlacitko
     var el = hit(e.target);
     var i = -1;
@@ -189,7 +204,7 @@
     if (EXPAND) { opened ? closeCard() : openCard(i); return; }
     var href = cards[i].dataset.href;               // prostredni karta na uvodu = prechod
     if (href && href !== '#') window.location.href = href;
-  });
+  }
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
   addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
