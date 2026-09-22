@@ -408,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260922f">
+<link rel="stylesheet" href="carousel.css?v=20260922g">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -482,7 +482,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   var rig=window.gloveRig={yaw:0,pitch:0,roll:0};
   var mm=gsap.matchMedia();
   mm.add({mob:'(max-width:700px)',pc:'(min-width:701px)'},function(ctx){
-    var mob=ctx.conditions.mob, unit=mob?'word':'char';
+    var mob=ctx.conditions.mob, unit='char';
 
     // klidove pozice se stridaji, text je vzdy na opacne strane
     function inset(){return innerWidth*.10;}
@@ -670,8 +670,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // uvodni panel nabehne pri nacteni, ne scrollem
   var small=matchMedia('(max-width:700px)').matches;
   var p0=document.getElementById('p0');
-  gsap.from(parts(p0.querySelector('h1'),small?'word':'char'),
-    {yPercent:120,duration:.85,ease:'power3.out',stagger:small?.09:.016,delay:.15,
+  gsap.from(parts(p0.querySelector('h1'),'char'),
+    {yPercent:120,duration:.85,ease:'power3.out',stagger:.016,delay:.15,
      onComplete:function(){ p0.classList.add('free'); }});
   gsap.from(p0.querySelector('.sub'),{opacity:0,y:18,duration:.7,delay:.55,ease:'power2.out'});
   gsap.from(p0.querySelectorAll('.btn'),{opacity:0,y:16,duration:.5,delay:.78,stagger:.09,ease:'power2.out'});
@@ -684,18 +684,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   var chars=gsap.utils.toArray('.p h1 .sh, .p h2 .sh').filter(function(el){
     return !el.closest('em');
   });
-  // Mobil: pruh svetla, ktery textem proběhne - kazde slovo se na okamzik rozsviti
-  // a zazari, v rychlem sledu zleva doprava. PC si nechava puvodni vlnu.
-  if(small&&chars.length) gsap.timeline({repeat:-1,repeatDelay:3.4,delay:2})
+  if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
     .to(chars,{keyframes:[
-      {filter:'brightness(1.75) drop-shadow(0 0 9px rgba(255,238,226,.9))',duration:.13,ease:'sine.out'},
-      {filter:'brightness(1) drop-shadow(0 0 0px rgba(255,238,226,0))',duration:.32,ease:'sine.in'}
-    ],stagger:{each:.045}});
-  else if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
-    .to(chars,{keyframes:[
-      {yPercent:-7,opacity:.42,duration:small?.16:.26,ease:'sine.inOut'},
-      {yPercent:0,opacity:1,duration:small?.3:.5,ease:'sine.inOut'}
-    ],stagger:{each:small?.012:.022}});
+      {yPercent:-7,opacity:.42,duration:.26,ease:'sine.inOut'},
+      {yPercent:0,opacity:1,duration:.5,ease:'sine.inOut'}
+    ],stagger:{each:.022}});
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
 
   ScrollTrigger.refresh();
@@ -745,9 +738,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260922f"></script>
-<script src="carousel.js?v=20260922f" defer></script>
-<script src="repel.js?v=20260922f" defer></script>
+<script type="module" src="glove3d.js?v=20260922g"></script>
+<script src="carousel.js?v=20260922g" defer></script>
+<script src="repel.js?v=20260922g" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
