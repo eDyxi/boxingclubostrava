@@ -408,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260922e">
+<link rel="stylesheet" href="carousel.css?v=20260922f">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -684,7 +684,14 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   var chars=gsap.utils.toArray('.p h1 .sh, .p h2 .sh').filter(function(el){
     return !el.closest('em');
   });
-  if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
+  // Mobil: pruh svetla, ktery textem proběhne - kazde slovo se na okamzik rozsviti
+  // a zazari, v rychlem sledu zleva doprava. PC si nechava puvodni vlnu.
+  if(small&&chars.length) gsap.timeline({repeat:-1,repeatDelay:3.4,delay:2})
+    .to(chars,{keyframes:[
+      {filter:'brightness(1.75) drop-shadow(0 0 9px rgba(255,238,226,.9))',duration:.13,ease:'sine.out'},
+      {filter:'brightness(1) drop-shadow(0 0 0px rgba(255,238,226,0))',duration:.32,ease:'sine.in'}
+    ],stagger:{each:.045}});
+  else if(chars.length) gsap.timeline({repeat:-1,repeatDelay:4.6,delay:2.2})
     .to(chars,{keyframes:[
       {yPercent:-7,opacity:.42,duration:small?.16:.26,ease:'sine.inOut'},
       {yPercent:0,opacity:1,duration:small?.3:.5,ease:'sine.inOut'}
@@ -738,9 +745,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260922e"></script>
-<script src="carousel.js?v=20260922e" defer></script>
-<script src="repel.js?v=20260922e" defer></script>
+<script type="module" src="glove3d.js?v=20260922f"></script>
+<script src="carousel.js?v=20260922f" defer></script>
+<script src="repel.js?v=20260922f" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
