@@ -26,7 +26,7 @@ a{color:inherit}
 @keyframes drift3{50%{transform:translate3d(7vw,-9vh,0) scale(1.12)}}
 
 /* bile svetlo za kurzorem */
-.torch{position:fixed;z-index:1;width:200px;height:200px;left:0;top:0;margin:-100px 0 0 -100px;
+.torch{position:fixed;z-index:1;width:120px;height:120px;left:0;top:0;margin:-60px 0 0 -60px;
   border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;
   background:radial-gradient(circle closest-side,oklch(100% 0 0/.16),oklch(100% 0 0/0) 72%)}
 body.lit .torch{opacity:1}

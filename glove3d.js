@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [0, 0, 0];          // vychozi natoceni modelu ve stupnich
+const TINT = [1.55, 1.0, 0.95];        // nasobic barvy kuze (R,G,B)
 const GOLD = 0xd9a441;                  // barva hlavniho svetla
 const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
@@ -85,6 +86,9 @@ function render(model) {
       map: o.material.map, roughness: .72, metalness: 0,
       envMapIntensity: .6, specularIntensity: .22
     });
+    // svetlejsi, cervenejsi kuze: barva > 1 zesvetli texturu, cervena nejvic
+    m.color.setRGB(TINT[0], TINT[1], TINT[2]);
+    if (m.map) { m.emissiveMap = m.map; m.emissive.setHex(0x3a0808); }
     o.material = m;
     if (m.map) { m.map.anisotropy = 4; m.map.colorSpace = THREE.SRGBColorSpace; }
     // logo promitnute rovinne z prednI strany - nezavisle na UV mape modelu

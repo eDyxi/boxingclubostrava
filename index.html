@@ -111,7 +111,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 #stats span{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 
 .outro{position:relative;z-index:5;border-top:1px solid var(--line);
-  padding:16vh var(--g) 12vh;text-align:center;
+  padding:7vh var(--g) 12vh;text-align:center;
   background:linear-gradient(to bottom,oklch(16% .055 25) 0%,oklch(13% .03 27) 46%,var(--paper) 100%)}
 .affil{display:flex;align-items:center;gap:14px;margin-top:clamp(40px,7vw,72px);
   padding-top:24px;border-top:1px solid var(--line)}
@@ -212,7 +212,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* Bile svetlo za kurzorem v posledni sekci. */
 .outro{overflow:hidden}
-.torch{position:absolute;left:0;top:0;width:200px;height:200px;margin:-100px 0 0 -100px;
+.torch{position:absolute;left:0;top:0;width:120px;height:120px;margin:-60px 0 0 -60px;
   border-radius:50%;pointer-events:none;opacity:0;transition:opacity .5s ease;
   background:radial-gradient(circle closest-side,oklch(100% 0 0/.15),oklch(100% 0 0/0) 72%)}
 .outro>.torch{z-index:0}
@@ -408,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260922g">
+<link rel="stylesheet" href="carousel.css?v=20260923a">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -515,7 +515,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // pocita z obrazku a rukavice se tim rozmazala a roztahla.
     gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05+60;},y:0,rotation:0,scale:1,
       transformOrigin:'50% 50%'});
-    if(!mob){ rig.yaw=.46; rig.roll=.96; rig.pitch=-.5; }          // naklon 55 stupnu
+    if(!mob){ rig.yaw=.46; rig.roll=1.571; rig.pitch=-.5; }          // naklon 90 stupnu
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -580,7 +580,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         // napriahnuti - kratce se stahne zpet, nez vyrazi
         tl.to('.gl',{x:function(){return rest.R()-innerWidth*.05+60+innerWidth*.03;},
                      duration:D*.10,ease:'power1.out'},t);
-        tl.to(rig,{yaw:.5,roll:1.2,pitch:-.8,duration:D*.12,ease:'power2.out'},t);
+        tl.to(rig,{yaw:.5,roll:1.571,pitch:-.8,duration:D*.12,ease:'power2.out'},t);
         // uder
         tl.to('.gl',{x:function(){return -innerWidth*.52;},
                      y:function(){                      // na vysku nadpisu, ktery rozbiji
@@ -738,9 +738,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260922g"></script>
-<script src="carousel.js?v=20260922g" defer></script>
-<script src="repel.js?v=20260922g" defer></script>
+<script type="module" src="glove3d.js?v=20260923a"></script>
+<script src="carousel.js?v=20260923a" defer></script>
+<script src="repel.js?v=20260923a" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -753,7 +753,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     var red=(sel==='.hero');
     var x=0,y=0,cx=0,cy=0,raf=0,on=false, last=0,live=0,px=0,py=0;
     function frame(){
-      cx+=(x-cx)*.14; cy+=(y-cy)*.14;
+      cx=x; cy=y;   // primo pod kurzorem, bez dojezdu
       if(t) t.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
       if(on||Math.abs(x-cx)>.5||Math.abs(y-cy)>.5) raf=requestAnimationFrame(frame); else raf=0;
     }
