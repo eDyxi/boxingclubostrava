@@ -137,7 +137,7 @@ function render(model) {
   const base = (q ? q.split(',').map(Number) : BASE_ROT).map(THREE.MathUtils.degToRad);
 
   let progress = 0, cur = 0, dirty = true, visible = true;
-  const pose = { y: 0, p: 0, r: 0 };
+  const pose = { y: 0, p: 0, r: 0, z: 1 };
   if (window.gsap && window.ScrollTrigger) {
     ScrollTrigger.create({
       trigger: '.wrap', start: 'top top', end: 'bottom bottom', scrub: true,
@@ -179,6 +179,7 @@ function render(model) {
     pose.y += (rig.yaw - pose.y) * .09;      // dojezd, aby zatacka nebyla hranata
     pose.p += (rig.pitch - pose.p) * .09;
     pose.r += (rig.roll - pose.r) * .09;
+    pose.z += ((rig.zoom || 1) - pose.z) * .09;   // zvetseni modelu kamerou, ne CSS - zadne rozmazani
     pivot.rotation.set(
       base[0] + pose.p + Math.sin(t * .35) * .05 - cur * .35,
       base[1] + pose.y + cur * SPIN + Math.sin(t * .27) * .06,
@@ -189,7 +190,7 @@ function render(model) {
     const cr = Math.abs(Math.cos(pose.r)), sr = Math.abs(Math.sin(pose.r));
     const visH = 2 * baseZ * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2), visW = visH * camera.aspect;
     const need = Math.max((size.x * cr + size.y * sr) / (visW * .96), (size.x * sr + size.y * cr) / (visH * .9));
-    camera.position.z = baseZ * Math.max(1, need);
+    camera.position.z = baseZ * Math.max(1 / pose.z, need);   // zoom nikdy neoreze natoceny model
     renderer.render(scene, camera);
     dirty = false;
   });

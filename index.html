@@ -408,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260923b">
+<link rel="stylesheet" href="carousel.css?v=20260923c">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -479,7 +479,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // POZOR: musi tu byt obe podminky. S jedinou se callback na desktopu vubec nespusti
   // (zadny dotaz neplati) a cela rezie se nepostavi.
   // 3D model cte tyhle hodnoty pri kazdem snimku; kdyz WebGL nejede, nic se nedeje
-  var rig=window.gloveRig={yaw:0,pitch:0,roll:0};
+  var rig=window.gloveRig={yaw:0,pitch:0,roll:0,zoom:1};
+  // klidova poza u vsech textu krome hlavniho nadpisu: naklon 30 st. a o 28 % vetsi
+  var POSE={yaw:.3,roll:.524,pitch:-.3,zoom:1.28};
   var mm=gsap.matchMedia();
   mm.add({mob:'(max-width:700px)',pc:'(min-width:701px)'},function(ctx){
     var mob=ctx.conditions.mob, unit='char';
@@ -608,7 +610,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+D*.52);
         tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+D*.52);
         tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:D*.42,ease:'power3.out'},t+D*.55);
-        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:D*.42,ease:'power3.out'},t+D*.55);
+        tl.to(rig,Object.assign({duration:D*.42,ease:'power3.out'},POSE),t+D*.55);
       }else if(hit){
         // DRUHA RANA: stejna choreografie jako prvni, jen zprava do cisel. Rukavice
         // vletí z pravého okraje, napřáhne, prorazí řadu čísel, kusy (číslo i popisek)
@@ -616,32 +618,29 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         // Animuje se b a span, ne jejich div (ten drzi najezd) ani textContent (ten
         // prepisuje pocitadlo).
         var sp=document.getElementById('stats'), bits=sp.querySelectorAll('b,span');
-        tl.to('.gl',{x:function(){return rest.R()+innerWidth*.03;},y:0,rotation:0,
-                     duration:S*.12,ease:'power2.out'},t);
-        tl.to(rig,{yaw:.5,roll:1.571,pitch:-.8,duration:S*.12,ease:'power2.out'},t);
-        tl.to('.gl',{x:function(){return -innerWidth*.52;},
-                     y:function(){
+        // start mimo obraz vpravo, primy prulet radou cisel az mimo obraz vlevo
+        tl.set('.gl',{rotation:0,y:function(){
                        var b=sp.querySelector('b').getBoundingClientRect(), g=gloveEl().getBoundingClientRect();
                        return (b.top+b.height/2)-(g.top+g.height/2);
-                     },
-                     duration:S*.24,ease:'power3.in'},t+S*.10);
-        tl.to(rig,{yaw:.55,roll:1.571,pitch:-1.571,duration:S*.2,ease:'power2.in'},t+S*.12);
+                     }},t);
+        tl.set(rig,{yaw:.55,roll:1.571,pitch:-1.571,zoom:1},t);
+        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
+                     duration:S*.36,ease:'none'},t+S*.04);
         tl.fromTo(bits,{x:0,y:0,rotation:0,opacity:1},{
             x:function(){return -120-Math.random()*380;},
             y:function(){return (Math.random()-.5)*420;},
             rotation:function(){return (Math.random()-.5)*260;},
             opacity:0,duration:S*.36,ease:'power3.out',
-            stagger:{each:S*.012,from:'end'}},t+S*.24);
+            stagger:{each:S*.02,from:'end'}},t+S*.16);
         tl.fromTo(sp,{x:0},{keyframes:[{x:-14,duration:S*.02},{x:9,duration:S*.02},
-                                        {x:-5,duration:S*.02},{x:0,duration:S*.03}]},t+S*.26);
-        tl.set(sp,{pointerEvents:'none'},t+S*.24);
+                                        {x:-5,duration:S*.02},{x:0,duration:S*.03}]},t+S*.18);
+        tl.set(sp,{pointerEvents:'none'},t+S*.16);
         tl.to(sp,{opacity:0,duration:S*.06,ease:'none'},t+S*.52);
-        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
-                     duration:S*.16,ease:'power1.in'},t+S*.34);
+        // mimo obraz: srovnat a vratit se zleva na levou pozici
         tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+S*.52);
         tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+S*.52);
         tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:S*.42,ease:'power3.out'},t+S*.55);
-        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:S*.42,ease:'power3.out'},t+S*.55);
+        tl.to(rig,Object.assign({duration:S*.42,ease:'power3.out'},POSE),t+S*.55);
       }else{
         var m=MOVES[i];
         // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
@@ -651,8 +650,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
                      duration:S*.5,ease:m.e2},t+S*.5);
         // naklon do oblouku dela 3D model, ne CSS
         tl.to(rig,{yaw:dir*m.yaw,roll:dir*-m.roll,pitch:m.pitch,duration:S*.5,ease:m.e1},t)
-          .to(rig,{yaw:0,roll:dir*.12,pitch:0,duration:S*.42,ease:m.e2},t+S*.5)
-          .to(rig,{roll:0,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
+          .to(rig,{yaw:POSE.yaw,roll:POSE.roll+dir*.12,pitch:POSE.pitch,zoom:POSE.zoom,duration:S*.42,ease:m.e2},t+S*.5)
+          .to(rig,{roll:POSE.roll,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
       }
 
       enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
@@ -772,9 +771,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260923b"></script>
-<script src="carousel.js?v=20260923b" defer></script>
-<script src="repel.js?v=20260923b" defer></script>
+<script type="module" src="glove3d.js?v=20260923c"></script>
+<script src="carousel.js?v=20260923c" defer></script>
+<script src="repel.js?v=20260923c" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
