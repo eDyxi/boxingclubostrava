@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const BASE_ROT = [0, 0, 0];          // vychozi natoceni modelu ve stupnich
-const TINT = [1.55, 1.0, 0.95];        // nasobic barvy kuze (R,G,B)
+const RED = 0xe01a2b;                   // cilova barva kuze: syta svetla cervena
 const GOLD = 0xd9a441;                  // barva hlavniho svetla
 const FIT = 0.67;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
@@ -86,13 +86,22 @@ function render(model) {
       map: o.material.map, roughness: .72, metalness: 0,
       envMapIntensity: .6, specularIntensity: .22
     });
-    // svetlejsi, cervenejsi kuze: barva > 1 zesvetli texturu, cervena nejvic
-    m.color.setRGB(TINT[0], TINT[1], TINT[2]);
-    if (m.map) { m.emissiveMap = m.map; m.emissive.setHex(0x3a0808); }
     o.material = m;
     if (m.map) { m.map.anisotropy = 4; m.map.colorSpace = THREE.SRGBColorSpace; }
     // logo promitnute rovinne z prednI strany - nezavisle na UV mape modelu
-    if (lg) m.onBeforeCompile = (sh) => {
+    // Prebarveni kuze: vse vyrazne cervene (tmava vinova) se premapuje na sytou
+    // svetlou cervenou, stinovani textury zustane. Kremove casti a logo se nemeni.
+    const RECOLOR = `{ vec3 c0 = diffuseColor.rgb;
+        float sat = (c0.r - max(c0.g, c0.b)) / max(c0.r, 1e-3);
+        float lum = dot(c0, vec3(0.2126, 0.7152, 0.0722));
+        vec3 hot = uRed * clamp(0.5 + lum * 6.0, 0.5, 1.4);
+        diffuseColor.rgb = mix(c0, hot, smoothstep(0.35, 0.6, sat)); }`;
+    m.onBeforeCompile = (sh) => {
+      sh.uniforms.uRed = { value: new THREE.Color(RED) };
+      sh.fragmentShader = sh.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform vec3 uRed;')
+        .replace('#include <map_fragment>', '#include <map_fragment>\n' + RECOLOR + '\n//LOGO');
+      if (!lg) return;
       sh.uniforms.uLogo = { value: logoTex };
       sh.uniforms.uLogoRect = { value: new THREE.Vector4(lg[0], lg[1], lg[2], lg[3]) };
       sh.vertexShader = sh.vertexShader
@@ -102,7 +111,7 @@ function render(model) {
         .replace('#include <common>', `#include <common>
           varying vec3 vLoc; varying vec3 vLocN;
           uniform sampler2D uLogo; uniform vec4 uLogoRect;`)
-        .replace('#include <map_fragment>', `#include <map_fragment>
+        .replace('//LOGO', `
           float ax = uLogoRect.w;
           vec2 pp = (ax < 1.5) ? vLoc.xy : vLoc.zy;
           float facing = (ax < 1.5) ? vLocN.z : vLocN.x;

@@ -279,6 +279,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   .outro{padding-top:7vh}                 /* mezera nad zaverem jako ostatni */
   .rozc{padding-bottom:36px}
 }
+/* Texty preletu (krome hlavniho nadpisu a posledniho textu) o 30 % vetsi. */
+@media (min-width:701px){
+  #p1 h2,#p2 h2,#p3 h2{font-size:clamp(34px,7.3vw,60px)}
+  #p1 p,#p2 p,#p3 p{font-size:19.5px}
+  #p1 .fine,#p2 .fine,#p3 .fine{font-size:17px}
+  body.fx #p1,body.fx #p2,body.fx #p3{width:min(572px,74vw)}
+  #stats b{font-size:clamp(62px,15.6vw,143px)}
+  #stats span{font-size:13px}
+}
 </style>
 
 <div class="wrap">
@@ -408,7 +417,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260923c">
+<link rel="stylesheet" href="carousel.css?v=20260923d">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -472,6 +481,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // (rana do nadpisu) trva dele nez ostatni, aby byl videt. Zbytek se podeli.
   var S=.12, S0=.20, H=(1-S0-S*(BEATS.length-2))/(BEATS.length+2.2), H0=H*2.2, HE=H*2;
   function tOf(i){ return i===0?H0:H0+S0+H+(i-1)*(S+H); }
+  var RAW={S:S,S0:S0,H:H,H0:H0,HE:HE};
   window.__smash={at:H0+S0*.52};                  // od teto chvile je rukavice mimo obraz
   function gloveEl(){var e=document.getElementById('g3d');return (e&&e.offsetWidth)?e:document.getElementById('glove');}
 
@@ -480,11 +490,43 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // (zadny dotaz neplati) a cela rezie se nepostavi.
   // 3D model cte tyhle hodnoty pri kazdem snimku; kdyz WebGL nejede, nic se nedeje
   var rig=window.gloveRig={yaw:0,pitch:0,roll:0,zoom:1};
-  // klidova poza u vsech textu krome hlavniho nadpisu: naklon 30 st. a o 28 % vetsi
-  var POSE={yaw:.3,roll:.524,pitch:-.3,zoom:1.28};
+  // klidova poza u vsech textu krome hlavniho nadpisu
+  var POSE={yaw:.3,roll:.349,pitch:-.3,zoom:1};   // 20 st.; velikost dela REST_S
   var mm=gsap.matchMedia();
   mm.add({mob:'(max-width:700px)',pc:'(min-width:701px)'},function(ctx){
     var mob=ctx.conditions.mob, unit='char';
+
+    // CASOVANI: kazdy text ma stejny cas na precteni (READ), pocitano az od chvile,
+    // kdy dojede jeho nastupni animace, do chvile, kdy ho zacne smazavat dalsi prelet.
+    // Delsi nastup = delsi zastavka. Hlavni nadpis si drzi svou puvodni pauzu H0.
+    // Celek se prepocte na 0..1 a o stejny pomer se prodlouzi .wrap, takze rychlost
+    // scrollu i rukavice zustava stejna.
+    S=RAW.S; S0=RAW.S0; H=RAW.H; H0=RAW.H0; HE=RAW.HE; RATE=.22;
+    var SH=S*1.7, TT=null, wrapEl=document.querySelector('.wrap');
+    var REST_S=mob?1:1.5;                         // velikost rukavice u ostatnich textu
+    if(!mob){
+      var READ=.10;
+      var anim=function(sel){
+        var p=document.querySelector(sel);
+        if(sel==='#stats') return S*(.06+.04*(p.querySelectorAll('b').length-1)+.34);
+        var h=p.querySelector('h1,h2'), ps=p.querySelectorAll('p'), a=0;
+        if(h) a=S*(.28+.005*h.textContent.trim().length);
+        if(ps.length){ var lp=ps[ps.length-1];
+          a=Math.max(a,S*(.35+(ps.length-1)*.08+.008*lp.textContent.trim().split(/\s+/).length)); }
+        return a;
+      };
+      TT=[H0];
+      for(var k=1;k<BEATS.length-1;k++){
+        var inD=(BEATS[k-1][0]==='#stats')?SH:S, outAt=(BEATS[k][0]==='#stats')?SH*.16:S*.30;
+        TT.push(TT[k-1]+inD*.80+anim(BEATS[k][0])+READ-outAt);
+      }
+      var nB=BEATS.length-1, T=TT[nB-1]+((BEATS[nB-1][0]==='#stats')?SH:S)*.80+anim(BEATS[nB][0])+READ*1.4;
+      var kf=1/T;
+      TT=TT.map(function(v){return v*kf;});
+      S*=kf; S0*=kf; SH*=kf; H0*=kf; HE*=kf; RATE*=kf;
+      wrapEl.style.height=(100+500*T).toFixed(0)+'vh';
+      window.__smash={at:H0+S0*.52};
+    }else{ wrapEl.style.height=''; window.__smash={at:RAW.H0+RAW.S0*.52}; }
 
     // klidove pozice se stridaji, text je vzdy na opacne strane
     function inset(){return innerWidth*.10;}
@@ -492,10 +534,13 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // nez u praveho, protoze vychazi z 3D ramecku.
     function insetL(){return innerWidth*.19;}
     var rest={
-      R:function(){return mob?0:-inset();},
-      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-insetL(),120);},
+      R0:function(){return mob?0:-inset();},                      // hlavni nadpis - beze zmeny
+      // vetsi rukavice roste od stredu; posun drzi jeji vnejsi okraj tam, kde byl
+      R:function(){return mob?0:-inset()-grow();},
+      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-insetL(),120)+grow()+innerWidth*.03;},
       OUT:function(){return mob?0:gloveEl().offsetWidth*.6+innerWidth*.55;}   // uplne z obrazu, scena patri cislum
     };
+    function grow(){return (REST_S-1)*gloveEl().offsetWidth*.28;}
     function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
     // Pet ruznych pruletu, ne jeden pohyb dokola. lift = zdvih, dep = jak daleko je
@@ -515,7 +560,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // aby byl videt palec. Zadne naklapeni ani roztahovani cele vrstvy.
     // Uvodni poza. Natoceni dela 3D model, ne otaceni cele vrstvy - to se
     // pocita z obrazku a rukavice se tim rozmazala a roztahla.
-    gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05+60;},y:0,rotation:0,scale:1,
+    gsap.set('.gl',{x:function(){return mob?0:rest.R0()-innerWidth*.05+60;},y:0,rotation:0,scale:1,
       transformOrigin:'50% 50%'});
     if(!mob){ rig.yaw=.46; rig.roll=1.396; rig.pitch=-.5; }          // naklon 80 stupnu, pri rane 90
 
@@ -563,9 +608,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     }
 
     for(var i=0;i<BEATS.length-1;i++){
-      var smash=(i===0&&!mob), D=smash?S0:S;
-      var hit=(BEATS[i][0]==='#stats'&&!mob);   // druha rana: do cisel
-      var t=mob?(H0+i*(H+S)):tOf(i), from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
+      var hit=(BEATS[i][0]==='#stats'&&!mob);   // druha rana: do cisel (pomalejsi prulet)
+      var smash=(i===0&&!mob), D=smash?S0:(hit?SH:S);
+      var t=mob?(H0+i*(H+S)):TT[i], from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
 
       if(!smash&&!hit) leave(BEATS[i][0],t+S*.30);   // stary text setre rukavice, kdyz na nej doleti
 
@@ -581,7 +626,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         var p0=document.getElementById('p0');
         var letters=parts(p0.querySelector('h1'),'char');
         // napriahnuti - kratce se stahne zpet, nez vyrazi
-        tl.to('.gl',{x:function(){return rest.R()-innerWidth*.05+60+innerWidth*.03;},
+        tl.to('.gl',{x:function(){return rest.R0()-innerWidth*.05+60+innerWidth*.03;},
                      duration:D*.10,ease:'power1.out'},t);
         tl.to(rig,{yaw:.5,roll:1.571,pitch:-.8,duration:D*.12,ease:'power2.out'},t);
         // uder
@@ -607,7 +652,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
                      duration:D*.16,ease:'power1.in'},t+D*.34);
         // mimo obraz: srovnat a vratit se zleva na levou pozici
-        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+D*.52);
+        tl.set('.gl',{rotation:12,scale:REST_S,y:-innerHeight*.02},t+D*.52);
         tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+D*.52);
         tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:D*.42,ease:'power3.out'},t+D*.55);
         tl.to(rig,Object.assign({duration:D*.42,ease:'power3.out'},POSE),t+D*.55);
@@ -625,28 +670,28 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
                      }},t);
         tl.set(rig,{yaw:.55,roll:1.571,pitch:-1.571,zoom:1},t);
         tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
-                     duration:S*.36,ease:'none'},t+S*.04);
+                     duration:D*.36,ease:'none'},t+D*.04);
         tl.fromTo(bits,{x:0,y:0,rotation:0,opacity:1},{
             x:function(){return -120-Math.random()*380;},
             y:function(){return (Math.random()-.5)*420;},
             rotation:function(){return (Math.random()-.5)*260;},
-            opacity:0,duration:S*.36,ease:'power3.out',
-            stagger:{each:S*.02,from:'end'}},t+S*.16);
-        tl.fromTo(sp,{x:0},{keyframes:[{x:-14,duration:S*.02},{x:9,duration:S*.02},
-                                        {x:-5,duration:S*.02},{x:0,duration:S*.03}]},t+S*.18);
-        tl.set(sp,{pointerEvents:'none'},t+S*.16);
-        tl.to(sp,{opacity:0,duration:S*.06,ease:'none'},t+S*.52);
+            opacity:0,duration:D*.36,ease:'power3.out',
+            stagger:{each:D*.02,from:'end'}},t+D*.16);
+        tl.fromTo(sp,{x:0},{keyframes:[{x:-14,duration:D*.02},{x:9,duration:D*.02},
+                                        {x:-5,duration:D*.02},{x:0,duration:D*.03}]},t+D*.18);
+        tl.set(sp,{pointerEvents:'none'},t+D*.16);
+        tl.to(sp,{opacity:0,duration:D*.06,ease:'none'},t+D*.52);
         // mimo obraz: srovnat a vratit se zleva na levou pozici
-        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+S*.52);
-        tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+S*.52);
-        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:S*.42,ease:'power3.out'},t+S*.55);
-        tl.to(rig,Object.assign({duration:S*.42,ease:'power3.out'},POSE),t+S*.55);
+        tl.set('.gl',{rotation:12,scale:REST_S,y:-innerHeight*.02},t+D*.52);
+        tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+D*.52);
+        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:D*.42,ease:'power3.out'},t+D*.55);
+        tl.to(rig,Object.assign({duration:D*.42,ease:'power3.out'},POSE),t+D*.55);
       }else{
         var m=MOVES[i];
         // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
-        tl.to('.gl',{x:mid(from,to),y:-innerHeight*m.lift,scale:m.dep,rotation:dir*m.rot,
+        tl.to('.gl',{x:mid(from,to),y:-innerHeight*m.lift,scale:m.dep*REST_S,rotation:dir*m.rot,
                      duration:S*.5,ease:m.e1},t)
-          .to('.gl',{x:rest[to],y:0,scale:1,rotation:dir*-3,
+          .to('.gl',{x:rest[to],y:0,scale:REST_S,rotation:dir*-3,
                      duration:S*.5,ease:m.e2},t+S*.5);
         // naklon do oblouku dela 3D model, ne CSS
         tl.to(rig,{yaw:dir*m.yaw,roll:dir*-m.roll,pitch:m.pitch,duration:S*.5,ease:m.e1},t)
@@ -654,7 +699,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
           .to(rig,{roll:POSE.roll,duration:S*.08,ease:'sine.out'},t+S*.92);   // dozhoupani po dosednuti
       }
 
-      enter(BEATS[i+1][0],t+S*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
+      enter(BEATS[i+1][0],t+(hit?SH:S)*.80,from==='L'?'start':'end');   // az kdyz je rukavice davno za nim
     }
     tl.to('.gl',{opacity:0,duration:HE*.35,ease:'none'},1-HE*.5);
     // dojezd do cerna, aby hero splynulo s pozadim sekce pod nim
@@ -771,9 +816,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260923c"></script>
-<script src="carousel.js?v=20260923c" defer></script>
-<script src="repel.js?v=20260923c" defer></script>
+<script type="module" src="glove3d.js?v=20260923d"></script>
+<script src="carousel.js?v=20260923d" defer></script>
+<script src="repel.js?v=20260923d" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
