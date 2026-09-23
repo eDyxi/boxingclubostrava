@@ -408,7 +408,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <p class="note">Prototyp. Ověřit u klubu: půjčování rukavic, časy skupin, rok založení, počet trenérů a ringů. <span id="diag"></span></p>
 
-<link rel="stylesheet" href="carousel.css?v=20260923a">
+<link rel="stylesheet" href="carousel.css?v=20260923b">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -515,7 +515,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // pocita z obrazku a rukavice se tim rozmazala a roztahla.
     gsap.set('.gl',{x:function(){return mob?0:rest.R()-innerWidth*.05+60;},y:0,rotation:0,scale:1,
       transformOrigin:'50% 50%'});
-    if(!mob){ rig.yaw=.46; rig.roll=1.571; rig.pitch=-.5; }          // naklon 90 stupnu
+    if(!mob){ rig.yaw=.46; rig.roll=1.396; rig.pitch=-.5; }          // naklon 80 stupnu, pri rane 90
 
     function enter(sel,at,dir){
       var p=document.querySelector(sel);
@@ -562,9 +562,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
     for(var i=0;i<BEATS.length-1;i++){
       var smash=(i===0&&!mob), D=smash?S0:S;
+      var hit=(BEATS[i][0]==='#stats'&&!mob);   // druha rana: do cisel
       var t=mob?(H0+i*(H+S)):tOf(i), from=BEATS[i][1], to=BEATS[i+1][1], dir=(to==='L'?-1:1);
 
-      if(!smash) leave(BEATS[i][0],t+S*.30);   // stary text setre rukavice, kdyz na nej doleti
+      if(!smash&&!hit) leave(BEATS[i][0],t+S*.30);   // stary text setre rukavice, kdyz na nej doleti
 
       if(mob){
         // mobil zustava jak byl: rukavice nahore na stredu, jen se preklapi
@@ -608,6 +609,39 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+D*.52);
         tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:D*.42,ease:'power3.out'},t+D*.55);
         tl.to(rig,{yaw:0,roll:0,pitch:0,duration:D*.42,ease:'power3.out'},t+D*.55);
+      }else if(hit){
+        // DRUHA RANA: stejna choreografie jako prvni, jen zprava do cisel. Rukavice
+        // vletí z pravého okraje, napřáhne, prorazí řadu čísel, kusy (číslo i popisek)
+        // se rozletí, řada se otřese, rukavice zmizí vlevo a vrátí se na levou pozici.
+        // Animuje se b a span, ne jejich div (ten drzi najezd) ani textContent (ten
+        // prepisuje pocitadlo).
+        var sp=document.getElementById('stats'), bits=sp.querySelectorAll('b,span');
+        tl.to('.gl',{x:function(){return rest.R()+innerWidth*.03;},y:0,rotation:0,
+                     duration:S*.12,ease:'power2.out'},t);
+        tl.to(rig,{yaw:.5,roll:1.571,pitch:-.8,duration:S*.12,ease:'power2.out'},t);
+        tl.to('.gl',{x:function(){return -innerWidth*.52;},
+                     y:function(){
+                       var b=sp.querySelector('b').getBoundingClientRect(), g=gloveEl().getBoundingClientRect();
+                       return (b.top+b.height/2)-(g.top+g.height/2);
+                     },
+                     duration:S*.24,ease:'power3.in'},t+S*.10);
+        tl.to(rig,{yaw:.55,roll:1.571,pitch:-1.571,duration:S*.2,ease:'power2.in'},t+S*.12);
+        tl.fromTo(bits,{x:0,y:0,rotation:0,opacity:1},{
+            x:function(){return -120-Math.random()*380;},
+            y:function(){return (Math.random()-.5)*420;},
+            rotation:function(){return (Math.random()-.5)*260;},
+            opacity:0,duration:S*.36,ease:'power3.out',
+            stagger:{each:S*.012,from:'end'}},t+S*.24);
+        tl.fromTo(sp,{x:0},{keyframes:[{x:-14,duration:S*.02},{x:9,duration:S*.02},
+                                        {x:-5,duration:S*.02},{x:0,duration:S*.03}]},t+S*.26);
+        tl.set(sp,{pointerEvents:'none'},t+S*.24);
+        tl.to(sp,{opacity:0,duration:S*.06,ease:'none'},t+S*.52);
+        tl.to('.gl',{x:function(){return -(innerWidth+gloveEl().offsetWidth*1.3);},
+                     duration:S*.16,ease:'power1.in'},t+S*.34);
+        tl.set('.gl',{rotation:12,y:-innerHeight*.02},t+S*.52);
+        tl.set(rig,{yaw:.6,roll:.2,pitch:0},t+S*.52);
+        tl.to('.gl',{x:rest.L,y:0,rotation:0,duration:S*.42,ease:'power3.out'},t+S*.55);
+        tl.to(rig,{yaw:0,roll:0,pitch:0,duration:S*.42,ease:'power3.out'},t+S*.55);
       }else{
         var m=MOVES[i];
         // jeden plynuly tah ve dvou navazujicich usecich, pokazde s jinym charakterem
@@ -738,9 +772,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260923a"></script>
-<script src="carousel.js?v=20260923a" defer></script>
-<script src="repel.js?v=20260923a" defer></script>
+<script type="module" src="glove3d.js?v=20260923b"></script>
+<script src="carousel.js?v=20260923b" defer></script>
+<script src="repel.js?v=20260923b" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.

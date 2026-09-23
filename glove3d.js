@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const BASE_ROT = [0, 0, 0];          // vychozi natoceni modelu ve stupnich
 const TINT = [1.55, 1.0, 0.95];        // nasobic barvy kuze (R,G,B)
 const GOLD = 0xd9a441;                  // barva hlavniho svetla
-const FIT = 0.74;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
+const FIT = 0.67;                       // kolik z vysky ramecku model zabere (zbytek je rezerva na rotaci)
 // Na mobilu je otaceni modelu hlavni pohyb. Na desktopu rizeni prebira window.gloveRig,
 // ktery plni hero timeline - model zatáčí do oblouku misto toceni na miste.
 const SPIN = matchMedia('(max-width: 700px)').matches ? 4.2 : 0;
@@ -128,7 +128,7 @@ function render(model) {
   const fit = () => {                     // nafitovat na vysku ramecku, ne na nejvetsi rozmer
     const half = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
     const dh = (size.y / 2 / FIT) / half;
-    const dw = (Math.max(size.x, size.z) / 2 / .62) / (half * camera.aspect);
+    const dw = (Math.max(size.x, size.z) / 2 / .56) / (half * camera.aspect);
     baseZ = Math.max(dh, dw);
     camera.position.set(0, 0, baseZ);
   };
