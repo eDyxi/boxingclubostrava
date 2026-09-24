@@ -288,18 +288,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   #stats b{font-size:clamp(62px,15.6vw,143px)}
   #stats span{font-size:13px}
 }
-/* SUNRAY - paprsek pres nadpisy (rizeni v JS, promenne --sx paprsek, --bo pruh).
+/* SUNRAY - paprsek pres nadpisy (rizeni v JS, promenna --sx).
+   Pismena NESMI byt samostatna GPU vrstva (will-change / 3D transform) - Chromium
+   pak ignoruje background-clip:text a kresli paprsek jako obdelnik.
    Stin pismen jde pres filter: text-shadow by lezl pres vyrez paprsku. */
-.p .ray{position:relative;--sx:-9999px;--bo:0;text-shadow:none;
+.p .ray{position:relative;--sx:-9999px;text-shadow:none;
   filter:drop-shadow(0 0 .3em rgba(190,40,30,.42)) drop-shadow(0 3px 12px rgba(10,4,3,.85))}
-.ray .rs{background-color:currentColor;
+.ray .rs{will-change:auto;background-color:currentColor;
   background-image:linear-gradient(108deg,transparent 0,transparent 43%,rgba(255,196,176,.9) 47.5%,#fff 50%,rgba(255,170,150,.9) 52.5%,transparent 57%,transparent 100%);
   background-size:var(--rw) 100%;background-repeat:no-repeat;
   background-position:calc(var(--sx) - var(--ox)) 0;
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.p .ray::after{content:"";position:absolute;top:-18%;bottom:-18%;left:0;width:140px;pointer-events:none;
-  transform:translateX(calc(var(--sx) + var(--rw) * .5 - 70px)) skewX(-18deg);opacity:var(--bo);
-  background:linear-gradient(90deg,rgba(255,210,195,0),rgba(255,210,195,.07) 35%,rgba(255,236,228,.16) 50%,rgba(255,210,195,.07) 65%,rgba(255,210,195,0))}
 </style>
 
 <div class="wrap">
@@ -773,7 +772,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   // SUNRAY: paprsek svetla rychle proleti nadpisem. Kazde pismeno nese vyrez
   // stejneho sikmeho pasu (background-clip:text), posunuty o svou polohu v nadpisu,
   // takze pres cely nadpis jede jeden souvisly paprsek. K tomu jemny sikmy pruh
-  // svetla pres cely blok (::after). Kurzivni slovo si drzi svou barvu.
+  // Kurzivni slovo si drzi svou barvu. Pod paprskem se pismena jemne zvetsi
+  // (vlna jako lupa, max 12 %), takze to zije bez poskakovani.
   var RAY_W=900, RAY_TAN=Math.tan(18*Math.PI/180);
   var heads=gsap.utils.toArray('.p h1, .p h2').filter(function(h){return h.querySelector('.sh');});
   function rayPrep(h){
@@ -781,7 +781,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       if(c.closest('em')) return;
       var x=0,y=0,e=c;                       // offsetLeft ignoruje transformace nastupu
       while(e&&e!==h){ x+=e.offsetLeft; y+=e.offsetTop; e=e.offsetParent; }
-      c.classList.add('rs');
+      c.classList.add('rs'); c._ox=x-y*RAY_TAN;
       c.style.setProperty('--ox',(x-y*RAY_TAN).toFixed(1)+'px');
     });
   }
@@ -791,10 +791,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   if(heads.length&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
     var rayTl=gsap.timeline({repeat:-1,repeatDelay:4.4,delay:2.2,repeatRefresh:true});
     heads.forEach(function(h){
-      rayTl.fromTo(h,{'--sx':function(){return (-RAY_W*.5-h.offsetHeight)+'px';},'--bo':0},
+      rayTl.fromTo(h,{'--sx':function(){return (-RAY_W*.5-h.offsetHeight)+'px';}},
         {'--sx':function(){return (h.offsetWidth-RAY_W*.5+h.offsetHeight)+'px';},
-         duration:.95,ease:'power2.inOut'},0);
-      rayTl.to(h,{keyframes:[{'--bo':1,duration:.3,ease:'sine.out'},{'--bo':0,duration:.55,ease:'sine.in'}]},.05);
+         duration:.95,ease:'none'},0);
+      var cs=h.querySelectorAll('.rs');
+      gsap.set(cs,{transformOrigin:'50% 72%'});
+      // kazde pismeno se nafoukne presne ve chvili, kdy nad nim je stred paprsku
+      rayTl.to(cs,{force3D:false,keyframes:[{scale:1.12,duration:.2,ease:'sine.out'},{scale:1,duration:.5,ease:'sine.inOut'}],
+        stagger:function(i,el){
+          var W=h.offsetWidth,H=h.offsetHeight,u=(el._ox+el.offsetWidth/2+H)/(W+2*H);
+          return Math.max(0,.95*Math.min(1,u)-.1);
+        }},0);
     });
   }
   gsap.to('#p0 h1 em',{opacity:.72,duration:2.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:1.4});
