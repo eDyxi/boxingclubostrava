@@ -343,7 +343,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       <div class="p r" id="p4">
         <div class="eyebrow">Proč nám věřit</div>
         <h2>Sportovní centrum mládeže.</h2>
-        <p>Ten statut si klub nedá sám — uděluje ho asociace klubům, které umí vychovat reprezentanta. Naši boxeři jezdí na Národní ligu, na turnaje do Polska a na mistrovství Evropy.</p>
+        <p>Ten status si klub nedá sám — uděluje ho asociace klubům, které umí vychovat reprezentanta. Naši boxeři jezdí na Národní ligu, na turnaje do Polska a na mistrovství Evropy.</p>
         <p class="fine">Ať přijdeš zhubnout nebo vyhrávat, trénuješ v klubu, který na to má.</p>
       </div>
     </div>
@@ -503,7 +503,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
     // scrollu i rukavice zustava stejna.
     S=RAW.S; S0=RAW.S0; H=RAW.H; H0=RAW.H0; HE=RAW.HE; RATE=.22;
     var SH=S*1.7, TT=null, wrapEl=document.querySelector('.wrap');
-    var REST_S=mob?1:1.5;                         // velikost rukavice u ostatnich textu
+    var REST_S=mob?1:1.275;                       // velikost rukavice u ostatnich textu (o 15 % mensi nez 1.5)
+    var POS_S=1.5;                                // pozice zustava spocitana pro 1.5 - zmenseni drzi stred
     if(!mob){
       var READ=.10;
       var anim=function(sel){
@@ -537,10 +538,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
       R0:function(){return mob?0:-inset();},                      // hlavni nadpis - beze zmeny
       // vetsi rukavice roste od stredu; posun drzi jeji vnejsi okraj tam, kde byl
       R:function(){return mob?0:-inset()-grow();},
-      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-insetL(),120)+grow()+innerWidth*.03;},
+      L:function(){return mob?0:-Math.max(innerWidth-gloveEl().offsetWidth-insetL(),120)+grow();},   // o 3 % sirky vlevo proti minule
       OUT:function(){return mob?0:gloveEl().offsetWidth*.6+innerWidth*.55;}   // uplne z obrazu, scena patri cislum
     };
-    function grow(){return (REST_S-1)*gloveEl().offsetWidth*.28;}
+    function grow(){return mob?0:(POS_S-1)*gloveEl().offsetWidth*.28;}
     function mid(a,b){return function(){return (rest[a]()+rest[b]())/2};}
 
     // Pet ruznych pruletu, ne jeden pohyb dokola. lift = zdvih, dep = jak daleko je
