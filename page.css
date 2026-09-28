@@ -175,6 +175,14 @@ a.kart:hover::after{background-position:-40% 0}
   .split .cf-on{height:min(560px,72vh)}
   .split .cf-on .cf-detail{width:min(340px,40%)}
   .split>.rozc{margin-left:clamp(-150px,-8vw,-50px)}   /* karusel co nejvic doleva, text ma svuj sloupec */
+  /* kontakt: stejne rozlozeni jako karusel, karty 3 vedle sebe ve 2 radach,
+     puvodni styl i animace, jen zmensene podle velikosti karet */
+  .split>.kont{padding:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .split>.kont .kart{padding:20px 20px 22px;border-radius:16px}
+  .split>.kont .kart span{font-size:10px}
+  .split>.kont .kart strong{margin-top:9px;font-size:clamp(17px,1.45vw,22px)}
+  .split>.kont .kart em{margin-top:7px;font-size:13px;line-height:1.45}
+  .split>.kont a.kart:hover{transform:translateY(-2px)}
 }
 
 
