@@ -207,6 +207,12 @@
   }
 
   if (detail) detail.querySelector('.cf-d-close').addEventListener('click', closeCard);
+  // Odkaz na jeste neexistujici podstranku (href="#") nesmi skocit na zacatek
+  // stranky - skok vratil scroll do animace hero a ta se pak sama dojizdela zpet.
+  root.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href="#"], a:not([href])');
+    if (a) e.preventDefault();
+  }, true);
   addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
 
   // Naklon za kurzorem je odstraneny. Kvuli nemu se karta hybala mezi stiskem
