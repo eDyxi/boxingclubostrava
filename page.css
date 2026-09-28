@@ -325,3 +325,88 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   padding:clamp(20px,7vh,90px) 0 clamp(28px,4vw,48px)}   /* opticky stred je o kus niz nez geometricky */
 .kcenter>.split{padding-top:0}
 .kcenter .fine{padding-bottom:clamp(20px,3vw,36px)}
+
+/* ---------- ZAPASY ---------- */
+.zap{padding:clamp(40px,7vw,80px) var(--g) 0}
+.zap h2{font-size:clamp(24px,4vw,40px);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;
+  margin:0 0 .8em;color:var(--ink);
+  filter:drop-shadow(0 0 .32em rgba(255,255,255,.22)) drop-shadow(0 2px 10px rgba(10,4,3,.8))}
+.lbl{display:block;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:oklch(74% .20 27)}
+/* hlavni vysledek: velka skleneno-cervena karta se skore */
+.res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(20px,4vw,56px);align-items:center;
+  padding:clamp(24px,3.5vw,44px);border-radius:26px;border:1.5px solid rgba(227,36,43,.4);
+  background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(227,36,43,.08) 55%,rgba(227,36,43,.16));
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);animation:karta 4.6s ease-in-out infinite}
+.res .teams{margin-top:12px;font-size:clamp(20px,2.4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.res .teams i{font-family:"Bodoni Moda",Georgia,serif;font-weight:400;color:oklch(74% .20 27);padding:0 .15em}
+.res p{margin:14px 0 0;max-width:62ch;color:var(--ink-dim);font-size:15px;line-height:1.55}
+.res .score{font-size:clamp(64px,10vw,140px);font-weight:800;letter-spacing:-.05em;line-height:.9;
+  font-variant-numeric:tabular-nums;white-space:nowrap;filter:drop-shadow(0 0 .25em rgba(227,36,43,.35))}
+.res .score i{font-style:normal;color:oklch(74% .20 27);padding:0 .06em}
+/* karty akci - stejny styl a hover jako cenove karty */
+.evs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;perspective:900px}
+.ev{display:block;text-decoration:none;color:inherit;padding:22px 22px 24px;border-radius:18px;
+  border:1.5px solid rgba(227,36,43,.34);background:oklch(14% .018 30/.62);
+  transform-style:preserve-3d;will-change:transform;animation:karta 4.6s ease-in-out infinite;transition:border-color .35s ease}
+.ev:nth-child(2){animation-delay:-1.5s}.ev:nth-child(3){animation-delay:-3s}
+.ev:hover{border-color:rgba(227,36,43,.6)}
+.ev strong{display:block;margin-top:10px;font-size:clamp(18px,1.6vw,22px);font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.ev em{display:block;margin-top:8px;font-style:normal;font-size:13.5px;line-height:1.5;color:var(--ink-dim)}
+/* casova osa sezony: datum v pilulce, radky ve skle */
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tl li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:20px;align-items:center;padding:14px 18px;
+  border-radius:20px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);
+  transition:border-color .5s ease,transform .5s cubic-bezier(.25,.8,.3,1),background-color .5s ease}
+.tl li:hover{border-color:rgba(227,36,43,.5);background-color:rgba(227,36,43,.06);transform:scale(1.005)}
+.tl time{justify-self:start;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap;
+  font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(227,36,43,.12) 55%,rgba(227,36,43,.22));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.tl b{display:block;font-size:16px;font-weight:800;letter-spacing:-.01em}
+.tl span{display:block;margin-top:4px;font-size:13.5px;line-height:1.5;color:var(--ink-dim)}
+@media (max-width:700px){ .res{grid-template-columns:1fr} .tl li{grid-template-columns:1fr;gap:8px} }
+
+/* ---------- GALERIE ---------- */
+.gal{padding:clamp(34px,6vw,64px) var(--g) 0}
+.gal-f{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(18px,2.5vw,28px)}
+.gal-f button{padding:9px 18px;border-radius:999px;cursor:pointer;color:#f4ece4;font:inherit;font-size:13px;font-weight:700;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:background .3s ease,border-color .3s ease,box-shadow .3s ease}
+.gal-f button:hover{border-color:rgba(227,36,43,.5)}
+.gal-f button[aria-pressed="true"]{border-color:rgba(227,36,43,.6);
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.22) 60%,rgba(227,36,43,.32));
+  box-shadow:0 0 18px rgba(227,36,43,.25)}
+.gal-grid{columns:4 250px;column-gap:12px}
+.gal-grid figure{position:relative;margin:0 0 12px;break-inside:avoid;border-radius:16px;overflow:hidden;cursor:zoom-in;
+  border:1.5px solid rgba(227,36,43,.28);background:oklch(14% .018 30/.62);
+  transition:border-color .4s ease,box-shadow .4s ease}
+.gal-grid figure.hide{display:none}
+.gal-grid img{display:block;width:100%;height:auto;transition:transform 1s cubic-bezier(.25,.8,.3,1)}
+.gal-grid figure:hover,.gal-grid figure:focus-visible{border-color:rgba(227,36,43,.65);box-shadow:0 0 26px rgba(227,36,43,.25);outline:none}
+.gal-grid figure:hover img{transform:scale(1.03)}
+.gal-grid figcaption{position:absolute;left:0;right:0;bottom:0;padding:30px 14px 12px;font-size:13px;font-weight:700;
+  background:linear-gradient(rgba(10,4,4,0),rgba(10,4,4,.85));opacity:0;transform:translateY(6px);
+  transition:opacity .35s ease,transform .45s cubic-bezier(.25,.8,.3,1)}
+.gal-grid figure:hover figcaption,.gal-grid figure:focus-visible figcaption{opacity:1;transform:none}
+@media (hover:none){ .gal-grid figcaption{opacity:1;transform:none} }
+/* nahled pres celou obrazovku */
+.lb{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:clamp(16px,4vw,48px);
+  background:rgba(8,3,3,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
+.lb.on{opacity:1;visibility:visible;transition:opacity .35s ease}
+.lb figure{margin:0;text-align:center;transform:scale(.96);transition:transform .45s cubic-bezier(.2,.9,.3,1.1)}
+.lb.on figure{transform:none}
+.lb img{display:block;max-width:min(90vw,1400px);max-height:80vh;width:auto;height:auto;border-radius:16px;
+  border:1.5px solid rgba(227,36,43,.4);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(227,36,43,.18)}
+.lb figcaption{margin-top:14px;font-size:14px;font-weight:700;color:var(--ink-dim)}
+.lb button{position:absolute;width:52px;height:52px;border-radius:50%;cursor:pointer;color:#f4ece4;font-size:28px;line-height:1;
+  border:1px solid rgba(255,255,255,.16);background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.12) 60%,rgba(227,36,43,.2));
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transition:border-color .3s ease,box-shadow .3s ease}
+.lb button:hover{border-color:rgba(227,36,43,.6);box-shadow:0 0 22px rgba(227,36,43,.35)}
+.lb-p{left:clamp(10px,2vw,28px);top:50%;margin-top:-26px}
+.lb-n{right:clamp(10px,2vw,28px);top:50%;margin-top:-26px}
+.lb-x{top:18px;right:18px}
+.lb-x i{position:absolute;left:50%;top:50%;width:18px;height:2px;margin:-1px 0 0 -9px;border-radius:2px;background:currentColor}
+.lb-x i:first-child{transform:rotate(45deg)}.lb-x i:last-child{transform:rotate(-45deg)}
+.lb-open,.lb-open body{overflow:hidden}
+@media (prefers-reduced-motion:reduce){ .res,.ev{animation:none} }

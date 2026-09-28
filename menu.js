@@ -4,8 +4,8 @@
     ['00', 'Úvod', 'index.html'],
     ['01', 'Trenéři', 'treneri.html'],
     ['02', 'Tréninky', 'treninky.html'],
-    ['03', 'Zápasy', ''],
-    ['04', 'Galerie', ''],
+    ['03', 'Zápasy', 'zapasy.html'],
+    ['04', 'Galerie', 'galerie.html'],
     ['05', 'Facebook', 'facebook.html'],
     ['06', 'Kontakt', 'kontakt.html']
   ];
