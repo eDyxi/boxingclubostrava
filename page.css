@@ -374,7 +374,8 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 /* ---------- GALERIE ---------- */
 .gal{padding:clamp(34px,6vw,64px) var(--g) 0}
 /* vyber fotek: kolecko "Vse", kolem nej na obezne draze pilulky kategorii */
-.orbit{position:relative;justify-self:center;width:min(100%,460px);aspect-ratio:1;display:grid;place-items:center;--R:min(36%,165px)}
+.orbit{position:relative;justify-self:center;width:min(100%,460px);aspect-ratio:1;display:grid;place-items:center;
+  --R:clamp(130px,11vw,165px)}   /* polomer drahy v px - procenta by se v translateX pocitala z pilulky */
 .orbit-ring{position:absolute;inset:0;margin:auto;width:calc(var(--R) * 2);height:calc(var(--R) * 2);border-radius:50%;
   border:1px dashed rgba(255,255,255,.18);opacity:0;transform:scale(.6) rotate(-40deg);pointer-events:none;
   transition:opacity .5s ease,transform .9s cubic-bezier(.2,.9,.3,1.05)}
