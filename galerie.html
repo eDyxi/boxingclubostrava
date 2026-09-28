@@ -114,7 +114,9 @@
     var W=grid.clientWidth, H=innerWidth<700?170:250, r=v.map(function(f){return parseFloat(f.style.getPropertyValue('--r'))||1.5;});
     var total=r.reduce(function(a,b){return a+b;},0), rows=Math.max(1,Math.round(total*H/W)), per=total/rows, i=0;
     for(var k=0;k<rows;k++){
-      var row=[], sum=0;
+      var row=[], sum=0, rest=0;
+      for(var q=i;q<v.length;q++) rest+=r[q];
+      per=rest/(rows-k);                               // cil rady se prepocita ze zbytku - posledni rada neni prepchana
       while(i<v.length&&(k===rows-1||sum+r[i]/2<per||!row.length)){ row.push(i); sum+=r[i]; i++; }
       var h=(W-GAP*(row.length-1))/sum;
       if(k<rows-1||row.length>1||rows===1) h=Math.min(h,H*1.9);
