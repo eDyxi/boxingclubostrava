@@ -180,11 +180,15 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   .eyebrow,#p0 h1 em,.outro .affil .l{animation:none}
 }
 
-.outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(18px,4vw,54px)}
+/* jedna mezera --og pro vsechno v paticce: nad linii, mezi kontakty, linie-text,
+   text-loga a loga-spodni linie */
+.outro{--og:28px}
+.outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--og)}
 .outro .contact div{text-align:center}
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:clamp(16px,3.4vw,40px);border-top:1px solid var(--line);margin-top:clamp(40px,7vw,72px);padding-top:28px}
-.outro .affil .l{flex-basis:100%;margin-bottom:16px;color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}
+  column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-top:var(--og);padding:var(--og) 0}
+.outro .affil .l{flex-basis:100%;margin-bottom:0;color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}
 .outro .affil img{height:clamp(20px,2.9vw,30px);width:auto;opacity:.6;filter:brightness(0) invert(1);
   transition:opacity .3s ease,filter .3s ease}
 .outro .affil a:hover img{opacity:1;filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(227,36,43,.75))}
