@@ -159,18 +159,19 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .spon a:hover img{opacity:1;filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(227,36,43,.75))}
 
 /* ---------- facebook ---------- */
-.feed{padding:clamp(34px,6vw,70px) var(--g) 0;display:grid;gap:clamp(20px,3vw,40px);
-  grid-template-columns:minmax(0,320px) 500px;justify-content:space-between;align-items:start}
-/* Facebook vpravo, box presne na sirku pluginu (max 500 px) - zadny prazdny sedy pas.
-   Okraj ve stylu webu: cerveny s dychajici zari. */
-.feed .box{order:2;width:100%;max-width:500px;justify-self:end;border:1.5px solid rgba(227,36,43,.34);
+.feed{padding:clamp(30px,6vw,70px) var(--g) 0;display:grid;gap:clamp(28px,4vw,60px);
+  grid-template-columns:minmax(0,740px) minmax(0,1fr);align-items:start}
+/* vlevo uvodni text + karty + poznamka, vpravo Facebook od horni hrany */
+.feed>.fl{display:grid;gap:clamp(24px,3vw,40px);min-width:0}
+.feed>.fl>.intro{padding:0;max-width:none}
+.feed .box{width:100%;max-width:500px;justify-self:center;border:1.5px solid rgba(227,36,43,.34);
   border-radius:18px;overflow:hidden;background:transparent;min-height:520px;position:relative;
   animation:karta 4.6s ease-in-out infinite}
 .feed .box .fb-page,.feed .box iframe{display:block}
 .feed .box .wait{position:absolute;inset:0;display:grid;place-items:center;padding:24px;
   text-align:center;color:var(--ink-faint);font-size:13px}
 /* Karty vlevo, mensi, s hoverem / naklonem / zari jako na kontaktu; poznamka pod nimi */
-.feed .side{order:1;display:grid;gap:10px;perspective:900px}
+.feed .side{display:grid;gap:10px;perspective:900px;min-width:0}
 .feed .side p{color:var(--ink-dim);font-size:13.5px;line-height:1.5;margin:8px 0 0}
 .feed .side .kart{margin:0;padding:17px 17px 18px;border-radius:15px;border:1.5px solid rgba(227,36,43,.34);
   transform-style:preserve-3d;will-change:transform;animation:karta 4.6s ease-in-out infinite;
@@ -181,8 +182,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .feed .side .kart span{font-size:10px}
 .feed .side .kart strong{margin-top:8px;font-size:clamp(16px,1.3vw,20px)}
 .feed .side .kart em{margin-top:7px;font-size:12.5px;line-height:1.45}
-@media (max-width:900px){ .feed{grid-template-columns:1fr;justify-content:stretch}
-  .feed .box{order:1;justify-self:center}.feed .side{order:2} }
+@media (max-width:1000px){ .feed{grid-template-columns:1fr} }
 
 /* Na sirokem displeji sedi uvodni text vedle karuselu - misto tam je i s
    rozkliknutym profilem. Pod 1100 px se to vrati pod sebe. */
