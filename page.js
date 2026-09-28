@@ -68,17 +68,17 @@
   document.querySelectorAll('.price div').forEach(function (el) {
     var tX = 0, tY = 0, cX = 0, cY = 0, hv = 0, over = false, raf = 0;
     function tick() {
-      cX += (tX - cX) * .09; cY += (tY - cY) * .09; hv += ((over ? 1 : 0) - hv) * .14;
+      cX += (tX - cX) * .09; cY += (tY - cY) * .09; hv += ((over ? 1 : 0) - hv) * .08;
       // hover jako u pilulek: posun dopredu a zvetseni o 5 %
-      el.style.transform = 'translateY(' + (-3 * hv).toFixed(2) + 'px) rotateX(' + cX.toFixed(2) + 'deg) rotateY(' +
-        cY.toFixed(2) + 'deg) translateZ(' + (14 * hv).toFixed(1) + 'px) scale(' + (1 + .05 * hv).toFixed(4) + ')';
+      el.style.transform = 'rotateX(' + cX.toFixed(2) + 'deg) rotateY(' +
+        cY.toFixed(2) + 'deg) translateZ(' + (4 * hv).toFixed(1) + 'px) scale(' + (1 + .01 * hv).toFixed(4) + ')';
       if (over || Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01 || hv > .002) raf = requestAnimationFrame(tick);
       else { raf = 0; el.style.transform = ''; }
     }
     el.addEventListener('mousemove', function (e) {
       var r = el.getBoundingClientRect();
-      tY = ((e.clientX - r.left) / r.width - .5) * 16;
-      tX = -((e.clientY - r.top) / r.height - .5) * 12;
+      tY = ((e.clientX - r.left) / r.width - .5) * 7;     // mirny naklon, karty se neprekryvaji
+      tX = -((e.clientY - r.top) / r.height - .5) * 6;
       over = true; if (!raf) raf = requestAnimationFrame(tick);
     });
     el.addEventListener('mouseleave', function () { over = false; tX = tY = 0; if (!raf) raf = requestAnimationFrame(tick); });
