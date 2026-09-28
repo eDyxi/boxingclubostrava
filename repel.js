@@ -73,9 +73,9 @@
     // Vsechny ostatni nadpisy jen jemne, s mensim dosahem.
     document.querySelectorAll('.p h1, .p h2, .rozc-head h2, .outro h2, .intro h1, .plan h2').forEach(function (h) {
       split(h);
-      var main = h.matches('#p0 h1');
+      var main = h.matches('#p0 h1'), soft = h.matches('.plan h2');   // rozpis: polovicni sila
       attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); },
-             main ? 128 : 92, main ? 36 : 18);
+             main ? 128 : soft ? 70 : 92, main ? 36 : soft ? 9 : 18);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
