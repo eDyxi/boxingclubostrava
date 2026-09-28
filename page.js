@@ -84,3 +84,31 @@
     el.addEventListener('mouseleave', function () { over = false; tX = tY = 0; if (!raf) raf = requestAnimationFrame(tick); });
   });
 })();
+
+// Telefon s Facebookem: naklon za kurzorem jako karty. Nad samotnym iframem stranka
+// kurzor nevidi, proto se sleduje cely dokument - telefon reaguje uz v blizkem okoli
+// a na ramu, nad displejem drzi posledni naklon.
+(function () {
+  var el = document.querySelector('.feed .box');
+  if (!el || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var tX = 0, tY = 0, cX = 0, cY = 0, hv = 0, over = false, raf = 0;
+  function tick() {
+    cX += (tX - cX) * .09; cY += (tY - cY) * .09; hv += ((over ? 1 : 0) - hv) * .08;
+    el.style.transform = 'perspective(1100px) rotateX(' + cX.toFixed(2) + 'deg) rotateY(' + cY.toFixed(2) +
+      'deg) translateZ(' + (4 * hv).toFixed(1) + 'px) scale(' + (1 + .01 * hv).toFixed(4) + ')';
+    if (over || Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01 || hv > .002) raf = requestAnimationFrame(tick);
+    else { raf = 0; el.style.transform = ''; }
+  }
+  document.addEventListener('mousemove', function (e) {
+    var r = el.getBoundingClientRect(), m = 60;
+    var inside = e.clientX > r.left - m && e.clientX < r.right + m && e.clientY > r.top - m && e.clientY < r.bottom + m;
+    if (inside) {
+      tY = Math.max(-.5, Math.min(.5, (e.clientX - r.left) / r.width - .5)) * 7;
+      tX = -Math.max(-.5, Math.min(.5, (e.clientY - r.top) / r.height - .5)) * 6;
+    } else { tX = tY = 0; }
+    over = inside;
+    if (!raf) raf = requestAnimationFrame(tick);
+  }, { passive: true });
+  document.addEventListener('mouseleave', function () { over = false; tX = tY = 0; if (!raf) raf = requestAnimationFrame(tick); });
+})();
