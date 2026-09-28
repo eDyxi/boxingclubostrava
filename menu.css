@@ -1,0 +1,42 @@
+/* ---------- MENU: tlacitko se tremi carkami vpravo nahore + panel ve tvaru pilulky ----------
+   Sklo ve stylu iOS, cervene podbarveni jako rozkliknuty profil v karuselu. */
+.mnu-btn{position:fixed;top:18px;right:18px;z-index:1000;width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;padding:0;cursor:pointer;color:#f4ece4;
+  border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.10) 60%,rgba(227,36,43,.16));
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 8px 22px rgba(0,0,0,.35);
+  transition:box-shadow .35s ease,border-color .35s ease,transform .35s cubic-bezier(.25,.8,.3,1)}
+.mnu-btn:hover{border-color:rgba(227,36,43,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 8px 22px rgba(0,0,0,.35),0 0 22px rgba(227,36,43,.35)}
+.mnu-btn:active{transform:scale(.94)}
+.mnu-btn i{position:absolute;left:50%;top:50%;width:18px;height:2px;margin:-1px 0 0 -9px;border-radius:2px;
+  background:currentColor;transition:transform .45s cubic-bezier(.25,.8,.3,1),opacity .25s ease}
+.mnu-btn i:nth-child(1){transform:translateY(-6px)}
+.mnu-btn i:nth-child(3){transform:translateY(6px)}
+.mnu-open .mnu-btn i:nth-child(1){transform:rotate(45deg)}
+.mnu-open .mnu-btn i:nth-child(2){opacity:0;transform:scaleX(.2)}
+.mnu-open .mnu-btn i:nth-child(3){transform:rotate(-45deg)}
+
+.mnu{position:fixed;top:76px;right:18px;z-index:999;width:236px;padding:10px;border-radius:34px;
+  border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(227,36,43,.10) 55%,rgba(227,36,43,.20));
+  -webkit-backdrop-filter:blur(24px) saturate(1.35);backdrop-filter:blur(24px) saturate(1.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 24px 60px rgba(0,0,0,.5),0 0 40px rgba(227,36,43,.16);
+  transform-origin:calc(100% - 24px) -30px;transform:translateY(-8px) scale(.86);opacity:0;visibility:hidden;
+  transition:transform .5s cubic-bezier(.2,.9,.3,1.12),opacity .3s ease,visibility 0s linear .5s}
+.mnu-open .mnu{transform:none;opacity:1;visibility:visible;transition:transform .5s cubic-bezier(.2,.9,.3,1.12),opacity .3s ease}
+.mnu ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.mnu a,.mnu span.off{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:999px;
+  color:#f4ece4;text-decoration:none;font-size:15px;font-weight:700;letter-spacing:-.01em;
+  opacity:0;transform:translateX(10px);transition:background .25s ease,opacity .35s ease,transform .45s cubic-bezier(.25,.8,.3,1)}
+.mnu-open .mnu a,.mnu-open .mnu span.off{opacity:1;transform:none;transition-delay:calc(var(--i) * 35ms + 60ms),calc(var(--i) * 35ms + 60ms),calc(var(--i) * 35ms + 60ms)}
+.mnu-open .mnu span.off{opacity:.42}
+.mnu a:hover{background:rgba(255,255,255,.09)}
+.mnu b{min-width:24px;font-size:11px;font-weight:800;letter-spacing:.08em;color:oklch(74% .20 27);font-variant-numeric:tabular-nums}
+.mnu small{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,236,228,.55)}
+.mnu a[aria-current]{background:rgba(227,36,43,.24);box-shadow:inset 0 0 0 1px rgba(227,36,43,.45)}
+.mnu a[aria-current] small{color:oklch(74% .20 27)}
+.mnu hr{border:0;height:1px;margin:6px 14px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.2),rgba(255,255,255,0))}
+@media (max-width:700px){ .top{padding-right:78px} }
+@media (prefers-reduced-motion:reduce){ .mnu,.mnu a,.mnu span.off,.mnu-btn i{transition:none} }

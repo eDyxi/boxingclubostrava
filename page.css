@@ -174,8 +174,14 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   position:relative;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 2px 0 rgba(255,255,255,.08);
   animation:karta 4.6s ease-in-out infinite;transition:border-color .35s ease}
-/* Naklon za kurzorem (page.js) jen rotaci - bez zvetseni a posunu v ose Z, aby se
-   Facebook nerozmazaval; po odjeti kurzoru se transformace uplne zrusi. */
+/* Zadny naklon ani zvetseni (rozmazava Facebook). Na hover se displej "rozsviti":
+   svetlo z displeje presvitne na ram a kolem telefonu se rozleje vetsi zare. */
+.feed .phone::before{content:"";position:absolute;inset:-12% -18%;z-index:-1;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,120,110,.30),rgba(227,36,43,.14) 55%,rgba(227,36,43,0) 100%);
+  opacity:.35;transform:scale(.9);transition:opacity .6s ease,transform .8s cubic-bezier(.25,.8,.3,1)}
+.feed .phone:hover::before{opacity:1;transform:scale(1.06)}
+.feed .box .fb-page{transition:box-shadow .6s ease}
+.feed .phone:hover .fb-page{box-shadow:0 0 18px 2px rgba(255,255,255,.22),0 0 46px 6px rgba(255,120,110,.22)}
 .feed .box:hover{border-color:rgba(227,36,43,.65)}
 .feed .box .fb-page{position:relative;z-index:1;border-radius:5px;overflow:hidden;background:#000;
   height:660px}   /* pevna vyska = data-height: pri znovunacteni se telefon ani sekce pod nim nepohnou */
@@ -317,27 +323,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 }
 
-/* ---------- facebook: napis na zdi vlevo pod telefonem ----------
-   "zaskroluj" sikmo nahoru, pod nim "si" a sipka, ktera se stoci nahoru k telefonu.
-   Cyklus 16 s: pomalu se napise (zaskroluj 4 s, si 1 s), dokresli se sipka,
-   chvili drzi, pak se vse odepise pozpatku. */
-.wall{position:absolute;right:calc(100% + 150px);bottom:-18px;width:440px;height:200px;
-  pointer-events:none;opacity:.5}
-.wall .wt{position:absolute;font-family:"Homemade Apple",cursive;font-weight:400;line-height:1;white-space:nowrap;
-  color:rgba(255,232,224,.92);text-shadow:0 1px 0 rgba(0,0,0,.55)}
-.wall .wt1{left:0;top:18px;font-size:34px;transform:rotate(-13deg);transform-origin:0 100%;animation:pis1 16s linear infinite}
-.wall .wt2{left:118px;top:112px;font-size:30px;transform:rotate(-6deg);animation:pis2 16s linear infinite}
-.wall .wa{position:absolute;left:168px;top:84px;width:250px;height:100px;overflow:visible}
-.wall .wa path{fill:none;stroke:rgba(255,232,224,.9);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:1;stroke-dashoffset:1}
-.wall .w1{animation:sip1 16s linear infinite}
-.wall .w2{animation:sip2 16s linear infinite}
-@keyframes pis1{0%{clip-path:inset(-40% 100% -40% 0)}25%,80%{clip-path:inset(-40% 0 -40% 0)}100%{clip-path:inset(-40% 100% -40% 0)}}
-@keyframes pis2{0%,25%{clip-path:inset(-40% 100% -40% 0)}31%,74%{clip-path:inset(-40% 0 -40% 0)}80%,100%{clip-path:inset(-40% 100% -40% 0)}}
-@keyframes sip1{0%,31%{stroke-dashoffset:1}38%,67%{stroke-dashoffset:0}74%,100%{stroke-dashoffset:1}}
-@keyframes sip2{0%,38%{stroke-dashoffset:1}41%,64%{stroke-dashoffset:0}67%,100%{stroke-dashoffset:1}}
-@media (prefers-reduced-motion:reduce){ .wall .wt,.wall .wa path{animation:none;clip-path:none;stroke-dashoffset:0} }
-@media (max-width:1399px){ .wall{display:none} }   /* v uzsim okne mezi kartami a telefonem neni misto */
+   /* v uzsim okne mezi kartami a telefonem neni misto */
 
 /* Kontakt: cely obsah (kontakty, partneri, poznamka) svisle na stred okna pod hlavickou,
    aby byl po otevreni hned videt cely a pohodlne se cetl. Top hlavicky se meri v JS. */
