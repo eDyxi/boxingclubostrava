@@ -63,31 +63,43 @@ main{position:relative;z-index:3}
 .plan{padding:clamp(40px,7vw,80px) var(--g) 0}
 .plan h2{font-size:clamp(24px,4vw,40px);font-weight:800;text-transform:uppercase;
   letter-spacing:-.025em;margin:0 0 .7em}
-.grid{display:grid;gap:10px}
-.day{display:grid;grid-template-columns:82px 1fr;gap:14px;align-items:start;
-  border:1px solid var(--line);border-radius:14px;padding:14px 16px;
-  background:oklch(14% .018 30/.62);backdrop-filter:blur(6px)}
-.day>b{font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gold);padding-top:4px}
-.slots{display:flex;flex-wrap:wrap;gap:8px}
-.slot{border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13px;
-  white-space:nowrap}
-.slot b{font-weight:700}
-.slot small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink-faint);margin-top:2px}
-.slot[data-g="akademie"]{border-color:oklch(66% .21 26/.35)}
-.slot[data-g="vykon"]{border-color:oklch(66% .21 26/.6);background:oklch(66% .21 26/.10)}
-.slot[data-g="scm"]{border-color:oklch(66% .21 26/.48)}
-.slot[data-g="kondice"]{border-color:oklch(80% .04 60/.4);background:oklch(96% .008 60/.05)}
+.grid{display:grid;gap:12px}
+/* Rozpis tydne: kazdy den radek, casy v pevnych sloupcich (rano / 15:00 /
+   odpoledne / vecer), takze cisla sedi pod sebou jako v tabulce. Skupinu nese
+   barevny prouzek vlevo + legenda nad rozpisem. */
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 18px;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-dim)}
+.legend i{width:22px;height:4px;border-radius:2px;background:var(--gc)}
+.day{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;
+  border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:16px 18px;
+  background:oklch(14% .018 30/.7);backdrop-filter:blur(6px)}
+.day>b{font-size:14px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.slot{--gc:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.16);border-radius:12px;
+  padding:12px 14px 12px 17px;box-shadow:inset 3px 0 0 var(--gc);background:rgba(255,255,255,.025)}
+.slot b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.1;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.slot small{display:block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.1em;
+  line-height:1.35;text-transform:uppercase;color:var(--ink-dim)}
+[data-g="akademie"]{--gc:#e0a13a}
+[data-g="vykon"]{--gc:#e3242b}
+[data-g="scm"]{--gc:#ff7a59}
+[data-g="kondice"]{--gc:#f4ece4}
+.slot[data-g="vykon"]{background:rgba(227,36,43,.10);border-color:rgba(227,36,43,.45)}
+.slot[data-g="kondice"]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3)}
 
 .price{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(28px,4vw,48px)}
 .price div{flex:1 1 220px;border:1px solid var(--line);border-radius:16px;padding:20px 22px;
   background:oklch(14% .018 30/.62)}
+.price div:nth-child(-n+2){border:1.5px solid rgba(255,255,255,.42);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.35)}
 .price strong{display:block;font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em}
 .price span{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.2em;
   text-transform:uppercase;color:var(--gold)}
 .price em{display:block;margin-top:8px;font-style:normal;font-size:13px;color:var(--ink-dim)}
-@media (max-width:620px){ .day{grid-template-columns:1fr;gap:8px} }
+@media (max-width:900px){ .slots{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:620px){ .day{grid-template-columns:1fr;gap:10px} }
 
 /* ---------- kontakt ---------- */
 .kont{padding:clamp(40px,7vw,80px) var(--g) 0;display:grid;gap:12px;
