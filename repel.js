@@ -71,7 +71,7 @@
   function init() {
     // Hlavni nadpis na uvodu ma plnou silu - ten je presne takhle dobre.
     // Vsechny ostatni nadpisy jen jemne, s mensim dosahem.
-    document.querySelectorAll('.p h1, .p h2, .rozc-head h2, .outro h2, .intro h1').forEach(function (h) {
+    document.querySelectorAll('.p h1, .p h2, .rozc-head h2, .outro h2, .intro h1, .plan h2').forEach(function (h) {
       split(h);
       var main = h.matches('#p0 h1');
       attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); },

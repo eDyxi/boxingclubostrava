@@ -66,12 +66,13 @@
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   document.querySelectorAll('.price div').forEach(function (el) {
-    var tX = 0, tY = 0, cX = 0, cY = 0, over = false, raf = 0;
+    var tX = 0, tY = 0, cX = 0, cY = 0, hv = 0, over = false, raf = 0;
     function tick() {
-      cX += (tX - cX) * .09; cY += (tY - cY) * .09;
-      el.style.transform = 'rotateX(' + cX.toFixed(2) + 'deg) rotateY(' + cY.toFixed(2) + 'deg)' +
-        (over ? ' translateZ(14px)' : '');
-      if (over || Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01) raf = requestAnimationFrame(tick);
+      cX += (tX - cX) * .09; cY += (tY - cY) * .09; hv += ((over ? 1 : 0) - hv) * .14;
+      // hover jako u pilulek: posun dopredu a zvetseni o 5 %
+      el.style.transform = 'translateY(' + (-3 * hv).toFixed(2) + 'px) rotateX(' + cX.toFixed(2) + 'deg) rotateY(' +
+        cY.toFixed(2) + 'deg) translateZ(' + (14 * hv).toFixed(1) + 'px) scale(' + (1 + .05 * hv).toFixed(4) + ')';
+      if (over || Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01 || hv > .002) raf = requestAnimationFrame(tick);
       else { raf = 0; el.style.transform = ''; }
     }
     el.addEventListener('mousemove', function (e) {
