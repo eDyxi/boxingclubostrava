@@ -74,8 +74,9 @@
     document.querySelectorAll('.p h1, .p h2, .rozc-head h2, .outro h2, .intro h1, .plan h2').forEach(function (h) {
       split(h);
       var main = h.matches('#p0 h1'), soft = h.matches('.plan h2');   // rozpis: polovicni sila
+      var k = parseFloat(h.getAttribute('data-repel') || '1');        // nasobitel sily pro konkretni nadpis
       attach(h, function () { return [].slice.call(h.querySelectorAll('.sh')); },
-             main ? 128 : soft ? 70 : 92, main ? 36 : soft ? 9 : 18);
+             main ? 128 : soft ? 70 : 92, (main ? 36 : soft ? 9 : 18) * k);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

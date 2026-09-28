@@ -245,6 +245,9 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   /* kontakt: stejne rozlozeni jako karusel, karty 3 vedle sebe ve 2 radach,
      puvodni styl i animace, jen zmensene podle velikosti karet */
   .split:has(>.kont){grid-template-columns:minmax(320px,34%) 1fr;gap:clamp(24px,3vw,48px)}
+  /* zapasy a galerie: text vlevo, vysledek / vyber fotek vpravo jako karusel */
+  .split.wide{grid-template-columns:minmax(320px,40%) 1fr;gap:clamp(28px,4vw,72px)}
+  .split.wide>.res{justify-self:end;width:min(100%,640px)}
   .split>.intro h1{font-size:clamp(40px,4.6vw,76px)}
   .split>.intro h1 em{display:block}                  /* "Kde nas" na radku, "najdes" pod nim */
   .split>.kont{padding:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;perspective:900px}
@@ -334,14 +337,15 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .lbl{display:block;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:oklch(74% .20 27)}
 /* hlavni vysledek: velka skleneno-cervena karta se skore */
 .res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(20px,4vw,56px);align-items:center;
-  padding:clamp(24px,3.5vw,44px);border-radius:26px;border:1.5px solid rgba(227,36,43,.4);
+  padding:clamp(22px,2.6vw,34px);border-radius:24px;border:1.5px solid rgba(227,36,43,.4);
   background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(227,36,43,.08) 55%,rgba(227,36,43,.16));
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);animation:karta 4.6s ease-in-out infinite}
-.res .teams{margin-top:12px;font-size:clamp(20px,2.4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.res .teams{margin-top:12px;font-size:clamp(19px,1.8vw,26px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .res .teams i{font-family:"Bodoni Moda",Georgia,serif;font-weight:400;color:oklch(74% .20 27);padding:0 .15em}
-.res p{margin:14px 0 0;max-width:62ch;color:var(--ink-dim);font-size:15px;line-height:1.55}
-.res .score{font-size:clamp(64px,10vw,140px);font-weight:800;letter-spacing:-.05em;line-height:.9;
-  font-variant-numeric:tabular-nums;white-space:nowrap;filter:drop-shadow(0 0 .25em rgba(227,36,43,.35))}
+.res p{margin:12px 0 0;max-width:40ch;color:var(--ink-dim);font-size:14px;line-height:1.55}
+.res .score{font-size:clamp(56px,6.4vw,104px);font-weight:800;letter-spacing:-.05em;line-height:.9;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  filter:drop-shadow(0 0 .18em rgba(255,255,255,.34)) drop-shadow(0 0 .5em rgba(255,255,255,.12))}   /* jemna bila zare */
 .res .score i{font-style:normal;color:oklch(74% .20 27);padding:0 .06em}
 /* karty akci - stejny styl a hover jako cenove karty */
 .evs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;perspective:900px}
@@ -354,12 +358,13 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .ev em{display:block;margin-top:8px;font-style:normal;font-size:13.5px;line-height:1.5;color:var(--ink-dim)}
 /* casova osa sezony: datum v pilulce, radky ve skle */
 .tl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.tl li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:20px;align-items:center;padding:14px 18px;
-  border-radius:20px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);
+.tl li{display:grid;grid-template-columns:168px minmax(0,1fr);gap:22px;align-items:center;padding:14px 18px;
+  border-radius:20px;border:1px solid rgba(227,36,43,.24);background:rgba(255,255,255,.03);
   transition:border-color .5s ease,transform .5s cubic-bezier(.25,.8,.3,1),background-color .5s ease}
 .tl li:hover{border-color:rgba(227,36,43,.5);background-color:rgba(227,36,43,.06);transform:scale(1.005)}
-.tl time{justify-self:start;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:800;white-space:nowrap;
-  font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.16);
+.tl time{box-sizing:border-box;width:100%;text-align:center;padding:8px 10px;border-radius:999px;   /* vsechny stejne siroke */
+  font-size:13px;font-weight:800;letter-spacing:.04em;white-space:nowrap;font-variant-numeric:tabular-nums;
+  color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite;border:1px solid rgba(227,36,43,.45);
   background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(227,36,43,.12) 55%,rgba(227,36,43,.22));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
 .tl b{display:block;font-size:16px;font-weight:800;letter-spacing:-.01em}
@@ -368,16 +373,50 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 /* ---------- GALERIE ---------- */
 .gal{padding:clamp(34px,6vw,64px) var(--g) 0}
-.gal-f{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(18px,2.5vw,28px)}
-.gal-f button{padding:9px 18px;border-radius:999px;cursor:pointer;color:#f4ece4;font:inherit;font-size:13px;font-weight:700;
-  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:background .3s ease,border-color .3s ease,box-shadow .3s ease}
-.gal-f button:hover{border-color:rgba(227,36,43,.5)}
-.gal-f button[aria-pressed="true"]{border-color:rgba(227,36,43,.6);
-  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.22) 60%,rgba(227,36,43,.32));
-  box-shadow:0 0 18px rgba(227,36,43,.25)}
-.gal-grid{columns:4 250px;column-gap:12px}
-.gal-grid figure{position:relative;margin:0 0 12px;break-inside:avoid;border-radius:16px;overflow:hidden;cursor:zoom-in;
+/* vyber fotek: kolecko "Vse", kolem nej na obezne draze pilulky kategorii */
+.orbit{position:relative;justify-self:center;width:min(100%,460px);aspect-ratio:1;display:grid;place-items:center;--R:min(36%,165px)}
+.orbit-ring{position:absolute;inset:0;margin:auto;width:calc(var(--R) * 2);height:calc(var(--R) * 2);border-radius:50%;
+  border:1px dashed rgba(255,255,255,.18);opacity:0;transform:scale(.6) rotate(-40deg);pointer-events:none;
+  transition:opacity .5s ease,transform .9s cubic-bezier(.2,.9,.3,1.05)}
+.orbit.open .orbit-ring{opacity:1;transform:none;animation:obeh 40s linear infinite}
+@keyframes obeh{to{transform:rotate(360deg)}}
+.orb{position:relative;z-index:2;width:150px;height:150px;border-radius:50%;cursor:pointer;color:#f4ece4;font:inherit;
+  display:grid;place-content:center;gap:4px;border:1.5px solid rgba(227,36,43,.55);
+  background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.16),rgba(227,36,43,.22) 55%,rgba(120,10,16,.5));
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 40px rgba(227,36,43,.3),0 18px 40px rgba(0,0,0,.4);
+  transition:transform .5s cubic-bezier(.2,.9,.3,1.2),box-shadow .4s ease}
+.orb span{font-size:24px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.orb small{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,236,228,.6)}
+.orb:hover{transform:scale(1.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 60px rgba(227,36,43,.45),0 18px 40px rgba(0,0,0,.4)}
+.orb::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:1.5px solid rgba(227,36,43,.45);
+  animation:puls 2.6s ease-out infinite;pointer-events:none}
+.orbit.open .orb::before{animation:none;opacity:0}
+@keyframes puls{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+.orb[aria-pressed="true"]{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 70px rgba(227,36,43,.55),0 18px 40px rgba(0,0,0,.4)}
+.sat{position:absolute;left:50%;top:50%;z-index:1;width:124px;margin:-21px 0 0 -62px;height:42px;border-radius:999px;cursor:pointer;
+  color:#f4ece4;font:inherit;font-size:14px;font-weight:700;border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.12) 60%,rgba(227,36,43,.2));
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 24px rgba(0,0,0,.35);
+  opacity:0;pointer-events:none;transform:rotate(var(--a)) translateX(0) rotate(calc(-1 * var(--a))) scale(.4);
+  transition:transform .6s cubic-bezier(.2,.9,.3,1.18),opacity .35s ease,border-color .3s ease,box-shadow .3s ease,background .3s ease}
+.orbit.open .sat{opacity:1;pointer-events:auto;transform:rotate(var(--a)) translateX(var(--R)) rotate(calc(-1 * var(--a)))}
+.orbit.open .sat:nth-of-type(2){transition-delay:.04s}.orbit.open .sat:nth-of-type(3){transition-delay:.08s}
+.orbit.open .sat:nth-of-type(4){transition-delay:.12s}.orbit.open .sat:nth-of-type(5){transition-delay:.16s}
+.sat:hover{border-color:rgba(227,36,43,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 0 22px rgba(227,36,43,.35)}
+.sat[aria-pressed="true"]{border-color:rgba(227,36,43,.7);
+  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(227,36,43,.34) 60%,rgba(227,36,43,.46));box-shadow:0 0 26px rgba(227,36,43,.45)}
+.gal-hint{margin:0;padding:clamp(18px,3vw,34px) 0;text-align:center;font-size:14px;color:var(--ink-faint);
+  transition:opacity .3s ease}
+.gal-hint b{color:oklch(74% .20 27)}
+.gal-hint.gone{display:none}
+/* zarovnane rady: kazda rada konci presne na pravem okraji, vyska radku podle pomeru stran */
+.gal-grid{display:flex;flex-wrap:wrap;gap:12px}
+.gal-grid figure{flex-grow:calc(var(--r) * 100);flex-basis:calc(var(--r) * 230px);aspect-ratio:var(--r)}
+.gal-grid figure img{width:100%;height:100%;object-fit:cover}
+.gal-grid figure.in{animation:foto .6s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--d,0ms)}
+@keyframes foto{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.gal-grid figure{position:relative;margin:0;border-radius:16px;overflow:hidden;cursor:zoom-in;
   border:1.5px solid rgba(227,36,43,.28);background:oklch(14% .018 30/.62);
   transition:border-color .4s ease,box-shadow .4s ease}
 .gal-grid figure.hide{display:none}
@@ -409,4 +448,4 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .lb-x i{position:absolute;left:50%;top:50%;width:18px;height:2px;margin:-1px 0 0 -9px;border-radius:2px;background:currentColor}
 .lb-x i:first-child{transform:rotate(45deg)}.lb-x i:last-child{transform:rotate(-45deg)}
 .lb-open,.lb-open body{overflow:hidden}
-@media (prefers-reduced-motion:reduce){ .res,.ev{animation:none} }
+@media (prefers-reduced-motion:reduce){ .res,.ev,.tl time,.orb::before,.orbit.open .orbit-ring,.gal-grid figure.in{animation:none} }
