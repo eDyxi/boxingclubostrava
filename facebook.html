@@ -8,7 +8,7 @@
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&family=Sedgwick+Ave&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="page.css?v=20260928g">
 </head>
 <body>
@@ -50,19 +50,10 @@
       <p>Když se příspěvky nenačtou, blokuje je nejspíš rozšíření proti sledování
          nebo odmítnuté cookies. Obsah je pořád dostupný přímo na Facebooku.</p>
     </div>
-    <!-- vyryte na zdi: napis se "vypise" psacim pismem, sipka ukaze na telefon, pak zmizi -->
+    <!-- vyryte na zdi: napis se napise, pod nim sipka na telefon, pak se vse odepise zpet -->
     <div class="wall" aria-hidden="true">
-      <svg viewBox="0 0 300 120">
-        <defs><filter id="ryti" x="-5%" y="-20%" width="110%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="4" result="n"/>
-          <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/>
-        </filter></defs>
-        <g filter="url(#ryti)">
-          <text class="wt" x="8" y="58">zaskroluj si</text>
-          <path class="wa" pathLength="1" d="M156 52c34-10 70-6 104 12c10 6 18 12 26 20"/>
-          <path class="wa wh" pathLength="1" d="M270 70l16 14l-20 4"/>
-        </g>
-      </svg>
+      <span class="wt">zaskroluj si</span>
+      <svg class="wa" viewBox="0 0 180 34"><path class="w1" pathLength="1" d="M4 10c40 14 92 18 150 8"/><path class="w2" pathLength="1" d="M142 6l14 12l-16 10"/></svg>
     </div>
     </div>
     <div class="box" id="fbbox">
@@ -71,7 +62,7 @@
       <i class="ph-sensor" aria-hidden="true"></i><i class="ph-cam" aria-hidden="true"></i><i class="ph-spk" aria-hidden="true"></i>
       <button class="ph-home" type="button" aria-label="Facebook zpět na začátek"></button>
       <i class="ph-btn ph-mute" aria-hidden="true"></i><i class="ph-btn ph-vol1" aria-hidden="true"></i><i class="ph-btn ph-vol2" aria-hidden="true"></i><i class="ph-btn ph-pwr" aria-hidden="true"></i>
-      <i class="ph-glare" aria-hidden="true"></i>
+      <i class="ph-glare" aria-hidden="true"></i><i class="ph-shut" aria-hidden="true"></i>
       <div class="fb-page"
            data-href="https://www.facebook.com/BoxingClubOstrava/"
            data-tabs="timeline"
@@ -128,7 +119,12 @@
   // home tlacitko: plugin se nacte znovu -> zpet na zacatek prispevku
   var home=box.querySelector('.ph-home');
   if(home) home.addEventListener('click',function(){
-    var f=box.querySelector('.fb-page iframe'); if(f) f.src=f.src;
+    // displej zhasne (cerna se zavre od kraju ke stredu), Facebook se na pozadi
+    // nacte znovu od zacatku a po vteřine se displej zase otevre od stredu
+    if(box.classList.contains('off')) return;
+    box.classList.add('off');
+    setTimeout(function(){ var f=box.querySelector('.fb-page iframe'); if(f) f.src=f.src; },450);
+    setTimeout(function(){ box.classList.remove('off'); },1450);
   });
   if('IntersectionObserver' in window){
     new IntersectionObserver(function(e,o){
