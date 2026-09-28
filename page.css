@@ -143,9 +143,13 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 /* stary odlesk pri hoveru zrusen - karty maji naklon + dychajici zari */
 
 /* nad partnery linie do ztracena (jako na hlavni strance), mezera nad i pod ni stejna */
-.spon{margin-top:clamp(20px,3.5vw,40px);padding:clamp(20px,3.5vw,40px) var(--g) clamp(28px,4vw,48px);
+.spon{margin-top:clamp(20px,3.5vw,40px);padding:clamp(20px,3.5vw,40px) var(--g) 0;
   background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.14) 22%,rgba(255,255,255,.34) 50%,rgba(255,255,255,.14) 78%,rgba(255,255,255,0))
     center top/calc(100% - 2 * var(--g)) 1px no-repeat}
+/* konec stranky jako na uvodu: linie pod logy a 36 px pod ni */
+.spon>div{padding-bottom:clamp(20px,3.5vw,40px);margin-bottom:36px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.14) 22%,rgba(255,255,255,.34) 50%,rgba(255,255,255,.14) 78%,rgba(255,255,255,0))
+    center bottom/100% 1px no-repeat}
 .rozc + .spon{margin-top:0}                           /* karusel uz ma svou spodni mezeru */
 @media (max-width:1099px){ .split:has(>.rozc) + .spon{margin-top:0} }
 .spon{text-align:center}
@@ -331,9 +335,8 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 /* ---------- ZAPASY ---------- */
 .zap{padding:clamp(40px,7vw,80px) var(--g) 0}
-.zap h2{font-size:clamp(24px,4vw,40px);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;
-  margin:0 0 .8em;color:var(--ink);
-  filter:drop-shadow(0 0 .32em rgba(255,255,255,.22)) drop-shadow(0 2px 10px rgba(10,4,3,.8))}
+.zap h2{font-size:clamp(17px,1.9vw,24px);font-weight:800;text-transform:uppercase;letter-spacing:.18em;
+  margin:0 0 1em;color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}   /* cervene jako ostatni, o stupen vetsi */
 .lbl{display:block;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:oklch(74% .20 27)}
 /* hlavni vysledek: velka skleneno-cervena karta se skore */
 .res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(20px,4vw,56px);align-items:center;
@@ -407,7 +410,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .sat:hover{border-color:rgba(227,36,43,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 0 22px rgba(227,36,43,.35)}
 .sat[aria-pressed="true"]{border-color:rgba(227,36,43,.7);
   background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(227,36,43,.34) 60%,rgba(227,36,43,.46));box-shadow:0 0 26px rgba(227,36,43,.45)}
-.gal-hint{margin:0;padding:clamp(18px,3vw,34px) 0;text-align:center;font-size:14px;color:var(--ink-faint);
+.gal-hint{margin:0;padding:clamp(6px,1.2vw,14px) 0 clamp(26px,4vw,46px);text-align:center;font-size:14px;color:var(--ink-faint);
   transition:opacity .3s ease}
 .gal-hint b{color:oklch(74% .20 27)}
 .gal-hint.gone{display:none}
