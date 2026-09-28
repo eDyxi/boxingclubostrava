@@ -164,15 +164,18 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 /* vlevo uvodni text + karty + poznamka, vpravo Facebook od horni hrany */
 .feed>.fl{grid-column:1;grid-row:1;display:grid;gap:clamp(24px,3vw,40px);min-width:0}
 .feed>.fl>.intro{padding:0;max-width:none}
-.feed .box{grid-column:2;grid-row:1;width:100%;max-width:428px;justify-self:center;margin-right:clamp(40px,7vw,140px);
+/* obal telefonu: drzi pozici ve sloupci a nese napis na zdi (napis se nenaklani s telefonem) */
+.feed .phone{grid-column:2;grid-row:1;justify-self:center;margin-right:clamp(40px,7vw,140px);
+  position:relative;width:100%;max-width:428px;perspective:1100px}
+.feed .box{width:100%;
   /* telo telefonu (iPhone 7), o 20 % mensi: siroky ram nahore a dole, uzky po stranach */
   padding:51px 11px 67px;border:2.5px solid rgba(227,36,43,.46);border-radius:46px;
   background:linear-gradient(155deg,#241011 0%,#120708 45%,#0b0405 100%);
   position:relative;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 2px 0 rgba(255,255,255,.08);
   animation:karta 4.6s ease-in-out infinite;transition:border-color .35s ease}
-/* Telefon se nenaklani ani nezvetsuje: kazda 3D transformace prepocitava iframe
-   a text Facebooku se rozmaze. Na hover jen zcervena okraj. */
+/* Naklon za kurzorem (page.js) jen rotaci - bez zvetseni a posunu v ose Z, aby se
+   Facebook nerozmazaval; po odjeti kurzoru se transformace uplne zrusi. */
 .feed .box:hover{border-color:rgba(227,36,43,.65)}
 .feed .box .fb-page{position:relative;z-index:1;border-radius:5px;overflow:hidden;background:#000;
   height:660px}   /* pevna vyska = data-height: pri znovunacteni se telefon ani sekce pod nim nepohnou */
@@ -221,7 +224,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .feed .side .kart span{font-size:10px}
 .feed .side .kart strong{margin-top:8px;font-size:clamp(16px,1.3vw,20px)}
 .feed .side .kart em{margin-top:7px;font-size:12.5px;line-height:1.45}
-@media (max-width:1000px){ .feed{grid-template-columns:1fr} .feed .box{grid-column:1;grid-row:2} }
+@media (max-width:1000px){ .feed{grid-template-columns:1fr} .feed .phone{grid-column:1;grid-row:2;margin-right:0} }
 
 /* Na sirokem displeji sedi uvodni text vedle karuselu - misto tam je i s
    rozkliknutym profilem. Pod 1100 px se to vrati pod sebe. */
@@ -314,21 +317,25 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 }
 
-/* ---------- facebook: napis na zdi v mezere mezi kartami a telefonem ----------
-   Tenke psaci pismo. Cyklus 15 s: napis se pomalu napise (4 s), pod nim se
-   dokresli sipka na telefon, chvili drzi, pak se vse odepise pozpatku. */
-.wall{grid-column:2;grid-row:1;justify-self:start;align-self:center;position:relative;z-index:1;
-  width:max-content;transform:rotate(-4deg);pointer-events:none;opacity:.5}
-.wall .wt{display:block;font-family:"Allura",cursive;font-size:40px;font-weight:400;line-height:1.1;
-  letter-spacing:.02em;color:rgba(255,232,224,.92);animation:pis 15s linear infinite}
-.wall .wa{display:block;width:118px;height:auto;margin:2px 0 0 46px;overflow:visible}
-.wall .wa path{fill:none;stroke:rgba(255,232,224,.9);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+/* ---------- facebook: napis na zdi vlevo pod telefonem ----------
+   "zaskroluj" sikmo nahoru, pod nim "si" a sipka, ktera se stoci nahoru k telefonu.
+   Cyklus 16 s: pomalu se napise (zaskroluj 4 s, si 1 s), dokresli se sipka,
+   chvili drzi, pak se vse odepise pozpatku. */
+.wall{position:absolute;right:calc(100% + 150px);bottom:-18px;width:440px;height:200px;
+  pointer-events:none;opacity:.5}
+.wall .wt{position:absolute;font-family:"Homemade Apple",cursive;font-weight:400;line-height:1;white-space:nowrap;
+  color:rgba(255,232,224,.92);text-shadow:0 1px 0 rgba(0,0,0,.55)}
+.wall .wt1{left:0;top:18px;font-size:34px;transform:rotate(-13deg);transform-origin:0 100%;animation:pis1 16s linear infinite}
+.wall .wt2{left:118px;top:112px;font-size:30px;transform:rotate(-6deg);animation:pis2 16s linear infinite}
+.wall .wa{position:absolute;left:168px;top:84px;width:250px;height:100px;overflow:visible}
+.wall .wa path{fill:none;stroke:rgba(255,232,224,.9);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:1;stroke-dashoffset:1}
-.wall .w1{animation:sip1 15s linear infinite}
-.wall .w2{animation:sip2 15s linear infinite}
-@keyframes pis{0%{clip-path:inset(-30% 100% -30% 0)}26.7%,75.3%{clip-path:inset(-30% 0 -30% 0)}96%,100%{clip-path:inset(-30% 100% -30% 0)}}
-@keyframes sip1{0%,26.7%{stroke-dashoffset:1}33.3%,68.7%{stroke-dashoffset:0}75.3%,100%{stroke-dashoffset:1}}
-@keyframes sip2{0%,33.3%{stroke-dashoffset:1}36%,66%{stroke-dashoffset:0}68.7%,100%{stroke-dashoffset:1}}
+.wall .w1{animation:sip1 16s linear infinite}
+.wall .w2{animation:sip2 16s linear infinite}
+@keyframes pis1{0%{clip-path:inset(-40% 100% -40% 0)}25%,80%{clip-path:inset(-40% 0 -40% 0)}100%{clip-path:inset(-40% 100% -40% 0)}}
+@keyframes pis2{0%,25%{clip-path:inset(-40% 100% -40% 0)}31%,74%{clip-path:inset(-40% 0 -40% 0)}80%,100%{clip-path:inset(-40% 100% -40% 0)}}
+@keyframes sip1{0%,31%{stroke-dashoffset:1}38%,67%{stroke-dashoffset:0}74%,100%{stroke-dashoffset:1}}
+@keyframes sip2{0%,38%{stroke-dashoffset:1}41%,64%{stroke-dashoffset:0}67%,100%{stroke-dashoffset:1}}
 @media (prefers-reduced-motion:reduce){ .wall .wt,.wall .wa path{animation:none;clip-path:none;stroke-dashoffset:0} }
 @media (max-width:1399px){ .wall{display:none} }   /* v uzsim okne mezi kartami a telefonem neni misto */
 

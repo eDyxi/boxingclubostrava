@@ -91,3 +91,29 @@
   function set() { document.documentElement.style.setProperty('--toph', Math.ceil(t.getBoundingClientRect().bottom + scrollY) + 'px'); }
   set(); addEventListener('resize', set);
 })();
+
+// Telefon s Facebookem: naklon za kurzorem jako karty, ale jen rotace (zadne
+// zvetseni ani posun v Z, jinak se text Facebooku rozmaze). Nad iframem stranka
+// kurzor nevidi, proto se sleduje dokument - telefon reaguje uz v okoli a na ramu,
+// nad displejem drzi posledni naklon. Po odjeti se transformace zrusi (ostry text).
+(function () {
+  var el = document.querySelector('.feed .box');
+  if (!el || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var tX = 0, tY = 0, cX = 0, cY = 0, raf = 0;
+  function tick() {
+    cX += (tX - cX) * .09; cY += (tY - cY) * .09;
+    if (Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01 || tX || tY) {
+      el.style.transform = 'rotateX(' + cX.toFixed(2) + 'deg) rotateY(' + cY.toFixed(2) + 'deg)';
+      raf = requestAnimationFrame(tick);
+    } else { raf = 0; cX = cY = 0; el.style.transform = ''; }
+  }
+  document.addEventListener('mousemove', function (e) {
+    var r = el.getBoundingClientRect(), m = 60;
+    if (e.clientX > r.left - m && e.clientX < r.right + m && e.clientY > r.top - m && e.clientY < r.bottom + m) {
+      tY = Math.max(-.5, Math.min(.5, (e.clientX - r.left) / r.width - .5)) * 7;
+      tX = -Math.max(-.5, Math.min(.5, (e.clientY - r.top) / r.height - .5)) * 6;
+    } else { tX = tY = 0; }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }, { passive: true });
+})();
