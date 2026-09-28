@@ -62,7 +62,8 @@ main{position:relative;z-index:3}
 /* ---------- rozpis a ceny ---------- */
 .plan{padding:clamp(40px,7vw,80px) var(--g) 0}
 .plan h2{font-size:clamp(24px,4vw,40px);font-weight:800;text-transform:uppercase;
-  letter-spacing:-.025em;margin:0 0 .7em}
+  letter-spacing:-.025em;margin:0 0 .7em;color:oklch(74% .20 27);text-shadow:none;
+  animation:dech 4.6s ease-in-out infinite}
 .grid{display:grid;gap:12px}
 /* Rozpis tydne: kazdy den radek, casy v pevnych sloupcich (rano / 15:00 /
    odpoledne / vecer), takze cisla sedi pod sebou jako v tabulce. Skupinu nese
@@ -74,26 +75,43 @@ main{position:relative;z-index:3}
 .day{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;
   border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:16px 18px;
   background:oklch(14% .018 30/.7);backdrop-filter:blur(6px)}
-.day>b{font-size:14px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.day>b{font-size:14px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}
+.day:nth-child(2)>b{animation-delay:-.9s}.day:nth-child(3)>b{animation-delay:-1.8s}
+.day:nth-child(4)>b{animation-delay:-2.7s}.day:nth-child(5)>b{animation-delay:-3.6s}
 .slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.slot{--gc:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.16);border-radius:12px;
-  padding:12px 14px 12px 17px;box-shadow:inset 3px 0 0 var(--gc);background:rgba(255,255,255,.025)}
-.slot b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:1.1;
+/* Pilulky casu v iOS skle: matne rozmazane pozadi, jemny svetly prechod shora,
+   tenky svetly okraj a vnitrni odlesk na horni hrane. Skupinu nese tecka se zari. */
+.slot{--gc:rgba(255,255,255,.55);position:relative;display:flex;flex-direction:column;justify-content:center;
+  min-height:58px;border-radius:999px;padding:10px 18px 10px 34px;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.035));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.25),0 6px 18px rgba(0,0,0,.28);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%)}
+.slot::before{content:"";position:absolute;left:15px;top:50%;width:8px;height:8px;margin-top:-4px;
+  border-radius:50%;background:var(--gc);box-shadow:0 0 8px var(--gc)}
+.slot b{display:block;font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.1;
   font-variant-numeric:tabular-nums;white-space:nowrap}
-.slot small{display:block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.1em;
-  line-height:1.35;text-transform:uppercase;color:var(--ink-dim)}
+.slot small{display:block;margin-top:3px;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  line-height:1.3;text-transform:uppercase;color:var(--ink-dim)}
 [data-g="akademie"]{--gc:#e0a13a}
 [data-g="vykon"]{--gc:#e3242b}
 [data-g="scm"]{--gc:#ff7a59}
 [data-g="kondice"]{--gc:#f4ece4}
-.slot[data-g="vykon"]{background:rgba(227,36,43,.10);border-color:rgba(227,36,43,.45)}
-.slot[data-g="kondice"]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3)}
+.slot[data-g="vykon"]{border-color:rgba(227,36,43,.5);
+  background:linear-gradient(180deg,rgba(227,36,43,.2),rgba(227,36,43,.07))}
+.slot[data-g="kondice"]{border-color:rgba(255,255,255,.32);
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.05))}
+.legend i{width:9px;height:9px;border-radius:50%;box-shadow:0 0 8px var(--gc)}
 
 .price{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(28px,4vw,48px)}
 .price div{flex:1 1 220px;border:1px solid var(--line);border-radius:16px;padding:20px 22px;
   background:oklch(14% .018 30/.62)}
-.price div:nth-child(-n+2){border:1.5px solid rgba(255,255,255,.42);
-  box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.35)}
+.price div{border:1.5px solid rgba(227,36,43,.34);animation:karta 4.6s ease-in-out infinite}
+.price div:nth-child(2){animation-delay:-1.5s}.price div:nth-child(3){animation-delay:-3s}
+@keyframes karta{
+  0%,100%{box-shadow:0 0 0 rgba(227,36,43,0),0 10px 30px rgba(0,0,0,.35)}
+  50%{box-shadow:0 0 22px rgba(227,36,43,.28),0 10px 30px rgba(0,0,0,.35)}}
 .price strong{display:block;font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em}
 .price span{display:block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.2em;
   text-transform:uppercase;color:var(--gold)}
@@ -178,7 +196,7 @@ a.kart:hover::after{background-position:-40% 0}
   50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
 }
 @media (prefers-reduced-motion:reduce){
-  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em{animation:none}
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div{animation:none}
 }
 
 /* kruhy na hladine za kurzorem */
