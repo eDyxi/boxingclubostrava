@@ -142,9 +142,11 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .kart em{display:block;margin-top:8px;font-style:normal;font-size:14px;color:var(--ink-dim)}
 /* stary odlesk pri hoveru zrusen - karty maji naklon + dychajici zari */
 
-.spon{padding:clamp(40px,7vw,80px) var(--g) clamp(28px,4vw,48px)}   /* stejna mezera jako mezi ostatnimi sekcemi */
-.rozc + .spon{padding-top:0}                          /* karusel uz ma svou spodni mezeru */
-@media (max-width:1099px){ .split:has(>.rozc) + .spon{padding-top:0} }
+/* nad partnery linie do ztracena (jako na hlavni strance), mezera nad i pod ni stejna */
+.spon{margin-top:clamp(20px,3.5vw,40px);padding:clamp(20px,3.5vw,40px) var(--g) clamp(28px,4vw,48px);
+  background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent) center top/calc(100% - 2 * var(--g)) 1px no-repeat}
+.rozc + .spon{margin-top:0}                           /* karusel uz ma svou spodni mezeru */
+@media (max-width:1099px){ .split:has(>.rozc) + .spon{margin-top:0} }
 .spon{text-align:center}
 .spon h2{font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
   color:oklch(74% .20 27);margin:0 0 30px;animation:dech 4.6s ease-in-out infinite}

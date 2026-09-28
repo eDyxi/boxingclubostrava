@@ -186,7 +186,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--og)}
 .outro .contact div{text-align:center}
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);
+  /* linie nahore a dole do ztracena, na krajich se nedotyka rohu */
+  background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent) top/100% 1px no-repeat,linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent) bottom/100% 1px no-repeat;
   margin-top:var(--og);padding:var(--og) 0}
 .outro .affil .l{flex-basis:100%;margin-bottom:0;color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}
 .outro .affil img{height:clamp(20px,2.9vw,30px);width:auto;opacity:.6;filter:brightness(0) invert(1);
