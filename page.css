@@ -149,7 +149,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .spon div{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(18px,4vw,44px)}
 /* Loga jsou vystrizena do pruhledna (logo-*.png), takze sedi na jakemkoli pozadi.
    V klidu svetla silueta, na hover plna a s cervenou zari jako ostatni texty. */
-.spon img{height:clamp(17px,2.5vw,26px);width:auto;opacity:.6;filter:brightness(0) invert(1);
+.spon img{height:clamp(20px,3vw,31px);width:auto;opacity:.6;filter:brightness(0) invert(1);
   transition:opacity .3s ease,filter .3s ease}
 .spon a:hover img{opacity:1;filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(227,36,43,.75))}
 
