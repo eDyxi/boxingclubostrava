@@ -162,19 +162,20 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .feed{padding:clamp(30px,6vw,70px) var(--g) 0;display:grid;gap:clamp(28px,4vw,60px);
   grid-template-columns:minmax(0,740px) minmax(0,1fr);align-items:start}
 /* vlevo uvodni text + karty + poznamka, vpravo Facebook od horni hrany */
-.feed>.fl{display:grid;gap:clamp(24px,3vw,40px);min-width:0}
+.feed>.fl{grid-column:1;grid-row:1;display:grid;gap:clamp(24px,3vw,40px);min-width:0}
 .feed>.fl>.intro{padding:0;max-width:none}
-.feed .box{width:100%;max-width:428px;justify-self:center;margin-right:clamp(40px,7vw,140px);
+.feed .box{grid-column:2;grid-row:1;width:100%;max-width:428px;justify-self:center;margin-right:clamp(40px,7vw,140px);
   /* telo telefonu (iPhone 7), o 20 % mensi: siroky ram nahore a dole, uzky po stranach */
   padding:51px 11px 67px;border:2.5px solid rgba(227,36,43,.46);border-radius:46px;
   background:linear-gradient(155deg,#241011 0%,#120708 45%,#0b0405 100%);
-  min-height:580px;position:relative;
+  position:relative;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 2px 0 rgba(255,255,255,.08);
   animation:karta 4.6s ease-in-out infinite;transition:border-color .35s ease}
 /* Telefon se nenaklani ani nezvetsuje: kazda 3D transformace prepocitava iframe
    a text Facebooku se rozmaze. Na hover jen zcervena okraj. */
 .feed .box:hover{border-color:rgba(227,36,43,.65)}
-.feed .box .fb-page{position:relative;z-index:1;border-radius:5px;overflow:hidden;background:#000}
+.feed .box .fb-page{position:relative;z-index:1;border-radius:5px;overflow:hidden;background:#000;
+  height:660px}   /* pevna vyska = data-height: pri znovunacteni se telefon ani sekce pod nim nepohnou */
 .feed .box i{position:absolute;display:block;pointer-events:none}
 .ph-spk{top:24px;left:50%;width:50px;height:5px;margin-left:-25px;border-radius:4px;
   background:#050203;box-shadow:inset 0 1px 1px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.07)}
@@ -199,13 +200,13 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   background:linear-gradient(118deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.075) 42%,rgba(255,255,255,.02) 52%,rgba(255,255,255,0) 60%) 0 0/220% 100%;
 }
 /* odlesk je staticky a bez mix-blend-mode - nic nad textem se pri hoveru nemeni */
-/* zhasnuti displeje po stisku home: cerna prijede z obou kraju ke stredu a zase odjede */
+/* zhasnuti displeje po stisku home: cerna prijede shora a zdola ke stredu a zase odjede */
 .ph-shut{z-index:3;top:51px;left:11px;right:11px;bottom:67px;border-radius:5px;overflow:hidden}
-.ph-shut::before,.ph-shut::after{content:"";position:absolute;top:0;bottom:0;width:50.5%;background:#000;
-  transform:scaleX(0);transition:transform .42s cubic-bezier(.7,0,.3,1)}
-.ph-shut::before{left:0;transform-origin:0 50%}
-.ph-shut::after{right:0;transform-origin:100% 50%}
-.feed .box.off .ph-shut::before,.feed .box.off .ph-shut::after{transform:scaleX(1)}
+.ph-shut::before,.ph-shut::after{content:"";position:absolute;left:0;right:0;height:50.5%;background:#000;
+  transform:scaleY(0);transition:transform .42s cubic-bezier(.7,0,.3,1)}
+.ph-shut::before{top:0;transform-origin:50% 0}
+.ph-shut::after{bottom:0;transform-origin:50% 100%}
+.feed .box.off .ph-shut::before,.feed .box.off .ph-shut::after{transform:scaleY(1)}
 .feed .box .wait{position:absolute;inset:51px 11px 67px;z-index:0;display:grid;place-items:center;padding:24px;
   text-align:center;color:var(--ink-faint);font-size:13px}
 /* Karty vlevo, mensi, s hoverem / naklonem / zari jako na kontaktu; poznamka pod nimi */
@@ -220,7 +221,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .feed .side .kart span{font-size:10px}
 .feed .side .kart strong{margin-top:8px;font-size:clamp(16px,1.3vw,20px)}
 .feed .side .kart em{margin-top:7px;font-size:12.5px;line-height:1.45}
-@media (max-width:1000px){ .feed{grid-template-columns:1fr} }
+@media (max-width:1000px){ .feed{grid-template-columns:1fr} .feed .box{grid-column:1;grid-row:2} }
 
 /* Na sirokem displeji sedi uvodni text vedle karuselu - misto tam je i s
    rozkliknutym profilem. Pod 1100 px se to vrati pod sebe. */
@@ -313,24 +314,23 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 }
 
-/* ---------- facebook: napis vyryty do zdi, pod nim sipka na telefon ----------
-   Cyklus 10 s: napis se napise zleva doprava, pod nim se dokresli sipka,
-   chvili drzi, pak se vse odepise presne pozpatku (sipka, pak text od konce). */
-.wall{width:max-content;margin:clamp(4px,1vw,14px) clamp(0px,2vw,24px) 0 auto;transform:rotate(-4deg);
-  pointer-events:none;opacity:.42}
-.wall .wt{display:block;font-family:"Sedgwick Ave",cursive;font-size:22px;line-height:1;letter-spacing:.01em;
-  color:rgba(255,232,224,.9);text-shadow:0 1px 0 rgba(0,0,0,.7),0 -1px 0 rgba(255,255,255,.06);
-  animation:pis 10s linear infinite}
-.wall .wa{display:block;width:118px;height:auto;margin:4px 0 0 30px;overflow:visible}
-.wall .wa path{fill:none;stroke:rgba(255,232,224,.9);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+/* ---------- facebook: napis na zdi v mezere mezi kartami a telefonem ----------
+   Tenke psaci pismo. Cyklus 15 s: napis se pomalu napise (4 s), pod nim se
+   dokresli sipka na telefon, chvili drzi, pak se vse odepise pozpatku. */
+.wall{grid-column:2;grid-row:1;justify-self:start;align-self:center;position:relative;z-index:1;
+  width:max-content;transform:rotate(-4deg);pointer-events:none;opacity:.5}
+.wall .wt{display:block;font-family:"Allura",cursive;font-size:40px;font-weight:400;line-height:1.1;
+  letter-spacing:.02em;color:rgba(255,232,224,.92);animation:pis 15s linear infinite}
+.wall .wa{display:block;width:118px;height:auto;margin:2px 0 0 46px;overflow:visible}
+.wall .wa path{fill:none;stroke:rgba(255,232,224,.9);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:1;stroke-dashoffset:1}
-.wall .w1{animation:sip1 10s linear infinite}
-.wall .w2{animation:sip2 10s linear infinite}
-@keyframes pis{0%{clip-path:inset(-20% 100% -20% 0)}20%,78%{clip-path:inset(-20% 0 -20% 0)}96%,100%{clip-path:inset(-20% 100% -20% 0)}}
-@keyframes sip1{0%,20%{stroke-dashoffset:1}30%,68%{stroke-dashoffset:0}78%,100%{stroke-dashoffset:1}}
-@keyframes sip2{0%,30%{stroke-dashoffset:1}34%,64%{stroke-dashoffset:0}68%,100%{stroke-dashoffset:1}}
+.wall .w1{animation:sip1 15s linear infinite}
+.wall .w2{animation:sip2 15s linear infinite}
+@keyframes pis{0%{clip-path:inset(-30% 100% -30% 0)}26.7%,75.3%{clip-path:inset(-30% 0 -30% 0)}96%,100%{clip-path:inset(-30% 100% -30% 0)}}
+@keyframes sip1{0%,26.7%{stroke-dashoffset:1}33.3%,68.7%{stroke-dashoffset:0}75.3%,100%{stroke-dashoffset:1}}
+@keyframes sip2{0%,33.3%{stroke-dashoffset:1}36%,66%{stroke-dashoffset:0}68.7%,100%{stroke-dashoffset:1}}
 @media (prefers-reduced-motion:reduce){ .wall .wt,.wall .wa path{animation:none;clip-path:none;stroke-dashoffset:0} }
-@media (max-width:1000px){ .wall{display:none} }
+@media (max-width:1399px){ .wall{display:none} }   /* v uzsim okne mezi kartami a telefonem neni misto */
 
 /* Kontakt: cely obsah (kontakty, partneri, poznamka) svisle na stred okna pod hlavickou,
    aby byl po otevreni hned videt cely a pohodlne se cetl. Top hlavicky se meri v JS. */
