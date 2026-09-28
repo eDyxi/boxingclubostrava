@@ -185,9 +185,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
   gap:clamp(16px,3.4vw,40px);border-top:1px solid var(--line);margin-top:clamp(40px,7vw,72px);padding-top:28px}
 .outro .affil .l{flex-basis:100%;margin-bottom:6px}
-.outro .affil img{height:clamp(28px,4vw,42px);width:auto;opacity:.5;filter:grayscale(1);
+.outro .affil img{height:clamp(28px,4vw,42px);width:auto;opacity:.6;filter:grayscale(1) invert(1) contrast(1.35);mix-blend-mode:screen;
   transition:opacity .3s ease,filter .3s ease}
-.outro .affil a:hover img{opacity:1;filter:none}
+.outro .affil a:hover img{opacity:1;filter:grayscale(1) invert(1) contrast(1.35) brightness(1.25)}
 
 /* Pozadi za rozcestnikem: stejne plovouci cervene plochy jako na podstrankach. */
 .rozc{position:relative;overflow:hidden;
@@ -220,7 +220,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro.lit>.torch,.rozc.lit>.torch{opacity:1}
 .outro>*:not(.torch){position:relative;z-index:1}
 .rozc>.rozc-head,.rozc>.cf{position:relative;z-index:2}
-.outro .affil{padding-left:clamp(0px,2.5vw,40px)}
+.outro .affil{padding-left:0}   /* loga presne na stred */
 @media (prefers-reduced-motion:reduce){.rozc>.field i{animation:none}}
 
 /* kruhy na hladine za kurzorem */
