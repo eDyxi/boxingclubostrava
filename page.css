@@ -319,15 +319,8 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 @keyframes bub{0%{transform:translate(0,0) scale(.4);opacity:0}15%{opacity:.9}
   100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
 
-/* mobil: rychlejsi prejezd svetla pres nadpis */
-
-}
-
-   /* v uzsim okne mezi kartami a telefonem neni misto */
-
 /* Kontakt: cely obsah (kontakty, partneri, poznamka) svisle na stred okna pod hlavickou,
    aby byl po otevreni hned videt cely a pohodlne se cetl. Top hlavicky se meri v JS. */
-.kcenter{min-height:calc(100svh - var(--toph,120px));display:flex;flex-direction:column;justify-content:center;
-  padding-top:clamp(24px,9vh,110px)}   /* obsah posunuty niz, opticky na stred okna */
+.kcenter{min-height:calc(100svh - var(--toph,120px));display:flex;flex-direction:column;justify-content:center}
 .kcenter>.split{padding-top:0}
 .kcenter .fine{padding-bottom:clamp(20px,3vw,36px)}
