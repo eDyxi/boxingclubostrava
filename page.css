@@ -160,14 +160,29 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 /* ---------- facebook ---------- */
 .feed{padding:clamp(34px,6vw,70px) var(--g) 0;display:grid;gap:clamp(20px,3vw,40px);
-  grid-template-columns:minmax(0,1fr) minmax(0,360px);align-items:start}
-.feed .box{border:1px solid var(--line);border-radius:18px;overflow:hidden;
-  background:oklch(14% .018 30/.62);min-height:520px;position:relative}
+  grid-template-columns:minmax(0,320px) 500px;justify-content:space-between;align-items:start}
+/* Facebook vpravo, box presne na sirku pluginu (max 500 px) - zadny prazdny sedy pas.
+   Okraj ve stylu webu: cerveny s dychajici zari. */
+.feed .box{order:2;width:100%;max-width:500px;justify-self:end;border:1.5px solid rgba(227,36,43,.34);
+  border-radius:18px;overflow:hidden;background:transparent;min-height:520px;position:relative;
+  animation:karta 4.6s ease-in-out infinite}
+.feed .box .fb-page,.feed .box iframe{display:block}
 .feed .box .wait{position:absolute;inset:0;display:grid;place-items:center;padding:24px;
   text-align:center;color:var(--ink-faint);font-size:13px}
-.feed .side p{color:var(--ink-dim);font-size:15px;margin:0 0 16px}
-.feed .side .kart{margin-bottom:12px}
-@media (max-width:820px){ .feed{grid-template-columns:1fr} }
+/* Karty vlevo, mensi, s hoverem / naklonem / zari jako na kontaktu; poznamka pod nimi */
+.feed .side{order:1;display:grid;gap:10px;perspective:900px}
+.feed .side p{color:var(--ink-dim);font-size:13.5px;line-height:1.5;margin:8px 0 0}
+.feed .side .kart{margin:0;padding:17px 17px 18px;border-radius:15px;border:1.5px solid rgba(227,36,43,.34);
+  transform-style:preserve-3d;will-change:transform;animation:karta 4.6s ease-in-out infinite;
+  transition:border-color .35s ease}
+.feed .side .kart:nth-child(2){animation-delay:-1.5s}
+.feed .side .kart:hover{border-color:rgba(227,36,43,.6)}
+.feed .side a.kart:hover{transform:none}
+.feed .side .kart span{font-size:10px}
+.feed .side .kart strong{margin-top:8px;font-size:clamp(16px,1.3vw,20px)}
+.feed .side .kart em{margin-top:7px;font-size:12.5px;line-height:1.45}
+@media (max-width:900px){ .feed{grid-template-columns:1fr;justify-content:stretch}
+  .feed .box{order:1;justify-self:center}.feed .side{order:2} }
 
 /* Na sirokem displeji sedi uvodni text vedle karuselu - misto tam je i s
    rozkliknutym profilem. Pod 1100 px se to vrati pod sebe. */
@@ -227,7 +242,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
 }
 @media (prefers-reduced-motion:reduce){
-  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart,.spon h2{animation:none}
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart,.spon h2,.feed .box,.feed .side .kart{animation:none}
 }
 
 /* kruhy na hladine za kurzorem */
