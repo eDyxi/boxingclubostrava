@@ -84,3 +84,10 @@
     el.addEventListener('mouseleave', function () { over = false; tX = tY = 0; if (!raf) raf = requestAnimationFrame(tick); });
   });
 })();
+
+// vyska hlavicky pro svisle centrovany obsah (kontakt)
+(function () {
+  var t = document.querySelector('.top'); if (!t || !document.querySelector('.kcenter')) return;
+  function set() { document.documentElement.style.setProperty('--toph', Math.ceil(t.getBoundingClientRect().bottom + scrollY) + 'px'); }
+  set(); addEventListener('resize', set);
+})();
