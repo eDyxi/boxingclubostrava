@@ -91,3 +91,26 @@
   function set() { document.documentElement.style.setProperty('--toph', Math.ceil(t.getBoundingClientRect().bottom + scrollY) + 'px'); }
   set(); addEventListener('resize', set);
 })();
+
+// Naklon za kurzorem jako karusel: reaguje na pohyb mysi po cele strance hned od
+// nacteni, ne az po najeti. Pouziti: data-tilt="global" (jen prvky, ktere nejsou odkaz).
+(function () {
+  var els = [].slice.call(document.querySelectorAll('[data-tilt="global"]'));
+  if (!els.length || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  els.forEach(function (el) {
+    var tX = 0, tY = 0, cX = 0, cY = 0, raf = 0;
+    function tick() {
+      cX += (tX - cX) * .07; cY += (tY - cY) * .07;
+      el.style.transform = 'perspective(1000px) rotateX(' + cX.toFixed(2) + 'deg) rotateY(' + cY.toFixed(2) + 'deg)';
+      raf = (Math.abs(tX - cX) > .01 || Math.abs(tY - cY) > .01) ? requestAnimationFrame(tick) : 0;
+    }
+    addEventListener('mousemove', function (e) {
+      var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      tY = Math.max(-1, Math.min(1, (e.clientX - cx) / (innerWidth / 2))) * 9;
+      tX = -Math.max(-1, Math.min(1, (e.clientY - cy) / (innerHeight / 2))) * 7;
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+    document.addEventListener('mouseleave', function () { tX = tY = 0; if (!raf) raf = requestAnimationFrame(tick); });
+  });
+})();

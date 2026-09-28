@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="page.css?v=20260929j">
-<link rel="stylesheet" href="menu.css?v=20260929j">
+<link rel="stylesheet" href="page.css?v=20260929k">
+<link rel="stylesheet" href="menu.css?v=20260929k">
 </head>
 <body>
 
@@ -110,24 +110,33 @@
   // stran) a kazda rada se dopocita presne na sirku mrizky - vsechny konci vpravo.
   var grid=document.querySelector('.gal-grid'), GAP=12;
   function layout(){
+    // Rady se plni zleva doprava pri cilove vysce H. Plna rada se dopocita presne na
+    // sirku mrizky; neuplna posledni rada zustane v cilove vysce zarovnana vlevo
+    // (zadna osamela roztazena fotka).
     var v=vis(); if(!v.length) return;
-    var W=grid.clientWidth, H=innerWidth<700?170:250, r=v.map(function(f){return parseFloat(f.style.getPropertyValue('--r'))||1.5;});
-    var total=r.reduce(function(a,b){return a+b;},0), rows=Math.max(1,Math.round(total*H/W)), per=total/rows, i=0;
-    for(var k=0;k<rows;k++){
-      var row=[], sum=0, rest=0;
-      for(var q=i;q<v.length;q++) rest+=r[q];
-      per=rest/(rows-k);                               // cil rady se prepocita ze zbytku - posledni rada neni prepchana
-      while(i<v.length&&(k===rows-1||sum+r[i]/2<per||!row.length)){ row.push(i); sum+=r[i]; i++; }
-      var h=(W-GAP*(row.length-1))/sum;
-      if(k<rows-1||row.length>1||rows===1) h=Math.min(h,H*1.9);
+    var W=grid.clientWidth, H=innerWidth<700?150:230;
+    var r=v.map(function(f){return parseFloat(f.style.getPropertyValue('--r'))||1.5;});
+    var row=[], sum=0;
+    function flush(full){
+      var h=full?(W-GAP*(row.length-1))/sum:H;
       row.forEach(function(j,q){ v[j].style.width=Math.floor(r[j]*h)+'px'; v[j].style.height=Math.round(h)+'px';
-        v[j].style.flexGrow=(q===row.length-1)?'1':'0'; });   // posledni v rade dorovna zaokrouhleni
+        v[j].style.flexGrow=(full&&q===row.length-1)?'1':'0'; });
+      row=[]; sum=0;
     }
+    for(var i=0;i<v.length;i++){
+      row.push(i); sum+=r[i];
+      if(sum*H+GAP*(row.length-1)>=W) flush(true);
+    }
+    if(row.length) flush(sum*H+GAP*(row.length-1)>=W*.8);
   }
   var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(layout,120); });
   orb.addEventListener('click',function(){
     var o=!orbit.classList.contains('open'); orbit.classList.toggle('open',o); orb.setAttribute('aria-expanded',o?'true':'false');
-    pick('*');
+    if(o){ pick('*'); return; }
+    // druhy klik: drahu zavre a fotky schova
+    btns.forEach(function(x){x.setAttribute('aria-pressed','false');});
+    figs.forEach(function(fi){fi.classList.remove('in'); fi.classList.add('hide');});
+    hint.classList.remove('gone');
   });
   orbit.querySelectorAll('.sat').forEach(function(s){ s.addEventListener('click',function(){ pick(s.dataset.f); }); });
   function vis(){return figs.filter(function(f){return !f.classList.contains('hide');});}
@@ -155,8 +164,8 @@
   lb.addEventListener('touchend',function(e){if(sx===null)return; var d=e.changedTouches[0].clientX-sx; if(Math.abs(d)>50) step(d<0?1:-1); sx=null;});
 })();
 </script>
-<script src="page.js?v=20260929j" defer></script>
-<script src="repel.js?v=20260929j" defer></script>
-<script src="menu.js?v=20260929j" defer></script>
+<script src="page.js?v=20260929k" defer></script>
+<script src="repel.js?v=20260929k" defer></script>
+<script src="menu.js?v=20260929k" defer></script>
 </body>
 </html>
