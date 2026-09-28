@@ -40,3 +40,4 @@
 .mnu hr{border:0;height:1px;margin:6px 14px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.2),rgba(255,255,255,0))}
 @media (max-width:700px){ .top{padding-right:78px} }
 @media (prefers-reduced-motion:reduce){ .mnu,.mnu a,.mnu span.off,.mnu-btn i{transition:none} }
+.lb-open .mnu-btn,.lb-open .mnu{opacity:0;pointer-events:none}   /* nahled fotky prekryva menu */

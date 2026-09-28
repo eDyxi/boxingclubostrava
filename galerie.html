@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="page.css?v=20260929e">
-<link rel="stylesheet" href="menu.css?v=20260929e">
+<link rel="stylesheet" href="page.css?v=20260929f">
+<link rel="stylesheet" href="menu.css?v=20260929f">
 </head>
 <body>
 
@@ -63,12 +63,6 @@
     </div>
   </section>
 
-  <div class="lb" aria-hidden="true" role="dialog" aria-label="Náhled fotky">
-    <button class="lb-x" type="button" aria-label="Zavřít"><i></i><i></i></button>
-    <button class="lb-p" type="button" aria-label="Předchozí">‹</button>
-    <figure><img alt=""><figcaption></figcaption></figure>
-    <button class="lb-n" type="button" aria-label="Další">›</button>
-  </div>
 
   <section class="spon">
     <h2>Podporují nás</h2>
@@ -82,6 +76,13 @@
     </div>
   </section>
 </main>
+
+  <div class="lb" aria-hidden="true" role="dialog" aria-label="Náhled fotky">
+    <button class="lb-x" type="button" aria-label="Zavřít"><i></i><i></i></button>
+    <button class="lb-p" type="button" aria-label="Předchozí">‹</button>
+    <figure><img alt=""><figcaption></figcaption></figure>
+    <button class="lb-n" type="button" aria-label="Další">›</button>
+  </div>
 
 <script>
 // Galerie: filtr (pilulky) a nahled pres celou obrazovku - sipky, Esc, swipe.
@@ -119,8 +120,8 @@
   lb.addEventListener('touchend',function(e){if(sx===null)return; var d=e.changedTouches[0].clientX-sx; if(Math.abs(d)>50) step(d<0?1:-1); sx=null;});
 })();
 </script>
-<script src="page.js?v=20260929e" defer></script>
-<script src="repel.js?v=20260929e" defer></script>
-<script src="menu.js?v=20260929e" defer></script>
+<script src="page.js?v=20260929f" defer></script>
+<script src="repel.js?v=20260929f" defer></script>
+<script src="menu.js?v=20260929f" defer></script>
 </body>
 </html>
