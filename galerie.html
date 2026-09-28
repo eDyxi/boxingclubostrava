@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="page.css?v=20260929h">
-<link rel="stylesheet" href="menu.css?v=20260929h">
+<link rel="stylesheet" href="page.css?v=20260929i">
+<link rel="stylesheet" href="menu.css?v=20260929i">
 </head>
 <body>
 
@@ -104,7 +104,24 @@
       fi.classList.remove('in'); fi.classList.toggle('hide',!on);
       if(on){ fi.style.setProperty('--d',(n++*55)+'ms'); void fi.offsetWidth; fi.classList.add('in'); }
     });
+    layout();
   }
+  // Zarovnane rady: vybrane fotky se rozdeli do vyrovnanych rad (podle soucetu pomeru
+  // stran) a kazda rada se dopocita presne na sirku mrizky - vsechny konci vpravo.
+  var grid=document.querySelector('.gal-grid'), GAP=12;
+  function layout(){
+    var v=vis(); if(!v.length) return;
+    var W=grid.clientWidth, H=innerWidth<700?170:250, r=v.map(function(f){return parseFloat(f.style.getPropertyValue('--r'))||1.5;});
+    var total=r.reduce(function(a,b){return a+b;},0), rows=Math.max(1,Math.round(total*H/W)), per=total/rows, i=0;
+    for(var k=0;k<rows;k++){
+      var row=[], sum=0;
+      while(i<v.length&&(k===rows-1||sum+r[i]/2<per||!row.length)){ row.push(i); sum+=r[i]; i++; }
+      var h=(W-GAP*(row.length-1))/sum;
+      if(k<rows-1||row.length>1||rows===1) h=Math.min(h,H*1.9);
+      row.forEach(function(j){ v[j].style.width=Math.floor(r[j]*h*100)/100+'px'; v[j].style.height=Math.floor(h)+'px'; });
+    }
+  }
+  var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(layout,120); });
   orb.addEventListener('click',function(){
     var o=!orbit.classList.contains('open'); orbit.classList.toggle('open',o); orb.setAttribute('aria-expanded',o?'true':'false');
     pick('*');
@@ -135,8 +152,8 @@
   lb.addEventListener('touchend',function(e){if(sx===null)return; var d=e.changedTouches[0].clientX-sx; if(Math.abs(d)>50) step(d<0?1:-1); sx=null;});
 })();
 </script>
-<script src="page.js?v=20260929h" defer></script>
-<script src="repel.js?v=20260929h" defer></script>
-<script src="menu.js?v=20260929h" defer></script>
+<script src="page.js?v=20260929i" defer></script>
+<script src="repel.js?v=20260929i" defer></script>
+<script src="menu.js?v=20260929i" defer></script>
 </body>
 </html>

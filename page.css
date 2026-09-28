@@ -413,7 +413,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .gal-hint.gone{display:none}
 /* zarovnane rady: kazda rada konci presne na pravem okraji, vyska radku podle pomeru stran */
 .gal-grid{display:flex;flex-wrap:wrap;gap:12px}
-.gal-grid figure{flex-grow:calc(var(--r) * 100);flex-basis:calc(var(--r) * 230px);aspect-ratio:var(--r)}
+.gal-grid figure{flex:none}   /* sirku a vysku dopocita JS - rady konci presne vpravo */
 .gal-grid figure img{width:100%;height:100%;object-fit:cover}
 .gal-grid figure.in{animation:foto .6s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--d,0ms)}
 @keyframes foto{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
