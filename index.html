@@ -177,17 +177,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 }
 @media (prefers-reduced-motion:reduce){
   .cta .btn::before,.cta .btn::after{animation:none}
-  .eyebrow,#p0 h1 em{animation:none}
+  .eyebrow,#p0 h1 em,.outro .affil .l{animation:none}
 }
 
 .outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(18px,4vw,54px)}
 .outro .contact div{text-align:center}
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
   gap:clamp(16px,3.4vw,40px);border-top:1px solid var(--line);margin-top:clamp(40px,7vw,72px);padding-top:28px}
-.outro .affil .l{flex-basis:100%;margin-bottom:6px}
-.outro .affil img{height:clamp(28px,4vw,42px);width:auto;opacity:.6;filter:grayscale(1) invert(1) contrast(1.35);mix-blend-mode:screen;
+.outro .affil .l{flex-basis:100%;margin-bottom:6px;color:oklch(74% .20 27);animation:dech 4.6s ease-in-out infinite}
+.outro .affil img{height:clamp(28px,4vw,42px);width:auto;opacity:.6;filter:brightness(0) invert(1);
   transition:opacity .3s ease,filter .3s ease}
-.outro .affil a:hover img{opacity:1;filter:grayscale(1) invert(1) contrast(1.35) brightness(1.25)}
+.outro .affil a:hover img{opacity:1;filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(227,36,43,.75))}
 
 /* Pozadi za rozcestnikem: stejne plovouci cervene plochy jako na podstrankach. */
 .rozc{position:relative;overflow:hidden;
@@ -419,10 +419,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   <div class="affil">
     <span class="l">Podporují nás</span>
     <a href="http://www.czechboxing.cz/" target="_blank" rel="noopener"><img src="logo-cba.png" alt="Česká boxerská asociace" loading="lazy"></a>
-    <a href="https://www.msk.cz/" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2024/01/ms-kraj.jpg" alt="Moravskoslezský kraj" loading="lazy"></a>
-    <a href="https://www.ostrava.cz/cs" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/ostrava.jpg" alt="Ostrava" loading="lazy"></a>
-    <a href="https://moap.ostrava.cz/cs" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/moap.png" alt="Moravská Ostrava a Přívoz" loading="lazy"></a>
-    <a href="http://www.kubicapartners.cz/portal/home/" target="_blank" rel="noopener"><img src="https://boxingclubostrava.cz/wp-content/uploads/2020/03/kubica.png" alt="Kubica Partners" loading="lazy"></a>
+    <a href="https://www.msk.cz/" target="_blank" rel="noopener"><img src="logo-msk.png" alt="Moravskoslezský kraj" loading="lazy"></a>
+    <a href="https://www.ostrava.cz/cs" target="_blank" rel="noopener"><img src="logo-ostrava.png" alt="Ostrava" loading="lazy"></a>
+    <a href="https://moap.ostrava.cz/cs" target="_blank" rel="noopener"><img src="logo-moap.png" alt="Moravská Ostrava a Přívoz" loading="lazy"></a>
+    <a href="http://www.kubicapartners.cz/portal/home/" target="_blank" rel="noopener"><img src="logo-kubica.png" alt="Kubica Partners" loading="lazy"></a>
   </div>
 </section>
 

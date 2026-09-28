@@ -145,14 +145,13 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .spon{padding:clamp(48px,8vw,90px) var(--g) 0}
 .spon{text-align:center}
 .spon h2{font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--ink-faint);margin:0 0 18px}
+  color:oklch(74% .20 27);margin:0 0 18px;animation:dech 4.6s ease-in-out infinite}
 .spon div{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(18px,4vw,44px)}
-/* Loga bez pozadi: bile pozadi JPG se invertem zmeni na cerne a screen ho
-   vyrazi, logo zustane jako svetla silueta. Do barvy se na hover nevraci,
-   jinak by se ukazal obdelnik pozadi. */
-.spon img{height:clamp(34px,5vw,52px);width:auto;opacity:.6;filter:grayscale(1) invert(1) contrast(1.35);mix-blend-mode:screen;
+/* Loga jsou vystrizena do pruhledna (logo-*.png), takze sedi na jakemkoli pozadi.
+   V klidu svetla silueta, na hover plna a s cervenou zari jako ostatni texty. */
+.spon img{height:clamp(34px,5vw,52px);width:auto;opacity:.6;filter:brightness(0) invert(1);
   transition:opacity .3s ease,filter .3s ease}
-.spon a:hover img{opacity:1;filter:grayscale(1) invert(1) contrast(1.35) brightness(1.25)}
+.spon a:hover img{opacity:1;filter:brightness(0) invert(1) drop-shadow(0 0 10px rgba(227,36,43,.75))}
 
 /* ---------- facebook ---------- */
 .feed{padding:clamp(34px,6vw,70px) var(--g) 0;display:grid;gap:clamp(20px,3vw,40px);
@@ -223,7 +222,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
   50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
 }
 @media (prefers-reduced-motion:reduce){
-  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart{animation:none}
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart,.spon h2{animation:none}
 }
 
 /* kruhy na hladine za kurzorem */
