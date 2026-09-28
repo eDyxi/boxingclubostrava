@@ -177,12 +177,23 @@ a.kart:hover::after{background-position:-40% 0}
   .split>.rozc{margin-left:clamp(-150px,-8vw,-50px)}   /* karusel co nejvic doleva, text ma svuj sloupec */
   /* kontakt: stejne rozlozeni jako karusel, karty 3 vedle sebe ve 2 radach,
      puvodni styl i animace, jen zmensene podle velikosti karet */
-  .split>.kont{padding:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-  .split>.kont .kart{padding:20px 20px 22px;border-radius:16px}
+  .split:has(>.kont){grid-template-columns:minmax(320px,34%) 1fr;gap:clamp(24px,3vw,48px)}
+  .split>.intro h1{font-size:clamp(40px,4.6vw,76px)}
+  .split>.intro h1 em{display:block}                  /* "Kde nas" na radku, "najdes" pod nim */
+  .split>.kont{padding:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;perspective:900px}
+  /* karty jako cenove karty na treninkach: cerveny dychajici okraj, naklon za kurzorem
+     a jemne zvetseni (JS v page.js) */
+  .split>.kont .kart{padding:17px 17px 18px;border-radius:15px;border:1.5px solid rgba(227,36,43,.34);
+    transform-style:preserve-3d;will-change:transform;animation:karta 4.6s ease-in-out infinite;
+    transition:border-color .35s ease}
+  .split>.kont .kart:nth-child(2){animation-delay:-.8s}.split>.kont .kart:nth-child(3){animation-delay:-1.6s}
+  .split>.kont .kart:nth-child(4){animation-delay:-2.4s}.split>.kont .kart:nth-child(5){animation-delay:-3.2s}
+  .split>.kont .kart:nth-child(6){animation-delay:-4s}
+  .split>.kont .kart:hover{border-color:rgba(227,36,43,.6)}
+  .split>.kont a.kart:hover{transform:none}
   .split>.kont .kart span{font-size:10px}
-  .split>.kont .kart strong{margin-top:9px;font-size:clamp(17px,1.45vw,22px)}
-  .split>.kont .kart em{margin-top:7px;font-size:13px;line-height:1.45}
-  .split>.kont a.kart:hover{transform:translateY(-2px)}
+  .split>.kont .kart strong{margin-top:8px;font-size:clamp(16px,1.3vw,20px)}
+  .split>.kont .kart em{margin-top:7px;font-size:12.5px;line-height:1.45}
 }
 
 
@@ -212,7 +223,7 @@ a.kart:hover::after{background-position:-40% 0}
   50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
 }
 @media (prefers-reduced-motion:reduce){
-  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div{animation:none}
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart{animation:none}
 }
 
 /* kruhy na hladine za kurzorem */

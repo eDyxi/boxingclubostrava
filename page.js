@@ -65,7 +65,7 @@
 (function () {
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  document.querySelectorAll('.price div').forEach(function (el) {
+  document.querySelectorAll('.price div, .split>.kont .kart').forEach(function (el) {
     var tX = 0, tY = 0, cX = 0, cY = 0, hv = 0, over = false, raf = 0;
     function tick() {
       cX += (tX - cX) * .09; cY += (tY - cY) * .09; hv += ((over ? 1 : 0) - hv) * .08;
