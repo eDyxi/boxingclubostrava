@@ -204,7 +204,7 @@ a.kart:hover::after{background-position:-40% 0}
   50%{filter:drop-shadow(0 0 10px rgba(255,104,92,.8)) drop-shadow(0 0 22px rgba(240,70,60,.45)) drop-shadow(0 1px 6px rgba(10,4,3,.9))}
 }
 @media (prefers-reduced-motion:reduce){
-  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div{animation:none}
+  .js .intro h1 .ch,.js .intro h1 .sh,.eyebrow,.intro h1 em,.plan h2,.day>b,.price div,.kont .kart{animation:none}
 }
 
 /* kruhy na hladine za kurzorem */
@@ -236,3 +236,27 @@ a.kart:hover::after{background-position:-40% 0}
 /* mobil: rychlejsi prejezd svetla pres nadpis */
 
 }
+
+/* ---------- kontakt: text vlevo, karty vpravo 3 x 2 ve stylu treninku ---------- */
+.kwrap{display:grid;grid-template-columns:minmax(300px,.85fr) 2fr;gap:clamp(28px,4vw,64px);
+  align-items:center;padding:clamp(30px,6vw,70px) var(--g) 0}
+.kwrap>.intro{padding:0;max-width:none}
+.kwrap>.kont{padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kont .kart{display:flex;flex-direction:column;border:1.5px solid rgba(227,36,43,.34);border-radius:20px;
+  padding:22px 22px 20px;
+  background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(227,36,43,.07) 55%,rgba(227,36,43,.14));
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
+  animation:karta 4.6s ease-in-out infinite;
+  transition:transform .5s cubic-bezier(.25,.8,.3,1),border-color .5s ease}
+.kont .kart:nth-child(2){animation-delay:-.8s}.kont .kart:nth-child(3){animation-delay:-1.6s}
+.kont .kart:nth-child(4){animation-delay:-2.4s}.kont .kart:nth-child(5){animation-delay:-3.2s}
+.kont .kart:nth-child(6){animation-delay:-4s}
+.kont a.kart:hover{transform:scale(1.01);border-color:rgba(227,36,43,.62)}
+.kont .kart span{font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+  color:oklch(74% .20 27)}
+.kont .kart strong{margin-top:14px;font-size:clamp(18px,1.55vw,23px);line-height:1.2;
+  letter-spacing:-.01em;overflow-wrap:anywhere}
+.kont .kart em{margin-top:auto;padding-top:12px;font-size:13.5px;line-height:1.45;color:var(--ink-dim)}
+@media (max-width:1100px){ .kwrap{grid-template-columns:1fr;align-items:start} }
+@media (max-width:760px){ .kwrap>.kont{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:480px){ .kwrap>.kont{grid-template-columns:1fr} }
