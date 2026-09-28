@@ -144,7 +144,8 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 
 /* nad partnery linie do ztracena (jako na hlavni strance), mezera nad i pod ni stejna */
 .spon{margin-top:clamp(20px,3.5vw,40px);padding:clamp(20px,3.5vw,40px) var(--g) clamp(28px,4vw,48px);
-  background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent) center top/calc(100% - 2 * var(--g)) 1px no-repeat}
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.14) 22%,rgba(255,255,255,.34) 50%,rgba(255,255,255,.14) 78%,rgba(255,255,255,0))
+    center top/calc(100% - 2 * var(--g)) 1px no-repeat}
 .rozc + .spon{margin-top:0}                           /* karusel uz ma svou spodni mezeru */
 @media (max-width:1099px){ .split:has(>.rozc) + .spon{margin-top:0} }
 .spon{text-align:center}
