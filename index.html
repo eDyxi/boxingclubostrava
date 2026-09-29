@@ -193,20 +193,12 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--og)}
 .outro .contact div{text-align:center}
 .outro .contact .l{padding-left:.24em}   /* vyrovna mezery za pismeny - stitek presne na stred */
-/* ikony karet: obrys ve stylu velkych cisel; kazda karta ma jinou kompozici
-   (vycentrovana, prerostla pres okraj, dvojice), cislo ustoupi do pozadi */
+/* ikony karet: obrys ve stylu velkych cisel, obri a zarizle levym dolnim rohem
+   (orez dela linka nad nazvem karty), viditelnost jen o kus vyssi nez cisla, bez hoveru */
 .cf-art{position:relative;overflow:hidden}
-.cf-ico{position:absolute;left:50%;top:46%;width:76%;max-width:260px;height:auto;z-index:2;pointer-events:none;
-  --t:translate(-50%,-50%);transform:var(--t);opacity:.55;filter:drop-shadow(0 0 10px rgba(255,80,70,.3));
-  transition:transform .7s cubic-bezier(.2,.9,.3,1.1),opacity .4s ease}
-.cf-card:hover .cf-ico{transform:var(--t) scale(1.04);opacity:.72}
-.ico-treneri{width:84%;max-width:280px}                                        /* mirne vetsi, na stredu */
-.ico-treninky{width:190%;max-width:none;left:78%;top:30%}                        /* obri stopky, vidi se asi tretina */
-.ico-zapasy{width:82%;--t:translate(-50%,-50%) rotate(-12deg)}
-.ico-galerie{width:80%;--t:translate(-50%,-50%) rotate(6deg)}
-.ico-facebook{width:150%;max-width:none;left:26%;top:72%}                         /* velke f preteka vlevo dole */
-.ico-kontakt{width:62%;left:26%;top:66%}                                        /* lokalita vlevo dole */
-.ico-mail{width:62%;left:74%;top:62%;--t:translate(-50%,-50%) rotate(-8deg)}   /* e-mail vpravo dole */
+.cf-ico{position:absolute;left:22%;top:80%;width:190%;max-width:none;height:auto;z-index:2;pointer-events:none;
+  transform:translate(-50%,-50%);opacity:.36;filter:drop-shadow(0 0 8px rgba(255,80,70,.22))}
+.ico-mail{left:84%;top:84%;transform:translate(-50%,-50%) rotate(-8deg)}   /* kontakt: e-mail v pravem dolnim rohu */
 .cf-art:has(.cf-ico) .cf-num{opacity:.3}
 .outro .contact .l{color:oklch(74% .20 27);font-weight:800;animation:dech 4.6s ease-in-out infinite}   /* cervene jako ostatni */
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
@@ -458,8 +450,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <span id="diag" hidden></span>
 
-<link rel="stylesheet" href="carousel.css?v=20260929v">
-<link rel="stylesheet" href="menu.css?v=20260929v">
+<link rel="stylesheet" href="carousel.css?v=20260929w">
+<link rel="stylesheet" href="menu.css?v=20260929w">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -884,9 +876,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260929v"></script>
-<script src="carousel.js?v=20260929v" defer></script>
-<script src="repel.js?v=20260929v" defer></script>
+<script type="module" src="glove3d.js?v=20260929w"></script>
+<script src="carousel.js?v=20260929w" defer></script>
+<script src="repel.js?v=20260929w" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -925,6 +917,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 })();
 </script>
 <script>document.querySelectorAll(".cta .btn").forEach(function(b){b.addEventListener("mousemove",function(e){var r=b.getBoundingClientRect();b.style.setProperty("--mx",(e.clientX-r.left)+"px");b.style.setProperty("--my",(e.clientY-r.top)+"px");});});</script>
-<script src="menu.js?v=20260929v" defer></script>
-<script src="splash.js?v=20260929v" defer></script>
+<script src="menu.js?v=20260929w" defer></script>
+<script src="splash.js?v=20260929w" defer></script>
 </html>
