@@ -198,8 +198,11 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .cf-art{position:relative;overflow:hidden}
 .cf-ico{position:absolute;left:22%;top:80%;width:190%;max-width:none;height:auto;z-index:2;pointer-events:none;
   transform:translate(-50%,-50%);opacity:.36;filter:drop-shadow(0 0 8px rgba(255,80,70,.22))}
+.ico-treneri{width:171%;left:32%;top:73%}     /* -10 %, vic do karty */
+.ico-zapasy{width:161%;left:30%;top:71%}      /* -15 %, vidi se vic */
+.ico-galerie{width:171%;left:34%;top:74%}     /* -10 %, bliz ke stredu, porad preteka */
 .ico-mail{left:84%;top:84%;transform:translate(-50%,-50%) rotate(-8deg)}   /* kontakt: e-mail v pravem dolnim rohu */
-.cf-art:has(.cf-ico) .cf-num{opacity:.3}
+.cf-art:has(.cf-ico) .cf-num{display:none}   /* cisla v pozadi pryc, nesou to ikony */
 .outro .contact .l{color:oklch(74% .20 27);font-weight:800;animation:dech 4.6s ease-in-out infinite}   /* cervene jako ostatni */
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
   column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);
@@ -414,7 +417,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
         <span class="cf-meta"><div><strong>Facebook</strong><em>Co je nového</em></div></span>
       </span></div>
       <div class="cf-card" data-href="kontakt.html" data-glow="oklch(36% .13 20/.5)"><span class="cf-panel">
-        <span class="cf-art"><span class="cf-num">06</span><img class="cf-ico ico-kontakt" src="ikony/kontakt.svg" alt="" width="120" height="120"><img class="cf-ico ico-mail" src="ikony/email.svg" alt="" width="120" height="120"></span>
+        <span class="cf-art"><span class="cf-num">06</span><img class="cf-ico ico-mail" src="ikony/email.svg" alt="" width="120" height="120"></span>
         <span class="cf-meta"><div><strong>Kontakt</strong><em>Kde nás najdeš</em></div></span>
       </span></div>
     </div>
@@ -450,8 +453,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <span id="diag" hidden></span>
 
-<link rel="stylesheet" href="carousel.css?v=20260929w">
-<link rel="stylesheet" href="menu.css?v=20260929w">
+<link rel="stylesheet" href="carousel.css?v=20260929x">
+<link rel="stylesheet" href="menu.css?v=20260929x">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -876,9 +879,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260929w"></script>
-<script src="carousel.js?v=20260929w" defer></script>
-<script src="repel.js?v=20260929w" defer></script>
+<script type="module" src="glove3d.js?v=20260929x"></script>
+<script src="carousel.js?v=20260929x" defer></script>
+<script src="repel.js?v=20260929x" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -917,6 +920,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 })();
 </script>
 <script>document.querySelectorAll(".cta .btn").forEach(function(b){b.addEventListener("mousemove",function(e){var r=b.getBoundingClientRect();b.style.setProperty("--mx",(e.clientX-r.left)+"px");b.style.setProperty("--my",(e.clientY-r.top)+"px");});});</script>
-<script src="menu.js?v=20260929w" defer></script>
-<script src="splash.js?v=20260929w" defer></script>
+<script src="menu.js?v=20260929x" defer></script>
+<script src="splash.js?v=20260929x" defer></script>
 </html>
