@@ -479,7 +479,7 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .ev::after,.res::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;
   box-shadow:0 0 38px rgba(227,36,43,.42),0 18px 40px rgba(0,0,0,.45);transition:opacity .45s ease}
 .ev:hover::after,.res:hover::after{opacity:1}
-.ev:hover{border-color:rgba(227,36,43,.78);background-color:oklch(9% .02 28/.82)}
+.ev:hover{border-color:rgba(227,36,43,.78);background-color:oklch(12.5% .018 30/.68)}   /* jen mirne ztmaveni */
 .res:hover{border-color:rgba(227,36,43,.7)}
 .ev .lbl,.res .lbl{transition:color .4s ease,text-shadow .4s ease}
 .ev:hover .lbl,.res:hover .lbl{color:#ff5b52;text-shadow:0 0 10px rgba(255,70,60,.85),0 0 24px rgba(227,36,43,.5)}

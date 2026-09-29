@@ -188,15 +188,17 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 /* jedna mezera --og pro vsechno v paticce: nad linii, mezi kontakty, linie-text,
    text-loga a loga-spodni linie */
-.outro{--og:28px}
+.outro{--og:28px;padding-right:calc(var(--g) + 3vw)}   /* opticky stred o kus doleva */
+.outro .contact{margin-top:var(--og);padding-top:var(--og)}   /* stejne mezery nad i pod kontakty */
 .outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--og)}
 .outro .contact div{text-align:center}
 .outro .contact .l{padding-left:.24em}   /* vyrovna mezery za pismeny - stitek presne na stred */
-/* ikony karet v karuselu: iOS sklo, cervene podbarveni */
+/* ikony karet: obrys ve stejnem stylu jako velka cisla, cislo ustoupi do pozadi */
 .cf-art{position:relative}
-.cf-ico{position:absolute;left:50%;top:46%;width:36%;max-width:124px;height:auto;transform:translate(-50%,-50%);z-index:2;pointer-events:none;
-  filter:drop-shadow(0 12px 22px rgba(0,0,0,.45)) drop-shadow(0 0 20px rgba(227,36,43,.28));transition:transform .6s cubic-bezier(.2,.9,.3,1.1)}
-.cf-card:hover .cf-ico{transform:translate(-50%,-54%) scale(1.04)}
+.cf-ico{position:absolute;left:50%;top:44%;width:56%;max-width:190px;height:auto;transform:translate(-50%,-50%);z-index:2;pointer-events:none;
+  opacity:.85;filter:drop-shadow(0 0 10px rgba(255,80,70,.35));transition:transform .6s cubic-bezier(.2,.9,.3,1.1),opacity .4s ease}
+.cf-card:hover .cf-ico{transform:translate(-50%,-53%) scale(1.03);opacity:1}
+.cf-art:has(.cf-ico) .cf-num{opacity:.3}
 .outro .contact .l{color:oklch(74% .20 27);font-weight:800;animation:dech 4.6s ease-in-out infinite}   /* cervene jako ostatni */
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
   column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);
@@ -447,8 +449,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <span id="diag" hidden></span>
 
-<link rel="stylesheet" href="carousel.css?v=20260929t">
-<link rel="stylesheet" href="menu.css?v=20260929t">
+<link rel="stylesheet" href="carousel.css?v=20260929u">
+<link rel="stylesheet" href="menu.css?v=20260929u">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -873,9 +875,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260929t"></script>
-<script src="carousel.js?v=20260929t" defer></script>
-<script src="repel.js?v=20260929t" defer></script>
+<script type="module" src="glove3d.js?v=20260929u"></script>
+<script src="carousel.js?v=20260929u" defer></script>
+<script src="repel.js?v=20260929u" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -914,6 +916,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 })();
 </script>
 <script>document.querySelectorAll(".cta .btn").forEach(function(b){b.addEventListener("mousemove",function(e){var r=b.getBoundingClientRect();b.style.setProperty("--mx",(e.clientX-r.left)+"px");b.style.setProperty("--my",(e.clientY-r.top)+"px");});});</script>
-<script src="menu.js?v=20260929t" defer></script>
-<script src="splash.js?v=20260929t" defer></script>
+<script src="menu.js?v=20260929u" defer></script>
+<script src="splash.js?v=20260929u" defer></script>
 </html>
