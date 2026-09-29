@@ -473,3 +473,17 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .tl-more:hover{border-color:rgba(227,36,43,.75);box-shadow:0 0 22px rgba(227,36,43,.35)}
 .tl-more[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){ .tl li.in{animation:none} }
+
+/* zapasy: vyraznejsi hover - vetsi zare, tmavsi gradient, jasnejsi cervene texty */
+.ev,.res{position:relative;transition:border-color .45s ease,background-color .45s ease}
+.ev::after,.res::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;
+  box-shadow:0 0 38px rgba(227,36,43,.42),0 18px 40px rgba(0,0,0,.45);transition:opacity .45s ease}
+.ev:hover::after,.res:hover::after{opacity:1}
+.ev:hover{border-color:rgba(227,36,43,.78);background-color:oklch(9% .02 28/.82)}
+.res:hover{border-color:rgba(227,36,43,.7)}
+.ev .lbl,.res .lbl{transition:color .4s ease,text-shadow .4s ease}
+.ev:hover .lbl,.res:hover .lbl{color:#ff5b52;text-shadow:0 0 10px rgba(255,70,60,.85),0 0 24px rgba(227,36,43,.5)}
+.tl li:hover{border-color:rgba(227,36,43,.7);background-color:rgba(20,4,6,.55);
+  box-shadow:0 0 30px rgba(227,36,43,.3),0 12px 28px rgba(0,0,0,.35)}
+.tl li:hover time{color:#ff5b52;text-shadow:0 0 10px rgba(255,70,60,.85),0 0 22px rgba(227,36,43,.5);border-color:rgba(227,36,43,.8)}
+.tl li{transition:border-color .45s ease,transform .5s cubic-bezier(.25,.8,.3,1),background-color .45s ease,box-shadow .45s ease}
