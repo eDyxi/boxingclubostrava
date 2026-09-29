@@ -3,11 +3,11 @@
 (function () {
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var wrap = document.createElement('div');
-  wrap.className = 'splash';
-  wrap.setAttribute('aria-hidden', 'true');
+  var host = document.createElement('div');          // pozor: "wrap" je jmeno funkce uvnitr simulace
+  host.className = 'splash';
+  host.setAttribute('aria-hidden', 'true');
   var cv = document.createElement('canvas');
-  wrap.appendChild(cv); document.body.appendChild(wrap);
+  host.appendChild(cv); document.body.appendChild(host);
   const canvasRef = { current: cv }, animationFrameId = { current: null };
   const SIM_RESOLUTION = 128, DYE_RESOLUTION = 1024, CAPTURE_RESOLUTION = 512,
         DENSITY_DISSIPATION = 4.2, VELOCITY_DISSIPATION = 2.2, PRESSURE = 0.1, PRESSURE_ITERATIONS = 20,
