@@ -573,7 +573,7 @@
 .pcmode .pc-shine{-webkit-mask-image:radial-gradient(circle at var(--pointer-x) var(--pointer-y),#000 0,rgba(0,0,0,.4) 30%,transparent 62%);
   mask-image:radial-gradient(circle at var(--pointer-x) var(--pointer-y),#000 0,rgba(0,0,0,.4) 30%,transparent 62%)}
 .pcmode .pc-card:hover .pc-shine,.pcmode .pc-card.active .pc-shine{opacity:.32}
-.pcmode .pc-shine::before{display:none}
+.pcmode .pc-shine::before,.pcmode .pc-shine::after{display:none}   /* difference/luminosity vrstvy by fotku invertovaly */
 .pcmode .pc-glare{opacity:.55}
 .pcmode .pc-user-info{z-index:6}
 .pcmode .pc-avatar-content .avatar{width:100%;height:100%;object-fit:cover;object-position:50% 20%;bottom:0;
