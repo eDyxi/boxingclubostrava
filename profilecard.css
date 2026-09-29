@@ -590,3 +590,14 @@
 .pcmode>div:last-child{padding:0 4px}
 @media (max-width:760px){ .cf-on .cf-detail.pcmode{width:auto;padding:16px 16px 20px;background:rgba(14,5,6,.92);border-radius:22px 22px 0 0}
   .pcmode .pc-card-wrapper{max-width:300px;margin:0 auto} }
+
+/* v2: jemnejsi lesk, na hover cerveny; cerveny okraj; bez cerne linky pod kartou */
+.pcmode .pc-card{border:1.5px solid rgba(227,36,43,.5);box-shadow:0 0 26px rgba(227,36,43,.18),0 18px 40px rgba(0,0,0,.35)!important}
+.pcmode .pc-card:hover,.pcmode .pc-card.active{border-color:rgba(227,36,43,.72)}
+.pcmode .pc-glare{opacity:.18}
+.pcmode .pc-shine{background:radial-gradient(circle at var(--pointer-x) var(--pointer-y),rgba(255,90,80,.55) 0,rgba(227,36,43,.22) 30%,rgba(227,36,43,0) 60%)!important;
+  mix-blend-mode:screen!important;filter:none!important;animation:none!important}
+.pcmode .pc-card:hover .pc-shine,.pcmode .pc-card.active .pc-shine{opacity:.45}
+.pcmode .pc-behind{opacity:calc(.45 * var(--card-opacity))}
+.pcmode .pc-avatar-content .avatar{bottom:0;height:calc(100% + 2px)}
+.pcmode .pc-inside{background-color:transparent}

@@ -177,7 +177,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 }
 @media (prefers-reduced-motion:reduce){
   .cta .btn::before,.cta .btn::after{animation:none}
-  .eyebrow,#p0 h1 em,.outro .affil .l{animation:none}
+  .eyebrow,#p0 h1 em,.outro .affil .l,.outro .contact .l{animation:none}
 }
 
 /* jedna mezera --og pro vsechno v paticce: nad linii, mezi kontakty, linie-text,
@@ -185,6 +185,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 .outro{--og:28px}
 .outro .contact{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--og)}
 .outro .contact div{text-align:center}
+.outro .contact .l{color:oklch(74% .20 27);font-weight:800;animation:dech 4.6s ease-in-out infinite}   /* cervene jako ostatni */
 .outro .affil{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
   column-gap:clamp(16px,3.4vw,40px);row-gap:var(--og);
   /* linie nahore a dole do ztracena, na krajich se nedotyka rohu */
@@ -287,10 +288,10 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 }
 /* Texty preletu (krome hlavniho nadpisu a posledniho textu) o 30 % vetsi. */
 @media (min-width:701px){
-  #p1 h2,#p2 h2,#p3 h2{font-size:clamp(34px,7.3vw,60px)}
-  #p1 p,#p2 p,#p3 p{font-size:19.5px}
-  #p1 .fine,#p2 .fine,#p3 .fine{font-size:17px}
-  body.fx #p1,body.fx #p2,body.fx #p3{width:min(572px,74vw)}
+  #p1 h2,#p2 h2,#p3 h2,#p4 h2{font-size:clamp(34px,7.3vw,60px)}
+  #p1 p,#p2 p,#p3 p,#p4 p{font-size:19.5px}
+  #p1 .fine,#p2 .fine,#p3 .fine,#p4 .fine{font-size:17px}
+  body.fx #p1,body.fx #p2,body.fx #p3,body.fx #p4{width:min(572px,74vw)}
   #stats b{font-size:clamp(62px,15.6vw,143px)}
   #stats span{font-size:13px}
 }
@@ -434,8 +435,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <span id="diag" hidden></span>
 
-<link rel="stylesheet" href="carousel.css?v=20260929o">
-<link rel="stylesheet" href="menu.css?v=20260929o">
+<link rel="stylesheet" href="carousel.css?v=20260929q">
+<link rel="stylesheet" href="menu.css?v=20260929q">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -860,9 +861,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260929o"></script>
-<script src="carousel.js?v=20260929o" defer></script>
-<script src="repel.js?v=20260929o" defer></script>
+<script type="module" src="glove3d.js?v=20260929q"></script>
+<script src="carousel.js?v=20260929q" defer></script>
+<script src="repel.js?v=20260929q" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -900,5 +901,6 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   });
 })();
 </script>
-<script src="menu.js?v=20260929o" defer></script>
+<script src="menu.js?v=20260929q" defer></script>
+<script src="splash.js?v=20260929q" defer></script>
 </html>

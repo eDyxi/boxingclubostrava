@@ -41,3 +41,9 @@
 @media (max-width:700px){ .top{padding-right:78px} }
 @media (prefers-reduced-motion:reduce){ .mnu,.mnu a,.mnu span.off,.mnu-btn i{transition:none} }
 .lb-open .mnu-btn,.lb-open .mnu{opacity:0;pointer-events:none}   /* nahled fotky prekryva menu */
+
+/* Splash cursor (splash.js): cervena tekutina za kurzorem, hodne ztlumena, pod obsahem.
+   Nahrazuje puvodni zari za kurzorem (.torch). */
+.splash{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.32;mix-blend-mode:screen}
+.splash canvas{display:block;width:100vw;height:100vh}
+.torch{display:none!important}

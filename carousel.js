@@ -76,9 +76,11 @@
     detail.querySelector('.cf-d-role').textContent = c.dataset.role || '';
     detail.querySelector('.cf-d-bio').textContent = c.dataset.bio || '';
     var mail = detail.querySelector('.cf-d-mail');
+    if (mail) {
     if (!mail.classList.contains('pc-contact-btn')) mail.textContent = c.dataset.mail || '';
     mail.href = c.dataset.mail ? 'mailto:' + c.dataset.mail : '#';
     mail.hidden = !c.dataset.mail;
+    }
     opened = true;
     root.classList.add('is-open');
     render();
