@@ -453,3 +453,23 @@ a.kart:hover{border-color:oklch(66% .21 26/.55);transform:translateY(-3px)}
 .lb-x i:first-child{transform:rotate(45deg)}.lb-x i:last-child{transform:rotate(-45deg)}
 .lb-open,.lb-open body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){ .res,.ev,.tl time,.orb::before,.orbit.open .orbit-ring,.gal-grid figure.in{animation:none} }
+
+/* ---------- zapasy: sezony a rozbaleni soutezi ---------- */
+.seas{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.seas button{padding:9px 20px;border-radius:999px;cursor:pointer;color:#f4ece4;font:inherit;font-size:14px;font-weight:800;
+  font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:border-color .3s ease,box-shadow .3s ease,background .3s ease}
+.seas button:hover{border-color:rgba(227,36,43,.5)}
+.seas button[aria-selected="true"]{border-color:rgba(227,36,43,.65);
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(227,36,43,.24) 60%,rgba(227,36,43,.34));box-shadow:0 0 20px rgba(227,36,43,.28)}
+.tl li.more{display:none}
+.tl.open li.more{display:grid}
+.tl li.in{animation:rad .55s cubic-bezier(.2,.9,.3,1) both;animation-delay:var(--d,0ms)}
+@keyframes rad{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+.tl-more{display:block;margin:14px auto 0;padding:11px 24px;border-radius:999px;cursor:pointer;color:#f4ece4;font:inherit;
+  font-size:13px;font-weight:800;letter-spacing:.08em;border:1px solid rgba(227,36,43,.45);
+  background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(227,36,43,.14) 60%,rgba(227,36,43,.22));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:box-shadow .3s ease,border-color .3s ease}
+.tl-more:hover{border-color:rgba(227,36,43,.75);box-shadow:0 0 22px rgba(227,36,43,.35)}
+.tl-more[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){ .tl li.in{animation:none} }

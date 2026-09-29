@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="page.css?v=20260929r">
-<link rel="stylesheet" href="menu.css?v=20260929r">
+<link rel="stylesheet" href="page.css?v=20260929s">
+<link rel="stylesheet" href="menu.css?v=20260929s">
 </head>
 <body>
 
@@ -44,8 +44,13 @@
   </div>
 
   <section class="zap">
-    <h2>Sezóna 2026</h2>
-    <ol class="tl">
+    <h2>Sezóny</h2>
+    <div class="seas" role="tablist" aria-label="Sezóna">
+      <button type="button" role="tab" data-s="2026" aria-selected="true">2026</button>
+      <button type="button" role="tab" data-s="2025" aria-selected="false">2025</button>
+      <button type="button" role="tab" data-s="2020" aria-selected="false">2020</button>
+    </div>
+    <ol class="tl" data-s="2026">
       <li><time>26. 9. 2026</time><div><b>NLB Národní liga boxu, 1. kolo</b><span>S mezinárodní účastí. Pořádal Boxing Club Ostrava se SCM Ostrava na sportovišti na Nádražní.</span></div></li>
       <li><time>19.–20. 9. 2026</time><div><b>Turnaj sportovních center mládeže</b><span>Obnovený turnaj SCM, první ročník nového startu zajistilo SCM Boxing Ostrava. Hala Varenská.</span></div></li>
       <li><time>19. 9. 2026</time><div><b>Extraliga boxu: Ostrava – Praha 19 : 8</b><span>Ze sedmi odvážených vah ztratila Ostrava jediný zápas a posunula se do čela tabulky.</span></div></li>
@@ -54,6 +59,15 @@
       <li><time>23. 5. 2026</time><div><b>Boxing Challenge</b><span>Sobotní soutěžení mládeže Moravskoslezské oblasti boxu.</span></div></li>
       <li><time>16. 5. 2026</time><div><b>NLB Národní liga boxu, 7. kolo</b><span>Naši boxeři ten den startovali na třech akcích najednou.</span></div></li>
     </ol>
+    <ol class="tl" data-s="2025" hidden>
+      <li><time>15. 11. 2025</time><div><b>NLB Národní liga boxu, kolo v Ostravě</b><span>Kolo Národní ligy boxu s domácími boxery na ringu.</span></div></li>
+    </ol>
+    <ol class="tl" data-s="2020" hidden>
+      <li><time>Březen 2020</time><div><b>Mezinárodní turnaj: Erik Suchý zlatý</b><span>Zlato v lehké welterové váze, reprezentaci vedl náš trenér Jiří Kotiba.</span></div></li>
+      <li><time>28. 2.–1. 3. 2020</time><div><b>MČR juniorů, Nové Strašecí</b><span>Naši junioři přivezli zlato, dvě stříbra a bronz.</span></div></li>
+      <li><time>22. 2. 2020</time><div><b>Boxgala Vídeň</b><span>Marek Biela (91 kg) vyhrál před koncem zápasu KO.</span></div></li>
+    </ol>
+    <button class="tl-more" type="button" hidden></button>
   </section>
 
   <section class="zap">
@@ -93,9 +107,29 @@
   </section>
 </main>
 
-<script src="page.js?v=20260929r" defer></script>
-<script src="repel.js?v=20260929r" defer></script>
-<script src="menu.js?v=20260929r" defer></script>
-<script src="splash.js?v=20260929r" defer></script>
+<script>
+// Sezony: prepinani pilulkami, v kazde sezone jen prvni 3 souteze, zbytek se rozbali.
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.seas button')), lists=[].slice.call(document.querySelectorAll('.tl[data-s]')),
+      more=document.querySelector('.tl-more'), cur=null;
+  function show(s){
+    tabs.forEach(function(t){t.setAttribute('aria-selected',t.dataset.s===s?'true':'false');});
+    lists.forEach(function(l){ var on=l.dataset.s===s; l.hidden=!on; if(on){ cur=l; l.classList.remove('open');
+      [].forEach.call(l.children,function(li,i){ li.style.setProperty('--d',(i*60)+'ms'); li.classList.toggle('more',i>2); li.classList.remove('in'); void li.offsetWidth; if(i<3) li.classList.add('in'); }); } });
+    var n=cur.children.length-3; more.hidden=n<=0; more.textContent='Další soutěže ('+n+')';
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.s);});});
+  more.addEventListener('click',function(){
+    var o=!cur.classList.contains('open'); cur.classList.toggle('open',o);
+    [].forEach.call(cur.querySelectorAll('li.more'),function(li,i){ li.style.setProperty('--d',(i*70)+'ms'); li.classList.remove('in'); void li.offsetWidth; if(o) li.classList.add('in'); });
+    more.textContent=o?'Skrýt':'Další soutěže ('+(cur.children.length-3)+')';
+  });
+  show('2026');
+})();
+</script>
+<script src="page.js?v=20260929s" defer></script>
+<script src="repel.js?v=20260929s" defer></script>
+<script src="menu.js?v=20260929s" defer></script>
+<script src="splash.js?v=20260929s" defer></script>
 </body>
 </html>

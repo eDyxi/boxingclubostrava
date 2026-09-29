@@ -47,3 +47,6 @@
 .splash{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.32;mix-blend-mode:screen}
 .splash canvas{display:block;width:100vw;height:100vh}
 .torch{display:none!important}
+.bub{display:none!important}   /* stare bubliny za kurzorem - nahrazene splash cursorem */
+.splash{animation:splashIn 1.6s ease both}
+@keyframes splashIn{from{opacity:0}to{opacity:.32}}

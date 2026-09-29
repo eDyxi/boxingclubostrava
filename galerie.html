@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Bodoni+Moda:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="page.css?v=20260929r">
-<link rel="stylesheet" href="menu.css?v=20260929r">
+<link rel="stylesheet" href="page.css?v=20260929s">
+<link rel="stylesheet" href="menu.css?v=20260929s">
 </head>
 <body>
 
@@ -104,7 +104,7 @@
       fi.classList.remove('in'); fi.classList.toggle('hide',!on);
       if(on){ fi.style.setProperty('--d',(n++*55)+'ms'); void fi.offsetWidth; fi.classList.add('in'); }
     });
-    layout();
+    requestAnimationFrame(function(){ layout(); requestAnimationFrame(layout); });   // az po objeveni posuvniku
   }
   // Zarovnane rady: vybrane fotky se rozdeli do vyrovnanych rad (podle soucetu pomeru
   // stran) a kazda rada se dopocita presne na sirku mrizky - vsechny konci vpravo.
@@ -118,9 +118,12 @@
     var r=v.map(function(f){return parseFloat(f.style.getPropertyValue('--r'))||1.5;});
     var row=[], sum=0;
     function flush(full){
-      var h=full?(W-GAP*(row.length-1))/sum:H;
-      row.forEach(function(j,q){ v[j].style.width=Math.floor(r[j]*h)+'px'; v[j].style.height=Math.round(h)+'px';
-        v[j].style.flexGrow=(full&&q===row.length-1)?'1':'0'; });
+      var h=full?(W-GAP*(row.length-1))/sum:H, used=0;
+      row.forEach(function(j,q){
+        var w=Math.floor(r[j]*h);
+        if(full&&q===row.length-1) w=Math.floor(W-GAP*(row.length-1)-used)-1;   // presny doplnek, zadne preteceni do dalsi rady
+        used+=w; v[j].style.width=w+'px'; v[j].style.height=Math.round(h)+'px'; v[j].style.flexGrow='0';
+      });
       row=[]; sum=0;
     }
     for(var i=0;i<v.length;i++){
@@ -129,7 +132,9 @@
     }
     if(row.length) flush(v.length<=6||sum*H+GAP*(row.length-1)>=W*.8);   // malou sadu vzdy do jedne plne rady
   }
-  var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(layout,120); });
+  var rt; function later(){ clearTimeout(rt); rt=setTimeout(layout,60); }
+  addEventListener('resize',later);
+  if('ResizeObserver' in window) new ResizeObserver(later).observe(grid);   // sirka mrizky se meni i posuvnikem
   orb.addEventListener('click',function(){
     var o=!orbit.classList.contains('open'); orbit.classList.toggle('open',o); orb.setAttribute('aria-expanded',o?'true':'false');
     if(o){ pick('*'); return; }
@@ -164,9 +169,9 @@
   lb.addEventListener('touchend',function(e){if(sx===null)return; var d=e.changedTouches[0].clientX-sx; if(Math.abs(d)>50) step(d<0?1:-1); sx=null;});
 })();
 </script>
-<script src="page.js?v=20260929r" defer></script>
-<script src="repel.js?v=20260929r" defer></script>
-<script src="menu.js?v=20260929r" defer></script>
-<script src="splash.js?v=20260929r" defer></script>
+<script src="page.js?v=20260929s" defer></script>
+<script src="repel.js?v=20260929s" defer></script>
+<script src="menu.js?v=20260929s" defer></script>
+<script src="splash.js?v=20260929s" defer></script>
 </body>
 </html>

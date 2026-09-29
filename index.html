@@ -143,26 +143,32 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 /* Tlacitka: skleneny styl. Pruhledne ma matne sklo s jemnym obrysem, plne je
    cerveny prechod s vnitrnim odleskem. Obema jednou za cas projede svetlo. */
 .cta .btn{position:relative;overflow:hidden;isolation:isolate;
-  border:1px solid oklch(100% 0 0/.34) !important;border-radius:999px !important;
-  padding:15px 30px !important;background:oklch(100% 0 0/.06);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  box-shadow:inset 0 1px 0 oklch(100% 0 0/.2),0 12px 30px -14px oklch(6% .02 30/.9);
-  transition:transform .4s cubic-bezier(.2,.9,.3,1),box-shadow .4s ease,
-    background .4s ease,border-color .4s ease}
-.cta .btn.solid{border-color:oklch(80% .14 28/.55) !important;
-  background:linear-gradient(180deg,oklch(62% .21 27),oklch(49% .2 25));
-  box-shadow:inset 0 1px 0 oklch(100% 0 0/.35),0 14px 34px -12px oklch(50% .2 25/.75)}
-.cta .btn::before{content:none !important}
+  border:1px solid rgba(255,255,255,.3) !important;border-radius:999px !important;padding:15px 30px !important;
+  /* tekute sklo: rozmazane a nasycene pozadi, svetlo z kurzoru (--mx/--my), odlesk na horni hrane */
+  background:radial-gradient(120px 80px at var(--mx,50%) var(--my,0%),rgba(255,255,255,.22),rgba(255,255,255,0) 70%),
+    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  -webkit-backdrop-filter:blur(16px) saturate(1.7);backdrop-filter:blur(16px) saturate(1.7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.28),inset 0 0 12px rgba(255,255,255,.06),
+    0 12px 30px -14px rgba(0,0,0,.9);
+  transition:transform .45s cubic-bezier(.2,.9,.3,1),box-shadow .45s ease,border-color .45s ease}
+.cta .btn.solid{border-color:rgba(255,170,160,.55) !important;
+  background:radial-gradient(120px 80px at var(--mx,50%) var(--my,0%),rgba(255,210,200,.4),rgba(255,210,200,0) 70%),
+    linear-gradient(180deg,rgba(255,90,80,.62),rgba(190,18,28,.52));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(80,0,0,.4),inset 0 0 14px rgba(255,160,150,.18),
+    0 14px 34px -12px rgba(227,36,43,.8),0 0 26px rgba(227,36,43,.22)}
+.cta .btn::before{content:'' !important;position:absolute;left:10%;right:10%;top:1px;height:46%;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0));pointer-events:none;z-index:-1}
 .cta .btn::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   background:linear-gradient(110deg,transparent 32%,oklch(100% 0 0/.26) 48%,transparent 64%);
   transform:translateX(-130%);animation:sheen 5.6s cubic-bezier(.4,0,.2,1) infinite}
 .cta .btn:nth-of-type(2)::after{animation-delay:2.8s}
 @keyframes sheen{0%,72%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
 .cta .btn:hover{transform:translateY(-2px) scale(1.03)}
-.cta .btn:not(.solid):hover{border-color:oklch(100% 0 0/.75) !important;background:oklch(100% 0 0/.11);
+.cta .btn:not(.solid):hover{border-color:rgba(255,255,255,.6) !important;
   box-shadow:inset 0 1px 0 oklch(100% 0 0/.28),0 16px 34px -12px oklch(6% .02 30/.95)}
-.cta .btn.solid:hover{background:linear-gradient(180deg,oklch(57% .21 27),oklch(45% .2 25));
-  box-shadow:inset 0 1px 0 oklch(100% 0 0/.3),0 18px 40px -12px oklch(50% .2 25/.9)}
+.cta .btn.solid:hover{border-color:rgba(255,200,190,.75) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(80,0,0,.4),inset 0 0 16px rgba(255,170,160,.24),
+    0 18px 40px -12px rgba(227,36,43,.9),0 0 34px rgba(227,36,43,.35)}
 @keyframes orbit{to{--ang:360deg}}
 @media (prefers-reduced-motion:reduce){.cta .btn::after{animation:none}}
 
@@ -435,8 +441,8 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 <span id="diag" hidden></span>
 
-<link rel="stylesheet" href="carousel.css?v=20260929r">
-<link rel="stylesheet" href="menu.css?v=20260929r">
+<link rel="stylesheet" href="carousel.css?v=20260929s">
+<link rel="stylesheet" href="menu.css?v=20260929s">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
 </script>
@@ -861,9 +867,9 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
 
 })();
 </script>
-<script type="module" src="glove3d.js?v=20260929r"></script>
-<script src="carousel.js?v=20260929r" defer></script>
-<script src="repel.js?v=20260929r" defer></script>
+<script type="module" src="glove3d.js?v=20260929s"></script>
+<script src="carousel.js?v=20260929s" defer></script>
+<script src="repel.js?v=20260929s" defer></script>
 <script>
 // Za kurzorem: svetlo a drobne bubliny, ktere se odtrhnou a odplavou jako
 // proud vody. V hero cervene, v dalsich sekcich bile. Kruhy na hladine jsou pryc.
@@ -901,6 +907,7 @@ body.fx #stats{position:absolute;inset:0;align-items:center;justify-content:cent
   });
 })();
 </script>
-<script src="menu.js?v=20260929r" defer></script>
-<script src="splash.js?v=20260929r" defer></script>
+<script>document.querySelectorAll(".cta .btn").forEach(function(b){b.addEventListener("mousemove",function(e){var r=b.getBoundingClientRect();b.style.setProperty("--mx",(e.clientX-r.left)+"px");b.style.setProperty("--my",(e.clientY-r.top)+"px");});});</script>
+<script src="menu.js?v=20260929s" defer></script>
+<script src="splash.js?v=20260929s" defer></script>
 </html>

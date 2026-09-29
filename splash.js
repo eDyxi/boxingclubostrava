@@ -11,7 +11,7 @@
   const canvasRef = { current: cv }, animationFrameId = { current: null };
   const SIM_RESOLUTION = 128, DYE_RESOLUTION = 1024, CAPTURE_RESOLUTION = 512,
         DENSITY_DISSIPATION = 4.2, VELOCITY_DISSIPATION = 2.2, PRESSURE = 0.1, PRESSURE_ITERATIONS = 20,
-        CURL = 3, SPLAT_RADIUS = 0.16, SPLAT_FORCE = 4200, SHADING = true, COLOR_UPDATE_SPEED = 10,
+        CURL = 3, SPLAT_RADIUS = 0.16, SPLAT_FORCE = 3200, SHADING = true, COLOR_UPDATE_SPEED = 10,
         BACK_COLOR = { r: 0, g: 0, b: 0 }, TRANSPARENT = true, RAINBOW_MODE = true, COLOR = '#e3242b';
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -984,6 +984,7 @@
       let posY = scaleByPixelRatio(e.clientY);
       if (!firstMouseMoveHandled) {
         let color = generateColor();
+        pointer.texcoordX = posX / canvas.width; pointer.texcoordY = 1.0 - posY / canvas.height;   // prvni pohyb bez skoku z rohu
         updatePointerMoveData(pointer, posX, posY, color);
         firstMouseMoveHandled = true;
       } else {
@@ -1028,4 +1029,7 @@
 
     updateFrame();
 
+  // mekky nabeh sily: prvnich ~1,5 s po prvnim pohybu roste z nuly
+  var ramp0 = 0; addEventListener('mousemove', function f() { ramp0 = performance.now(); removeEventListener('mousemove', f); });
+  (function ramp() { var k = ramp0 ? Math.min(1, (performance.now() - ramp0) / 1500) : 0; config.SPLAT_FORCE = SPLAT_FORCE * k * k; if (k < 1) requestAnimationFrame(ramp); })();
 })();
