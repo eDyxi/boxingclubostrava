@@ -568,7 +568,14 @@
   -webkit-backdrop-filter:none;backdrop-filter:none}
 .cf-on .cf-detail.pcmode::before,.cf-on .cf-detail.pcmode::after{display:none}
 .pcmode .pc-card{height:auto;max-height:none;width:100%;font-family:inherit}
-.pcmode .pc-avatar-content{mix-blend-mode:normal}
+.pcmode .pc-avatar-content{mix-blend-mode:normal;z-index:3}
+/* lesk jen kolem kurzoru a slabsi - pres fotku by jinak prepalil barvy */
+.pcmode .pc-shine{-webkit-mask-image:radial-gradient(circle at var(--pointer-x) var(--pointer-y),#000 0,rgba(0,0,0,.4) 30%,transparent 62%);
+  mask-image:radial-gradient(circle at var(--pointer-x) var(--pointer-y),#000 0,rgba(0,0,0,.4) 30%,transparent 62%)}
+.pcmode .pc-card:hover .pc-shine,.pcmode .pc-card.active .pc-shine{opacity:.32}
+.pcmode .pc-shine::before{display:none}
+.pcmode .pc-glare{opacity:.55}
+.pcmode .pc-user-info{z-index:6}
 .pcmode .pc-avatar-content .avatar{width:100%;height:100%;object-fit:cover;object-position:50% 20%;bottom:0;
   border-radius:0;background:none;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.55) 22%,#000 45%);mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.55) 22%,#000 45%)}
