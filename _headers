@@ -1,10 +1,23 @@
-# HTML se nesmi kesovat natvrdo, jinak prohlizec drzi starou stranku
-# i s odkazem na starou verzi skriptu a opravy se k uzivateli nedostanou.
+# HTML se nesmi kesovat natvrdo (no-cache), jinak prohlizec drzi starou stranku
+# i s odkazem na starou verzi skriptu. Assety s verzi (?v= / cislo v nazvu) natvrdo.
+# Pozor: pravidla se slucuji -> u assetu se no-cache z /* nejdriv odpoji (! Cache-Control).
 /*
   Cache-Control: no-cache
-/*.html
-  Cache-Control: no-cache
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.facebook.com https://*.fbcdn.net; font-src 'self'; connect-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; frame-src https://www.facebook.com https://web.facebook.com; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
 /*.js
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /*.css
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+/vendor/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
