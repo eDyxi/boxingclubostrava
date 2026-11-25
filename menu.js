@@ -1,15 +1,15 @@
 // Menu vpravo nahore na vsech strankach: tri carky -> panel ve tvaru pilulky se vsemi kartami.
 (function () {
   var items = [
-    ['00', 'Úvod', 'index.html'],
-    ['01', 'Trenéři', 'treneri.html'],
-    ['02', 'Tréninky', 'treninky.html'],
-    ['03', 'Zápasy', 'zapasy.html'],
-    ['04', 'Galerie', 'galerie.html'],
-    ['05', 'Facebook', 'facebook.html'],
-    ['06', 'Kontakt', 'kontakt.html']
+    ['00', 'Úvod', '/'],
+    ['01', 'Trenéři', '/treneri'],
+    ['02', 'Tréninky', '/treninky'],
+    ['03', 'Zápasy', '/zapasy'],
+    ['04', 'Galerie', '/galerie'],
+    ['05', 'Facebook', '/facebook'],
+    ['06', 'Kontakt', '/kontakt']
   ];
-  var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  var here = location.pathname.toLowerCase().replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
   var btn = document.createElement('button');
   btn.className = 'mnu-btn'; btn.type = 'button';
   btn.setAttribute('aria-label', 'Menu'); btn.setAttribute('aria-expanded', 'false');
